@@ -1,0 +1,7 @@
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\bin\Debug\ConsoleClient.exe
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\bin\Debug\ConsoleClient.pdb
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\bin\Debug\Lisp.exe
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\bin\Debug\Lisp.pdb
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\obj\Debug\ConsoleClient.exe
+C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\obj\Debug\ConsoleClient.pdb
