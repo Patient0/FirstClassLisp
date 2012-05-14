@@ -1,0 +1,5 @@
+<Modules>
+  <Module PersistentId="2517BF60-4567-456F-AE2E-25B280AD24F2" ModuleId="LispTests" />
+  <Module PersistentId="81EE52DF-F912-4FE5-973C-262762CA3B99" ModuleId="LispEngine" />
+  <Module PersistentId="F4859844-A8FB-4CE4-9184-2DD789A07085" ModuleId="Lisp" />
+</Modules>

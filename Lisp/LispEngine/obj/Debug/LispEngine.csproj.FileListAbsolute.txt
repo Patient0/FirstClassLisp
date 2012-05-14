@@ -1,0 +1,5 @@
+C:\Users\CarolinAndPaul\Documents\Visual Studio 2010\Projects\Lisp\LispEngine\bin\Debug\LispEngine.dll
+C:\Users\CarolinAndPaul\Documents\Visual Studio 2010\Projects\Lisp\LispEngine\bin\Debug\LispEngine.pdb
+C:\Users\CarolinAndPaul\Documents\Visual Studio 2010\Projects\Lisp\LispEngine\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\CarolinAndPaul\Documents\Visual Studio 2010\Projects\Lisp\LispEngine\obj\Debug\LispEngine.dll
+C:\Users\CarolinAndPaul\Documents\Visual Studio 2010\Projects\Lisp\LispEngine\obj\Debug\LispEngine.pdb

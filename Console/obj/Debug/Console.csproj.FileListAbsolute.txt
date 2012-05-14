@@ -1,1 +1,0 @@
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Console\obj\Debug\ResolveAssemblyReference.cache

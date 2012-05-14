@@ -1,9 +1,0 @@
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\bin\Debug\Lisp.Tests.dll
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\bin\Debug\Lisp.Tests.pdb
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\bin\Debug\nunit.framework.dll
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\bin\Debug\nunit.framework.xml
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\obj\Debug\Lisp.Tests.dll
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\obj\Debug\Lisp.Tests.pdb
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\bin\Debug\Lisp.exe
-C:\Users\USER\Documents\SharpDevelop Projects\Lisp\Lisp.Tests\bin\Debug\Lisp.pdb
