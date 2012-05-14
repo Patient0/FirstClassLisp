@@ -45,6 +45,7 @@
     <Compile Include="Datums\Null.cs" />
     <Compile Include="Datums\Pair.cs" />
     <Compile Include="Datums\Symbol.cs" />
+    <Compile Include="Evaluation\EmptyEnvironment.cs" />
     <Compile Include="Evaluation\Environment.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Lexing\Token.cs" />
