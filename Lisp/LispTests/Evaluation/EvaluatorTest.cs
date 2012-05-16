@@ -63,5 +63,11 @@ namespace LispTests.Evaluation
         {
             test("((lambda (x) x) 5)", 5);
         }
+
+        [Test]
+        public void testConstantFunction()
+        {
+            test("((lambda () 6))", 6);
+        }
     }
 }
