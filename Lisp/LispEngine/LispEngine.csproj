@@ -45,9 +45,15 @@
     <Compile Include="Datums\Null.cs" />
     <Compile Include="Datums\Pair.cs" />
     <Compile Include="Datums\Symbol.cs" />
+    <Compile Include="Evaluation\Closure.cs" />
+    <Compile Include="Evaluation\CoreForms.cs" />
     <Compile Include="Evaluation\EmptyEnvironment.cs" />
     <Compile Include="Evaluation\Environment.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
+    <Compile Include="Evaluation\ExtendedEnvironment.cs" />
+    <Compile Include="Evaluation\Function.cs" />
+    <Compile Include="Evaluation\Lambda.cs" />
+    <Compile Include="Evaluation\Macro.cs" />
     <Compile Include="Lexing\Token.cs" />
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\Scanner.cs" />

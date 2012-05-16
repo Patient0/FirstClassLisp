@@ -29,5 +29,18 @@ namespace LispEngine.Datums
         {
             return new Atom(value);
         }
+
+        public static IEnumerable<Datum> enumerate(Datum list)
+        {
+            var next = list;
+            while(next != nil)
+            {
+                var pair = next as Pair;
+                if(pair == null)
+                    throw new Exception("Not a list");
+                next = pair.Second;
+                yield return pair.First;
+            }
+        }
     }
 }

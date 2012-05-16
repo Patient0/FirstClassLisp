@@ -14,27 +14,14 @@ namespace LispTests.Evaluation
     [TestFixture]
     class EvaluatorTest : DatumHelpers
     {
-        private class MockEnvironment : Environment
-        {
-            private readonly IDictionary<string, object> items = new Dictionary<string, object>();
-            public object lookup(string name)
-            {
-                if(items.ContainsKey(name))
-                    return items[name];
-                return EmptyEnvironment.Instance.lookup(name);
-            }
-
-            public void Put(String name, object value)
-            {
-                items[name] = value;
-            }
-        }
-
-        private readonly MockEnvironment env = new MockEnvironment();
+        private Environment env;
 
         public EvaluatorTest()
         {
-            env.Put("life", 42);
+            var e = EmptyEnvironment.Instance;
+            e = CoreForms.AddTo(e);
+            e = e.Extend("life", 42);
+            this.env = e;
         }
 
         private void test(string sexp, object expected)
@@ -56,6 +43,25 @@ namespace LispTests.Evaluation
         public void testSymbol()
         {
             test("life", 42);
+        }
+
+        [Test]
+        public void testDatumEnumerate()
+        {
+            var five = atom("5");
+            var listfive = compound(five);
+            var l = enumerate(listfive);
+            Assert.AreEqual(1, l.Count());
+
+            var listfivefive = compound(five, five);
+            l = enumerate(listfivefive);
+            Assert.AreEqual(2, l.Count());
+        }
+
+        [Test]
+        public void testFunction()
+        {
+            test("((lambda (x) x) 5)", 5);
         }
     }
 }
