@@ -58,6 +58,7 @@
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\Scanner.cs" />
     <Compile Include="Datums\Datum.cs" />
+    <Compile Include="Parsing\ParseException.cs" />
     <Compile Include="Parsing\Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -28,7 +28,7 @@ namespace LispTests.Evaluation
         {
             var e = new Evaluator();
 
-            var datum = new Parser(Scanner.Create(sexp).Scan()).parse();
+            var datum = new Parser(Scanner.Create(sexp)).parse();
             var result = e.evaluate(env, datum);
             Assert.AreEqual(expected, result);
         }

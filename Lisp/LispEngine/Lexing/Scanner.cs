@@ -7,6 +7,7 @@ namespace LispEngine.Lexing
     public class Scanner
     {
         private readonly TextReader input;
+        private readonly StringBuilder lineSoFar = new StringBuilder();
         private StringBuilder sb;
 
         public static Scanner Create(string s)
@@ -26,7 +27,9 @@ namespace LispEngine.Lexing
 
         private void readChar()
         {
-            sb.Append((char) input.Read());
+            var next = (char) input.Read();
+            sb.Append(next);
+            lineSoFar.Append(next);
         }
 
         private bool more()
@@ -57,6 +60,16 @@ namespace LispEngine.Lexing
         private bool isWhiteSpace()
         {
             return more() && char.IsWhiteSpace(peek());
+        }
+
+        private Token dot()
+        {
+            if (peek() == '.')
+            {
+                readChar();
+                return tok(TokenType.Dot);                
+            }
+            return null;
         }
 
         private Token symbol()
@@ -113,6 +126,8 @@ namespace LispEngine.Lexing
                 return t;
             if ((t = openClose()) != null)
                 return t;
+            if ((t = dot()) != null)
+                return t;
             return null;
         }
 
@@ -121,6 +136,14 @@ namespace LispEngine.Lexing
             Token next;
             while ((next = GetNext()) != null)
                 yield return next;
+        }
+
+        public string LineSoFar
+        {
+            get
+            {
+                return lineSoFar.ToString();
+            }
         }
     }
 }

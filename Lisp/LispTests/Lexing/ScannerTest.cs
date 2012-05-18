@@ -85,5 +85,11 @@ namespace LispTests.Lexing
         {
             test("(printf)", open, symbol("printf"), close);
         }
+
+        [Test]
+        public void TestDot()
+        {
+            test("5 . 6", integer("5"), space(" "), token(TokenType.Dot, "."), space(" "), integer("6"));
+        }
     }
 }

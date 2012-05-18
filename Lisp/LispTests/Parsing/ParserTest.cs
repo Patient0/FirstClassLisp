@@ -16,7 +16,7 @@ namespace LispTests.Parsing
         {
             Console.WriteLine("sexp: {0}", sexp);
             var s = Scanner.Create(sexp);
-            var p = new Parser(s.Scan());
+            var p = new Parser(s);
             var actual = new List<Datum>();
             Datum parsed;
             while( (parsed = p.parse()) != null)
@@ -90,6 +90,50 @@ namespace LispTests.Parsing
             var worldlist = compound(world);
             var expected = compound(hello, worldlist);
             test("(hello (world))", expected);
+        }
+
+        private static void failtest(string sexp, string errorMsg)
+        {
+            try
+            {
+                test(sexp);
+            }
+            catch (ParseException e)
+            {
+                Console.WriteLine("Got expected Parse exception: {0}", e);
+                Assert.IsTrue(e.Message.Contains(errorMsg));
+            }
+            
+        }
+
+        [Test]
+        public void testParseException()
+        {
+            failtest("(hello .", "(hello ");
+        }
+
+        [Test]
+        public void testPair()
+        {
+            test("(hello . world)", cons(hello, world));
+        }
+
+        [Test]
+        public void test3Tuple()
+        {
+            test("(hello world . car)", cons(hello, cons(world, car)));
+        }
+
+        [Test]
+        public void testInvalidPair()
+        {
+            failtest("(5 . 6 7)", "(5 . 6");
+        }
+
+        [Test]
+        public void testInvalidPairMsg()
+        {
+            failtest("(5 . 6 7 8)", "(5 . 6 7");
         }
     }
 }

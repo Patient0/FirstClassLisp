@@ -11,6 +11,7 @@ namespace LispEngine.Lexing
         Symbol,
         Integer,
         Open,
-        Close
+        Close,
+        Dot
     }
 }
