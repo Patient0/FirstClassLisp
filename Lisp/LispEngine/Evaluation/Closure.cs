@@ -6,7 +6,7 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    class Closure : Function
+    class Closure : DatumHelpers, Function
     {
         private readonly Environment environment;
         private readonly Evaluator evaluator;
@@ -23,17 +23,17 @@ namespace LispEngine.Evaluation
 
         private delegate Environment Binding(Environment e);
 
-        private static Binding makeBinding(string name, object arg)
+        private static Binding makeBinding(string name, Datum arg)
         {
             return e => e.Extend(name, arg);
         }
 
-        public object evaluate(IEnumerable<object> args)
+        public Datum evaluate(Datum args)
         {
             // Map the names the values. A "binding" is something that can
             // extend an environment with a new mapping.
-            var mappings = argNames.Zip(args, makeBinding);
-            // Extend the environment wiht the new mappings.
+            var mappings = argNames.Zip(enumerate(args), makeBinding);
+            // Extend the environment with the new mappings.
             var closureEnvironment = mappings.Aggregate(environment, (env, binding) => binding(env));
             return evaluator.evaluate(closureEnvironment, body);
         }

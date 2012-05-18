@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
     public sealed class EmptyEnvironment : Environment
     {
-        public object lookup(string name)
+        public Datum lookup(string name)
         {
             throw new Exception(String.Format("Undefined symbol '{0}'", name));
         }

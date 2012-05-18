@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
@@ -9,16 +10,16 @@ namespace LispEngine.Evaluation
     {
         private readonly Environment parent;
         private readonly string name;
-        private readonly object value;
+        private readonly Datum value;
 
-        public ExtendedEnvironment(Environment parent, string name, object value)
+        public ExtendedEnvironment(Environment parent, string name, Datum value)
         {
             this.parent = parent;
             this.name = name;
             this.value = value;
         }
 
-        public object lookup(string name)
+        public Datum lookup(string name)
         {
             if (this.name == name)
                 return value;
@@ -28,7 +29,7 @@ namespace LispEngine.Evaluation
 
     public static class EnvironmentExtensions
     {
-        public static Environment Extend(this Environment e, string name, object value)
+        public static Environment Extend(this Environment e, string name, Datum value)
         {
             return new ExtendedEnvironment(e, name, value);
         }

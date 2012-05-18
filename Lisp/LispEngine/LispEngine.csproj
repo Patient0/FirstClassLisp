@@ -45,6 +45,7 @@
     <Compile Include="Datums\Null.cs" />
     <Compile Include="Datums\Pair.cs" />
     <Compile Include="Datums\Symbol.cs" />
+    <Compile Include="Evaluation\Builtins.cs" />
     <Compile Include="Evaluation\Closure.cs" />
     <Compile Include="Evaluation\CoreForms.cs" />
     <Compile Include="Evaluation\EmptyEnvironment.cs" />

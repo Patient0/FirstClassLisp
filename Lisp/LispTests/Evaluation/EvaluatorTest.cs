@@ -20,11 +20,11 @@ namespace LispTests.Evaluation
         {
             var e = EmptyEnvironment.Instance;
             e = CoreForms.AddTo(e);
-            e = e.Extend("life", 42);
+            e = e.Extend("life", atom(42));
             this.env = e;
         }
 
-        private void test(string sexp, object expected)
+        private void test(string sexp, Datum expected)
         {
             var e = new Evaluator();
 
@@ -36,13 +36,13 @@ namespace LispTests.Evaluation
         [Test]
         public void testAtom()
         {
-            test("23", 23);
+            test("23", atom(23));
         }
 
         [Test]
         public void testSymbol()
         {
-            test("life", 42);
+            test("life", atom(42));
         }
 
         [Test]
@@ -61,13 +61,19 @@ namespace LispTests.Evaluation
         [Test]
         public void testFunction()
         {
-            test("((lambda (x) x) 5)", 5);
+            test("((lambda (x) x) 5)", atom(5));
         }
 
         [Test]
         public void testConstantFunction()
         {
-            test("((lambda () 6))", 6);
+            test("((lambda () 6))", atom(6));
+        }
+
+        [Test, Ignore]
+        public void testCarList()
+        {
+            test("(car (list 4 5))", atom(4));
         }
     }
 }

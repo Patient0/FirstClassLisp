@@ -28,7 +28,7 @@ namespace LispEngine.Evaluation
 
             // This is a "terminal" macro so it evaluates to
             // an atom which will then be evaluated to its value.
-            return atom(new Closure(evaluator, env, argNames, body));
+            return new Closure(evaluator, env, argNames, body);
         }
     }
 }
