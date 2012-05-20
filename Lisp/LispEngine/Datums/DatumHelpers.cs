@@ -8,6 +8,20 @@ namespace LispEngine.Datums
     public class DatumHelpers
     {
         public static readonly Datum nil = Null.Instance;
+
+        public static Exception error(string msg, params object[] args)
+        {
+            return new Exception(string.Format(msg, args));
+        }
+
+        public static string getIdentifier(Datum dt)
+        {
+            var symbol = dt as Symbol;
+            if (symbol == null)
+                throw new Exception(String.Format("'{0}' is not a symbol", dt));
+            return symbol.Identifier;
+        }
+
         public static Symbol symbol(string identifier)
         {
             return new Symbol(identifier);
@@ -16,6 +30,11 @@ namespace LispEngine.Datums
         public static Pair cons(Datum first, Datum second)
         {
             return new Pair(first, second);
+        }
+
+        public static Datum atomList(params object[] e)
+        {
+            return compound(e.AsEnumerable().Select(atom).ToArray<Datum>());
         }
 
         public static Datum compound(params Datum[] e)

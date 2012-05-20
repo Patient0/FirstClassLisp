@@ -8,6 +8,11 @@ namespace LispEngine.Evaluation
 {
     public sealed class Evaluator : DatumHelpers
     {
+        private Datum evaluateArgs(Environment env, Datum datum)
+        {
+            return compound(enumerate(datum).Select(f => evaluate(env, f)).ToArray());
+        }
+
         public Datum evaluate(Environment env, Datum datum)
         {
             var a = datum as Atom;
@@ -26,7 +31,7 @@ namespace LispEngine.Evaluation
                 var f = first as Function;
                 if (f == null)
                     throw new Exception(string.Format("'{0}' is not a function", first));
-                return f.evaluate(c.Second);
+                return f.Evaluate(this, evaluateArgs(env, c.Second));
             }
             
             return null;

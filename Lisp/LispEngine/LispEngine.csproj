@@ -40,21 +40,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Apply.cs" />
+    <Compile Include="Core\BindingTypes.cs" />
+    <Compile Include="Core\Cons.cs" />
     <Compile Include="Datums\Atom.cs" />
     <Compile Include="Datums\DatumHelpers.cs" />
     <Compile Include="Datums\Null.cs" />
     <Compile Include="Datums\Pair.cs" />
     <Compile Include="Datums\Symbol.cs" />
-    <Compile Include="Evaluation\Builtins.cs" />
-    <Compile Include="Evaluation\Closure.cs" />
-    <Compile Include="Evaluation\CoreForms.cs" />
+    <Compile Include="Core\Bindings.cs" />
+    <Compile Include="Bootstrap\Builtins.cs" />
+    <Compile Include="Core\Closure.cs" />
+    <Compile Include="Core\CoreForms.cs" />
     <Compile Include="Evaluation\EmptyEnvironment.cs" />
     <Compile Include="Evaluation\Environment.cs" />
     <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Evaluation\ExtendedEnvironment.cs" />
     <Compile Include="Evaluation\Function.cs" />
-    <Compile Include="Evaluation\Lambda.cs" />
+    <Compile Include="Core\Lambda.cs" />
     <Compile Include="Evaluation\Macro.cs" />
+    <Compile Include="Bootstrap\StandardEnvironment.cs" />
     <Compile Include="Lexing\Token.cs" />
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\Scanner.cs" />

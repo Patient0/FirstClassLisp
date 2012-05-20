@@ -11,6 +11,6 @@ namespace LispEngine.Evaluation
     // very confusing.
     public interface Function : Datum
     {
-        Datum evaluate(Datum args);
+        Datum Evaluate(Evaluator evaluator, Datum args);
     }
 }

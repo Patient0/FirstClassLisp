@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using LispEngine.Bootstrap;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
@@ -14,14 +14,11 @@ namespace LispTests.Evaluation
     [TestFixture]
     class EvaluatorTest : DatumHelpers
     {
-        private Environment env;
+        private readonly Environment env;
 
         public EvaluatorTest()
         {
-            var e = EmptyEnvironment.Instance;
-            e = CoreForms.AddTo(e);
-            e = e.Extend("life", atom(42));
-            this.env = e;
+            this.env = StandardEnvironment.Create().Extend("life", atom(42));
         }
 
         private void test(string sexp, Datum expected)
@@ -70,10 +67,64 @@ namespace LispTests.Evaluation
             test("((lambda () 6))", atom(6));
         }
 
-        [Test, Ignore]
+        [Test]
+        public void testLambdaList()
+        {
+            test("((lambda x x) 1 2 3)", atomList(1,2,3));
+        }
+
+        [Test]
+        public void testList()
+        {
+            test("(list 1 2 3)", atomList(1, 2, 3));
+        }
+
+        [Test]
+        public void testRecursiveFunctions()
+        {
+            test("(cons 3 (cons 4 5))", cons(atom(3), cons(atom(4), atom(5))));
+        }
+
+        [Test]
+        public void testCons()
+        {
+            test("(cons 3 4)", cons(atom(3), atom(4)));
+        }
+
+        [Test]
+        public void testApply()
+        {
+            test("(apply cons (list 3 4))", cons(atom(3), atom(4)));
+        }
+
+        [Test]
+        public void testDotArgList()
+        {
+            test("((lambda (x . y) x) 4)", atom(4));
+        }
+
+        [Test]
         public void testCarList()
         {
             test("(car (list 4 5))", atom(4));
+        }
+
+        [Test]
+        public void testCdrList()
+        {
+            test("(cdr (list 4 5))", atomList(5));
+        }
+
+        // Our lambda macro actually does full "structure" matching
+        // on all of its arguments - this was actually as simple to
+        // implement as the standard, which is a subset.
+        // If then allowed multiple alternative argument lists
+        // we could then support pattern matching.
+        [Test]
+        public void testStructuredMatching()
+        {
+            test("((lambda (((a))) a) (list (list 5)))", atom(5));
+            test("((lambda (a (b c)) c) 4 (list 5 6)))", atom(6));
         }
     }
 }
