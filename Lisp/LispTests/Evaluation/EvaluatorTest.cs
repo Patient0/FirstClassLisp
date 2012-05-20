@@ -18,7 +18,7 @@ namespace LispTests.Evaluation
 
         public EvaluatorTest()
         {
-            this.env = StandardEnvironment.Create().Extend("life", atom(42));
+            env = StandardEnvironment.Create().Extend("life", atom(42));
         }
 
         private void test(string sexp, Datum expected)
@@ -172,6 +172,11 @@ namespace LispTests.Evaluation
         public void testQuotedQuote()
         {
             test("''3", cons(quote, atom(3)));
+        }
+
+        [Test]
+        public void testMacro()
+        {
         }
     }
 }

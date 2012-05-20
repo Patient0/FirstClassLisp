@@ -45,8 +45,7 @@
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Eq.cs" />
     <Compile Include="Core\IfMacro.cs" />
-    <Compile Include="Core\MacroClosure.cs" />
-    <Compile Include="Core\Quote.cs" />
+    <Compile Include="Core\UserMacro.cs" />
     <Compile Include="Datums\Atom.cs" />
     <Compile Include="Datums\DatumHelpers.cs" />
     <Compile Include="Datums\Null.cs" />
