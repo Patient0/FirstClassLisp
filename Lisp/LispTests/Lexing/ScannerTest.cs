@@ -115,5 +115,13 @@ namespace LispTests.Lexing
             test("#t #T", boolean("#t"), space(" "), boolean("#T"));
             test("#f #F", boolean("#f"), space(" "), boolean("#F"));
         }
+
+        private static readonly Token quote = token(TokenType.Quote, "'");
+
+        [Test]
+        public void testQuote()
+        {
+            test("'(3 4)", quote, open, integer("3"), space(" "), integer("4"), close);
+        }
     }
 }

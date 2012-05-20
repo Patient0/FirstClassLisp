@@ -81,10 +81,22 @@ namespace LispEngine.Parsing
             return null;
         }
 
+        private Datum quotedExpression()
+        {
+            if(next.Type == TokenType.Quote)
+            {
+                var expression = parse();
+                return cons(quote, expression);
+            }
+            return null;
+        }
+
         // Based on the token that was just read, turn it into an expression
         private Datum expression()
         {
             Datum d;
+            if ((d = quotedExpression()) != null)
+                return d;
             if ((d = symbol()) != null)
                 return d;
             if ((d = atom()) != null)

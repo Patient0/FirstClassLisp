@@ -156,10 +156,22 @@ namespace LispTests.Evaluation
             test("(if #f undefined 5)", atom(5));
         }
 
-        [Test, Ignore]
-        public void testQuote()
+        [Test]
+        public void testQuotedList()
         {
             test("'(3 4)", atomList(3, 4));
+        }
+
+        [Test]
+        public void testQuotedAtom()
+        {
+            test("'3", atom(3));
+        }
+
+        [Test]
+        public void testQuotedQuote()
+        {
+            test("''3", cons(quote, atom(3)));
         }
     }
 }

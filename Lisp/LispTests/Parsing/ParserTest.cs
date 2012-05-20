@@ -142,5 +142,11 @@ namespace LispTests.Parsing
             test("#t", atom(true));
             test("#f", atom(false));
         }
+
+        [Test]
+        public void testQuote()
+        {
+            test("'(3 4)", compound(symbol("quote"), atom(3), atom(4)));
+        }
     }
 }

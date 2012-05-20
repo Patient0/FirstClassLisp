@@ -13,6 +13,7 @@ namespace LispEngine.Lexing
         Open,
         Close,
         Dot,
-        Boolean
+        Boolean,
+        Quote
     }
 }

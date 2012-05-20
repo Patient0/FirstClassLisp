@@ -147,12 +147,23 @@ namespace LispEngine.Lexing
             throw fail("Unrecognized token");
         }
 
+        private Token quote()
+        {
+            if(peek() != '\'')
+                return null;
+            readChar();
+            return tok(TokenType.Quote);
+
+        }
+
         public Token GetNext()
         {
             Token t;
             sb = new StringBuilder();
             if (!more())
                 return null;
+            if ((t = quote()) != null)
+                return t;
             if ((t = symbol()) != null)
                 return t;
             if ((t = space()) != null)
