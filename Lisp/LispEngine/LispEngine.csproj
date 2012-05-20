@@ -43,6 +43,9 @@
     <Compile Include="Core\Apply.cs" />
     <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\Cons.cs" />
+    <Compile Include="Core\Eq.cs" />
+    <Compile Include="Core\IfMacro.cs" />
+    <Compile Include="Core\MacroClosure.cs" />
     <Compile Include="Datums\Atom.cs" />
     <Compile Include="Datums\DatumHelpers.cs" />
     <Compile Include="Datums\Null.cs" />

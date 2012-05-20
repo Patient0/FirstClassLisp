@@ -135,5 +135,12 @@ namespace LispTests.Parsing
         {
             failtest("(5 . 6 7 8)", "(5 . 6 7");
         }
+
+        [Test]
+        public void testBooleanAtom()
+        {
+            test("#t", atom(true));
+            test("#f", atom(false));
+        }
     }
 }

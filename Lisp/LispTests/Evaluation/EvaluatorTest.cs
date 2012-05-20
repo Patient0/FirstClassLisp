@@ -37,6 +37,13 @@ namespace LispTests.Evaluation
         }
 
         [Test]
+        public void testBoolAtom()
+        {
+            test("#t", atom(true));
+            test("#f", atom(false));
+        }
+
+        [Test]
         public void testSymbol()
         {
             test("life", atom(42));
@@ -126,6 +133,33 @@ namespace LispTests.Evaluation
             test("((lambda (a (b c)) c) 4 (list 5 6)))", atom(6));
             test("((lambda ((a b) c) b) (list 5 6) 4))", atom(6));
             test("((lambda (((a))) a) (list (list 5)))", atom(5));
+        }
+
+        [Test]
+        public void testEq()
+        {
+            test("(eq? 4 4)", atom(true));
+            test("(eq? 4 3)", atom(false));
+        }
+
+        [Test]
+        public void testEqIsFlat()
+        {
+            // We don't want Eq to be doing deep comparisons
+            test("(eq? (list 1 2) (list 1 2))", atom(false));
+        }
+
+        [Test]
+        public void testIfMacro()
+        {
+            test("(if #t 5 undefined)", atom(5));
+            test("(if #f undefined 5)", atom(5));
+        }
+
+        [Test, Ignore]
+        public void testQuote()
+        {
+            test("'(3 4)", atomList(3, 4));
         }
     }
 }

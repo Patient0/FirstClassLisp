@@ -91,5 +91,29 @@ namespace LispTests.Lexing
         {
             test("5 . 6", integer("5"), space(" "), token(TokenType.Dot, "."), space(" "), integer("6"));
         }
+
+        [Test]
+        public void TestSymbolQuestionMark()
+        {
+            test("eq?", symbol("eq?"));
+        }
+
+        [Test]
+        public void TestSymbolSpecial()
+        {
+            test("e-+.@", symbol("e-+.@"));
+        }
+
+        private static Token boolean(string c)
+        {
+            return token(TokenType.Boolean, c);
+        }
+
+        [Test]
+        public void testBoolean()
+        {
+            test("#t #T", boolean("#t"), space(" "), boolean("#T"));
+            test("#f #F", boolean("#f"), space(" "), boolean("#F"));
+        }
     }
 }

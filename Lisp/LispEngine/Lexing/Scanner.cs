@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using LispEngine.Parsing;
 
 namespace LispEngine.Lexing
 {
@@ -47,11 +48,6 @@ namespace LispEngine.Lexing
             return more() && char.IsLetter(peek());
         }
 
-        private bool isLetterOrDigit()
-        {
-            return more() && char.IsLetterOrDigit(peek());
-        }
-
         private bool isDigit()
         {
             return more() && char.IsDigit(peek());
@@ -62,6 +58,7 @@ namespace LispEngine.Lexing
             return more() && char.IsWhiteSpace(peek());
         }
 
+        // Based on http://people.csail.mit.edu/jaffer/r5rs_9.html
         private Token dot()
         {
             if (peek() == '.')
@@ -72,12 +69,37 @@ namespace LispEngine.Lexing
             return null;
         }
 
+        private bool isOneOf(string chars)
+        {
+            return more() && chars.IndexOf(peek()) != -1;
+        }
+
+        private bool isSpecialSubsequent()
+        {
+            return isOneOf("+-.@");
+        }
+
+        private bool isSpecialInitial()
+        {
+            return isOneOf("!$%&+-*/:<=>?^_~");
+        }
+
+        private bool isInitial()
+        {
+            return isLetter() || isSpecialInitial();
+        }
+
+        private bool isSubsequent()
+        {
+            return isInitial() || isDigit() || isSpecialSubsequent();
+        }
+
         private Token symbol()
         {
-            if(!isLetter())
+            if(!isInitial())
                 return null;
             readChar();
-            while(isLetterOrDigit())
+            while(isSubsequent())
                 readChar();
             return tok(TokenType.Symbol);
         }
@@ -112,6 +134,19 @@ namespace LispEngine.Lexing
             return null;
         }
 
+        private Token boolean()
+        {
+            if (peek() != '#')
+                return null;
+            readChar();
+            if(isOneOf("tfTF"))
+            {
+                readChar();
+                return tok(TokenType.Boolean);
+            }
+            throw fail("Unrecognized token");
+        }
+
         public Token GetNext()
         {
             Token t;
@@ -127,6 +162,8 @@ namespace LispEngine.Lexing
             if ((t = openClose()) != null)
                 return t;
             if ((t = dot()) != null)
+                return t;
+            if ((t = boolean()) != null)
                 return t;
             return null;
         }
@@ -144,6 +181,14 @@ namespace LispEngine.Lexing
             {
                 return lineSoFar.ToString();
             }
+        }
+
+        public ParseException fail(string fmt, params object[] args)
+        {
+            var errorMsg = string.Format(fmt, args);
+            var line = LineSoFar;
+            var msg = string.Format("\n{0}\n{1}^: {2}", line, new string(' ', line.Length), errorMsg);
+            return new ParseException(msg);
         }
     }
 }

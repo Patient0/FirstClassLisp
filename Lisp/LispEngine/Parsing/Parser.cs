@@ -24,19 +24,16 @@ namespace LispEngine.Parsing
             next = tokens.MoveNext() ? tokens.Current : null;
         }
 
-        private void fail(String fmt, params object[] args)
+        private ParseException fail(String fmt, params object[] args)
         {
-            var errorMsg = string.Format(fmt, args);
-            var line = s.LineSoFar;
-            var msg = string.Format("\n{0}\n{1}^: {2}", line, new string(' ', line.Length), errorMsg);
-            throw new ParseException(msg);
+            return s.fail(fmt, args);
         }
 
         private void expectNext(string what)
         {
             readNext();
             if(next == null)
-                fail("Expected '{0}'", what);
+                throw fail("Expected '{0}'", what);
         }
 
         private Datum symbol()
@@ -50,7 +47,7 @@ namespace LispEngine.Parsing
             var cdr = expression();
             expectNext(")");
             if (next.Type != TokenType.Close)
-                fail("more than one item found after dot (.)");
+                throw fail("more than one item found after dot (.)");
             return cdr;
         }
 
@@ -77,7 +74,11 @@ namespace LispEngine.Parsing
 
         private Datum atom()
         {
-            return next.Type == TokenType.Integer ? new Atom(int.Parse(next.Contents)) : null;
+            if (next.Type == TokenType.Integer)
+                return atom(int.Parse(next.Contents));
+            if(next.Type == TokenType.Boolean)
+                return atom(next.Contents.ToLower().Equals("#t"));
+            return null;
         }
 
         // Based on the token that was just read, turn it into an expression

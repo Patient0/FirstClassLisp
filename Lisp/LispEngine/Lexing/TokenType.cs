@@ -12,6 +12,7 @@ namespace LispEngine.Lexing
         Integer,
         Open,
         Close,
-        Dot
+        Dot,
+        Boolean
     }
 }
