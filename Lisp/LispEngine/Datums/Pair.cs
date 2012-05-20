@@ -25,10 +25,51 @@ namespace LispEngine.Datums
             get { return first; }
         }
 
+        private static Pair asPair(Datum d)
+        {
+            return d as Pair;
+        }
+
+        private class Writer
+        {
+            private StringBuilder sb = new StringBuilder();
+            private Boolean empty = true;
+            public Writer()
+            {
+                sb.Append('(');
+            }
+            public void Write(object d)
+            {
+                if(!empty)
+                    sb.Append(' ');
+                sb.Append(d);
+                empty = false;
+            }
+
+            public string GetString()
+            {
+                sb.Append(')');
+                return sb.ToString();
+            }
+        }
+
         public override string ToString()
         {
-            // Not ideal but good enough for now
-            return string.Format("({0} . {1})", first, second);
+            var writer = new Writer();
+            Pair tail;
+            Datum next = this;
+            while( (tail = asPair(next)) != null)
+            {
+                writer.Write(tail.First);
+                next = tail.Second;
+            }
+            if(next != Null.Instance)
+            {
+                writer.Write(".");
+                writer.Write(next);
+                
+            }
+            return writer.GetString();
         }
 
         public bool Equals(Pair other)
@@ -54,7 +95,7 @@ namespace LispEngine.Datums
             }
         }
 
-        public static bool operator ==(Pair left, Pair right)
+        public static bool operator==(Pair left, Pair right)
         {
             return Equals(left, right);
         }

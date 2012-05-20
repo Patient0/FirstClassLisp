@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Datums\DatumTest.cs" />
     <Compile Include="Evaluation\EvaluatorTest.cs" />
     <Compile Include="Lexing\ScannerTest.cs" />
     <Compile Include="Parsing\ParserTest.cs" />
