@@ -174,9 +174,17 @@ namespace LispTests.Evaluation
             test("''3", cons(quote, atom(3)));
         }
 
-        [Test]
-        public void testMacro()
+        [Test, Ignore]
+        public void testLet()
         {
+            test("(let ((x 3)) x)", atom(3));
         }
+
+        [Test, Ignore]
+        public void testLetEvaluatesBody()
+        {
+            test("(let ((x 3)) (eq? x 3))", atom(true));
+        }
+
     }
 }
