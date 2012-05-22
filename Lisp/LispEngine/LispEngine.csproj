@@ -44,7 +44,7 @@
     <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Eq.cs" />
-    <Compile Include="Core\FunctionExpression.cs" />
+    <Compile Include="Evaluation\FunctionExpression.cs" />
     <Compile Include="Core\If.cs" />
     <Compile Include="Core\Quote.cs" />
     <Compile Include="Core\Macro.cs" />
