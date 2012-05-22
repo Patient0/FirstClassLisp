@@ -2,39 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LispEngine.Core;
 using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
     public sealed class Evaluator : DatumHelpers
     {
-        private Datum evaluateArgs(Environment env, Datum datum)
+        private static FExpression toFExpression(Datum d)
         {
-            return compound(enumerate(datum).Select(f => evaluate(env, f)).ToArray());
+            var fexpr = d as FExpression;
+            if (fexpr != null)
+                return fexpr;
+            var function = d as Function;
+            if (function != null)
+                return new FunctionExpression(function);
+            throw error("'{0}' is not callable", d);
         }
 
-        public Datum evaluate(Environment env, Datum datum)
+        public Datum Evaluate(Environment env, Datum datum)
         {
-            var a = datum as Atom;
-            if (a != null)
-                return a;
             var s = datum as Symbol;
             if(s != null)
                 return env.lookup(s.Identifier);
             var c = datum as Pair;
             if(c != null)
             {
-                var first = evaluate(env, c.First);
-                var m = first as Macro;
-                if(m != null)
-                    return m.Expand(this, env, c.Second);
-                var f = first as Function;
-                if (f == null)
-                    throw new Exception(string.Format("'{0}' is not a function", first));
-                return f.Evaluate(this, evaluateArgs(env, c.Second));
+                var first = Evaluate(env, c.First);
+                var fexp = toFExpression(first);
+                return fexp.Evaluate(this, env, c.Second);
             }
-            
-            return null;
+            // Anything else just evaluates to itself
+            return datum;
         }
     }
 }

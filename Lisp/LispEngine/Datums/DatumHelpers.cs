@@ -16,6 +16,12 @@ namespace LispEngine.Datums
             return new Exception(string.Format(msg, args));
         }
 
+        public static Exception error(Exception cause, string msg, params object[] args)
+        {
+            return new Exception(string.Format(msg, args), cause);
+        }
+
+
         public static string getIdentifier(Datum dt)
         {
             var symbol = dt as Symbol;

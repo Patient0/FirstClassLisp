@@ -32,7 +32,7 @@ namespace LispEngine.Datums
 
         private class Writer
         {
-            private StringBuilder sb = new StringBuilder();
+            private readonly StringBuilder sb = new StringBuilder();
             private Boolean empty = true;
             public Writer()
             {

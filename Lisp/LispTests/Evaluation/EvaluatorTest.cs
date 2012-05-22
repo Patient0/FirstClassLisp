@@ -26,7 +26,7 @@ namespace LispTests.Evaluation
             var e = new Evaluator();
 
             var datum = new Parser(Scanner.Create(sexp)).parse();
-            var result = e.evaluate(env, datum);
+            var result = e.Evaluate(env, datum);
             Assert.AreEqual(expected, result);
         }
 
@@ -150,7 +150,7 @@ namespace LispTests.Evaluation
         }
 
         [Test]
-        public void testIfMacro()
+        public void testIf()
         {
             test("(if #t 5 undefined)", atom(5));
             test("(if #f undefined 5)", atom(5));
@@ -174,17 +174,17 @@ namespace LispTests.Evaluation
             test("''3", cons(quote, atom(3)));
         }
 
-        [Test, Ignore]
+        [Test]
         public void testLet()
         {
-            test("(let ((x 3)) x)", atom(3));
+            // We'll use "arc" let syntax because it's cleaner (http://ycombinator.com/arc/tut.txt)
+            test("(let x 3 x)", atom(3));
         }
 
-        [Test, Ignore]
+        [Test]
         public void testLetEvaluatesBody()
         {
-            test("(let ((x 3)) (eq? x 3))", atom(true));
+            test("(let x 3 (eq? x 3))", atom(true));
         }
-
     }
 }

@@ -27,7 +27,7 @@ namespace LispEngine.Bootstrap
             {
                 var parser = new Parser(Scanner.Create(sexp));
                 var datum = parser.parse();
-                return bootstrapper.evaluate(env, datum);
+                return bootstrapper.Evaluate(env, datum);
             }
 
             public void add(string symbol, string sexp)
@@ -42,8 +42,7 @@ namespace LispEngine.Bootstrap
             b.add("list", "(lambda x x)");
             b.add("car", "(lambda (list) (apply (lambda (x . y) x) list))");
             b.add("cdr", "(lambda (list) (apply (lambda (x . y) y) list))");
-            b.add("quote", "(macro list)");
-            b.add("letdef", "(lambda (((var value)) body) body))");
+            b.add("letdef", "(lambda (var value body) (list (list lambda (list var) body) value))");
             b.add("let", "(macro letdef)");
             return b.env;
         }

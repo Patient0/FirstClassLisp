@@ -44,8 +44,10 @@
     <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Eq.cs" />
-    <Compile Include="Core\IfMacro.cs" />
-    <Compile Include="Core\UserMacro.cs" />
+    <Compile Include="Core\FunctionExpression.cs" />
+    <Compile Include="Core\If.cs" />
+    <Compile Include="Core\Quote.cs" />
+    <Compile Include="Core\Macro.cs" />
     <Compile Include="Datums\Atom.cs" />
     <Compile Include="Datums\DatumHelpers.cs" />
     <Compile Include="Datums\Null.cs" />
@@ -61,7 +63,7 @@
     <Compile Include="Evaluation\ExtendedEnvironment.cs" />
     <Compile Include="Evaluation\Function.cs" />
     <Compile Include="Core\Lambda.cs" />
-    <Compile Include="Evaluation\Macro.cs" />
+    <Compile Include="Evaluation\FExpression.cs" />
     <Compile Include="Bootstrap\StandardEnvironment.cs" />
     <Compile Include="Lexing\Token.cs" />
     <Compile Include="Lexing\TokenType.cs" />

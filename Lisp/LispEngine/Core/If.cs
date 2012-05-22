@@ -8,10 +8,10 @@ using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
-    class IfMacro : DatumHelpers, Macro
+    class If : DatumHelpers, FExpression
     {
-        public static readonly Macro Instance = new IfMacro();
-        public Datum Expand(Evaluator evaluator, Environment env, Datum args)
+        public static readonly FExpression Instance = new If();
+        public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
         {
             var a = enumerate(args).ToArray();
             if (a.Length != 3)
@@ -19,7 +19,7 @@ namespace LispEngine.Core
             var condition = a[0];
             var trueCase = a[1];
             var falseCase = a[2];
-            return atom(false).Equals(evaluator.evaluate(env, condition)) ? falseCase : trueCase;
+            return atom(false).Equals(evaluator.Evaluate(env, condition)) ? falseCase : trueCase;
         }
     }
 }

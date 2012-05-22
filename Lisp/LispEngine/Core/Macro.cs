@@ -9,12 +9,13 @@ using Environment = LispEngine.Evaluation.Environment;
 namespace LispEngine.Core
 {
     /**
-     * Turns a function into a macro
+     * Turns a function into something that
+     * can be used as a macro.
      */
-    class UserMacro : DatumHelpers, Function
+    class Macro : DatumHelpers, Function
     {
-        public static readonly Function Instance = new UserMacro();
-        class MacroClosure : Macro
+        public static readonly Function Instance = new Macro();
+        class MacroClosure : FExpression
         {
             private readonly Function argFunction;
 
@@ -23,9 +24,10 @@ namespace LispEngine.Core
                 this.argFunction = argFunction;
             }
 
-            public Datum Expand(Evaluator evaluator, Environment env, Datum args)
+            public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
             {
-                return argFunction.Evaluate(evaluator, args);
+                var expansion = argFunction.Evaluate(evaluator, args);
+                return evaluator.Evaluate(env, expansion);
             }
         }
 
