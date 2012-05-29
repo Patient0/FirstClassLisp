@@ -29,7 +29,7 @@ namespace LispEngine.Core
             }
         }
 
-        public static Bindings rest(string identifier)
+        private static Bindings rest(string identifier)
         {
             return new Rest(identifier);
         }
@@ -47,10 +47,10 @@ namespace LispEngine.Core
             public Environment apply(Environment to, Datum args)
             {
                 var argPair = args as Pair;
-                if(argPair == null)
-                    throw error("Expected '{0}' to be a pair", args);
+                if (argPair == null)
+                    return null;
                 var env = first.apply(to, argPair.First);
-                return second.apply(env, argPair.Second);
+                return env == null ? null : second.apply(env, argPair.Second);
             }
 
             public override string ToString()
@@ -59,14 +59,26 @@ namespace LispEngine.Core
             }
         }
 
+        private sealed class AtomBindings : Bindings
+        {
+            private readonly Atom atom;
+            public AtomBindings(Atom atom)
+            {
+                this.atom = atom;
+            }
+
+            public Environment apply(Environment to, Datum args)
+            {
+                return atom.Equals(args) ? to : null;
+            }
+        }
+
         private sealed class EmptyBindings : Bindings
         {
             public static readonly Bindings Instance = new EmptyBindings();
             public Environment apply(Environment to, Datum args)
             {
-                if(args != nil)
-                    throw error("Expected empty list, not '{0}'", args);
-                return to;
+                return args != nil ? null : to;
             }
 
             public override string ToString()
@@ -75,7 +87,7 @@ namespace LispEngine.Core
             }
         }
 
-        public static Bindings pair(Bindings first, Bindings second)
+        private static Bindings pair(Bindings first, Bindings second)
         {
             return new PairBindings(first, second);
         }
@@ -90,6 +102,9 @@ namespace LispEngine.Core
             var p = args as Pair;
             if(p != null)
                 return pair(parse(p.First), parse(p.Second));
+            var a = args as Atom;
+            if(a != null)
+                return new AtomBindings(a);
             throw error("'{0}' is not a valid argument list", args);
         }
     }

@@ -40,8 +40,10 @@ namespace LispEngine.Bootstrap
         {
             var b = new Builder(env);
             b.add("list", "(lambda x x)");
-            b.add("car", "(lambda (list) (apply (lambda (x . y) x) list))");
-            b.add("cdr", "(lambda (list) (apply (lambda (x . y) y) list))");
+            b.add("car", "(lambda ((x . y)) x)");
+            b.add("cdr", "(lambda ((x . y)) y)");
+            b.add("nil?", "(lambda (()) #t _ #f)");
+            b.add("pair?", "(lambda ((_ . _)) #t _ #f)");
             b.add("letdef", "(lambda (var value body) (list (list lambda (list var) body) value))");
             b.add("let", "(macro letdef)");
             return b.env;

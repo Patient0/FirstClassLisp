@@ -14,12 +14,7 @@ namespace LispTests.Evaluation
     [TestFixture]
     class EvaluatorTest : DatumHelpers
     {
-        private readonly Environment env;
-
-        public EvaluatorTest()
-        {
-            env = StandardEnvironment.Create().Extend("life", atom(42));
-        }
+        private Environment env;
 
         private void test(string sexp, Datum expected)
         {
@@ -29,6 +24,13 @@ namespace LispTests.Evaluation
             var result = e.Evaluate(env, datum);
             Assert.AreEqual(expected, result);
         }
+
+        [SetUp]
+        public void setup()
+        {
+            env = StandardEnvironment.Create().Extend("life", atom(42));            
+        }
+        
 
         [Test]
         public void testAtom()
@@ -185,6 +187,59 @@ namespace LispTests.Evaluation
         public void testLetEvaluatesBody()
         {
             test("(let x 3 (eq? x 3))", atom(true));
+        }
+
+        // It turns out it's less work to do case lambda
+        // than to write the error checking code
+        [Test]
+        public void testCaseLambdaPair()
+        {
+            test("((lambda ((x . y)) #t x #f) (list 3 4))", atom(true));
+        }
+
+        [Test]
+        public void testCaseLambdaPairWithAtom()
+        {
+            test("((lambda ((x . y)) #t x #f) 3)", atom(false));
+        }
+
+        [Test]
+        public void testAlternativeCar()
+        {
+            test("((lambda ((x . y)) x) '(3 . 4))", atom(3));
+        }
+
+        [Test]
+        public void testAlternativeCdr()
+        {
+            test("((lambda ((x . y)) y) '(3 . 4))", atom(4));
+        }
+
+        [Test]
+        public void testLambdaAtomArgs()
+        {
+            test("((lambda (1) 2) 1)", atom(2));
+        }
+
+        [Test]
+        public void testPairBindingChecksForNull()
+        {
+            test("((lambda ((#f . x)) life ((y . x)) y) '(#t 3))", atom(true));
+        }
+
+        [Test]
+        public void testNil()
+        {
+            test("(nil? '())", atom(true));
+            test("(nil? 5)", atom(false));
+            test("(nil? #f)", atom(false));
+        }
+
+        [Test]
+        public void testPair()
+        {
+            test("(pair? '(1 . 2))", atom(true));
+            test("(pair? 5)", atom(false));
         }
     }
 }
