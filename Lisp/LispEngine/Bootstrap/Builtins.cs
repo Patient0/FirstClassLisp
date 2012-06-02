@@ -1,4 +1,7 @@
-﻿using LispEngine.Datums;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
@@ -13,31 +16,24 @@ namespace LispEngine.Bootstrap
      */
     public sealed class Builtins
     {
-        class Builder
-        {
-            private readonly Evaluator bootstrapper = new Evaluator();
-            public Environment env;
-
-            public Builder(Environment env)
-            {
-                this.env = env;
-            }
-
-            private Datum evaluate(string sexp)
-            {
-                var parser = new Parser(Scanner.Create(sexp));
-                var datum = parser.parse();
-                return bootstrapper.Evaluate(env, datum);
-            }
-
-            public void add(string symbol, string sexp)
-            {
-                env = env.Extend(symbol, evaluate(sexp));
-            }
-        }
-
         public static Environment AddTo(Environment env)
         {
+            var assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream("LispEngine.Bootstrap.Builtins.lisp");
+            if (stream == null)
+                throw new Exception("Unable to find Builtins.lisp embedded resource");
+            var s = new Scanner(new StreamReader(stream)) { Filename = "Builtins.lisp" };
+            var p = new Parser(s);
+            Datum d = null;
+            var evaluator = new Evaluator();
+            while((d = p.parse()) != null)
+            {
+                evaluator.Evaluate(env, d);
+            }
+            return env;
+            /*
+            var parsed = p.parse();
+
             var b = new Builder(env);
             b.add("list", "(lambda x x)");
             b.add("car", "(lambda ((x . y)) x)");
@@ -47,6 +43,7 @@ namespace LispEngine.Bootstrap
             b.add("letdef", "(lambda (var value body) (list (list lambda (list var) body) value))");
             b.add("let", "(macro letdef)");
             return b.env;
+             */
         }
     }
 }

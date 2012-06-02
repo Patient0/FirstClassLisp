@@ -137,8 +137,8 @@ namespace LispTests.Evaluation
         [Test]
         public void testStructuredMatching()
         {
-            test("((lambda (a (b c)) c) 4 (list 5 6)))", atom(6));
-            test("((lambda ((a b) c) b) (list 5 6) 4))", atom(6));
+            test("((lambda (a (b c)) c) 4 (list 5 6))", atom(6));
+            test("((lambda ((a b) c) b) (list 5 6) 4)", atom(6));
             test("((lambda (((a))) a) (list (list 5)))", atom(5));
         }
 
