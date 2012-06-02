@@ -55,6 +55,13 @@ namespace LispEngine.Datums
 
         public override string ToString()
         {
+            var abbreviation = DatumHelpers.isQuote(First);
+            if(abbreviation != null)
+            {
+                var quoted = Second as Pair;
+                if(quoted != null)
+                    return string.Format("{0}{1}", abbreviation, quoted.First);
+            }
             var writer = new Writer();
             Pair tail;
             Datum next = this;

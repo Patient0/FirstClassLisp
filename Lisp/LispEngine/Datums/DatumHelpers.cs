@@ -14,6 +14,37 @@ namespace LispEngine.Datums
         public static readonly Datum unquote = symbol("unquote");
         public static readonly Datum unquoteSplicing = symbol("unquote-splicing");
 
+        public const string quoteAbbreviation = "'";
+        public const string quasiquoteAbbreviation = "`";
+        public const string splicingAbbreviation = ",@";
+        public const string unquoteAbbreviation = ",";
+
+        public static Datum isQuote(string abbreviation)
+        {
+            if (abbreviation == unquoteAbbreviation)
+                return unquote;
+            if (abbreviation == quasiquoteAbbreviation)
+                return quasiquote;
+            if (abbreviation == splicingAbbreviation)
+                return unquoteSplicing;
+            if (abbreviation == quoteAbbreviation)
+                return quote;
+            return null;
+        }
+
+        public static string isQuote(Datum d)
+        {
+            if (d.Equals(quote))
+                return quoteAbbreviation;
+            if (d.Equals(quasiquote))
+                return quasiquoteAbbreviation;
+            if (d.Equals(unquoteSplicing))
+                return splicingAbbreviation;
+            if (d.Equals(unquote))
+                return unquoteAbbreviation;
+            return null;
+        }
+
         public static Exception error(string msg, params object[] args)
         {
             return new Exception(string.Format(msg, args));

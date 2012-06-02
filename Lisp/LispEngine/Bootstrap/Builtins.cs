@@ -5,6 +5,7 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
+using LispEngine.Util;
 using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
@@ -18,18 +19,9 @@ namespace LispEngine.Bootstrap
     {
         public static Environment AddTo(Environment env)
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream("LispEngine.Bootstrap.Builtins.lisp");
-            if (stream == null)
-                throw new Exception("Unable to find Builtins.lisp embedded resource");
-            var s = new Scanner(new StreamReader(stream)) { Filename = "Builtins.lisp" };
-            var p = new Parser(s);
-            Datum d = null;
             var evaluator = new Evaluator();
-            while((d = p.parse()) != null)
-            {
+            foreach (var d in ResourceLoader.ReadDatums("LispEngine.Bootstrap.Builtins.lisp"))
                 evaluator.Evaluate(env, d);
-            }
             return env;
             /*
             var parsed = p.parse();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using LispEngine.Datums;
 using LispEngine.Lexing;
 using NUnit.Framework;
 
@@ -117,10 +118,10 @@ namespace LispTests.Lexing
             test("#f #F", boolean("#f"), sp, boolean("#F"));
         }
 
-        private static readonly Token quote = token(TokenType.Quote, "'");
-        private static readonly Token quasiquote = token(TokenType.QuasiQuote, "`");
-        private static readonly Token unquote = token(TokenType.Unquote, ",");
-        private static readonly Token splicing = token(TokenType.UnquoteSplicing, ",@");
+        private static readonly Token quote = token(TokenType.Quote, DatumHelpers.quoteAbbreviation);
+        private static readonly Token quasiquote = token(TokenType.Quote, DatumHelpers.quasiquoteAbbreviation);
+        private static readonly Token unquote = token(TokenType.Quote, DatumHelpers.unquoteAbbreviation);
+        private static readonly Token splicing = token(TokenType.Quote, DatumHelpers.splicingAbbreviation);
 
         [Test]
         public void testQuote()

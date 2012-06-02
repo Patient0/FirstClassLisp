@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using LispEngine.Datums;
 using LispEngine.Parsing;
 
 namespace LispEngine.Lexing
@@ -67,24 +68,18 @@ namespace LispEngine.Lexing
                  );
         }
 
-        private static TokenType? unquote(Scanner s)
-        {
-            if (s.peek() != ',')
-                return null;
-            s.readChar();
-            if (s.peek() == '@')
-            {
-                s.readChar();
-                return TokenType.UnquoteSplicing;
-            }
-            return TokenType.Unquote;
-        }
-
         private static readonly Matcher[] matchers = new[]
                     {
-                    match(TokenType.QuasiQuote, '`'),
-                    unquote,
-                    match(TokenType.Quote, '\''),
+                    match(TokenType.Quote,
+                        s =>
+                            {
+                                // This has to agree with DatumHelpers abbreviations
+                                if (!s.isOneOf(",`'"))
+                                    return;
+                                s.readChar();
+                                if(s.peek() == '@')
+                                    s.readChar();
+                            }),
                     match(TokenType.Symbol,
                         s =>
                         {

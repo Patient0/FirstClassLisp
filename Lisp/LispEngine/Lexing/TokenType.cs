@@ -15,9 +15,6 @@ namespace LispEngine.Lexing
         Dot,
         Boolean,
         Quote,
-        QuasiQuote,
-        Unquote,
-        UnquoteSplicing,
         Comment
     }
 }

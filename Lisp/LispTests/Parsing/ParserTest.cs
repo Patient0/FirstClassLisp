@@ -7,6 +7,7 @@ using System.Text;
 using LispEngine.Datums;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
+using LispEngine.Util;
 using NUnit.Framework;
 
 namespace LispTests.Parsing
@@ -178,14 +179,8 @@ namespace LispTests.Parsing
         [Test]
         public void testLoadLispFile()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream("LispTests.Parsing.MultilineFile.lisp");
-            if (stream == null)
-                throw new Exception("Unable to find MultilineFile.lisp embedded resource");
-            var s = new Scanner(new StreamReader(stream)) {Filename = "MultilineFile.lisp"};
-            var p = new Parser(s);
-            var parsed = p.parse();
-            Console.WriteLine("Parsed:\n{0}\n", parsed);
+            foreach(var d in ResourceLoader.ReadDatums("LispTests.Parsing.MultilineFile.lisp"))
+                Console.WriteLine("Parsed:\n{0}\n", d);
         }
     }
 }

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Datums\DatumTest.cs" />
     <Compile Include="Evaluation\EvaluatorTest.cs" />
+    <Compile Include="Evaluation\EvaluatorTestCases.cs" />
     <Compile Include="Lexing\ScannerTest.cs" />
     <Compile Include="Parsing\ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,6 +58,9 @@
     <EmbeddedResource Include="Parsing\MultilineFile.lisp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Evaluation\EvaluatorTests.lisp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

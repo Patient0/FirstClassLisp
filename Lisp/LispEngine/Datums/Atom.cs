@@ -53,6 +53,10 @@ namespace LispEngine.Datums
 
         public override string ToString()
         {
+            if (true.Equals(value))
+                return "#t";
+            if (false.Equals(value))
+                return "#f";
             return string.Format("{0}", value);
         }
     }
