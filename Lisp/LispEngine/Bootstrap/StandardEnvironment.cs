@@ -8,7 +8,7 @@ namespace LispEngine.Bootstrap
     {
         public static Environment Create()
         {
-            var env = EmptyEnvironment.Instance;
+            var env = new Environment(EmptyEnvironment.Instance);
             env = CoreForms.AddTo(env);
             env = Builtins.AddTo(env);
             return env;

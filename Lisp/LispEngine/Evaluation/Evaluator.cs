@@ -24,7 +24,7 @@ namespace LispEngine.Evaluation
         {
             var s = datum as Symbol;
             if(s != null)
-                return env.lookup(s.Identifier);
+                return env.Lookup(s.Identifier);
             var c = datum as Pair;
             if(c != null)
             {

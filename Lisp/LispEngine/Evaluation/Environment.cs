@@ -6,8 +6,27 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    public interface Environment
+    public sealed class Environment : ImmutableEnvironment
     {
-        Datum lookup(string name);
+        private ImmutableEnvironment env;
+        public Environment(ImmutableEnvironment env)
+        {
+            this.env = env;
+        }
+
+        public void Define(string name, Datum value)
+        {
+            env = env.Extend(name, value);
+        }
+
+        public Datum Lookup(string name)
+        {
+            return env.Lookup(name);
+        }
+
+        public Environment Extend(string name, Datum value)
+        {
+            return new Environment(env.Extend(name, value));
+        }
     }
 }

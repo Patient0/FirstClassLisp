@@ -6,9 +6,9 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    public sealed class EmptyEnvironment : Environment
+    public sealed class EmptyEnvironment : ImmutableEnvironment
     {
-        public Datum lookup(string name)
+        public Datum Lookup(string name)
         {
             throw new Exception(String.Format("Undefined symbol '{0}'", name));
         }
@@ -17,6 +17,6 @@ namespace LispEngine.Evaluation
         {
         }
 
-        public static readonly Environment Instance = new EmptyEnvironment();
+        public static readonly ImmutableEnvironment Instance = new EmptyEnvironment();
     }
 }
