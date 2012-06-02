@@ -173,7 +173,7 @@ namespace LispTests.Evaluation
         [Test]
         public void testQuotedQuote()
         {
-            test("''3", cons(quote, atom(3)));
+            test("''3", compound(quote, atom(3)));
         }
 
         [Test]

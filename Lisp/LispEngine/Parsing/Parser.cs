@@ -86,7 +86,7 @@ namespace LispEngine.Parsing
             if(next.Type == TokenType.Quote)
             {
                 var expression = parse();
-                return cons(quote, expression);
+                return cons(quote, compound(expression));
             }
             return null;
         }

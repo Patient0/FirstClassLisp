@@ -57,6 +57,14 @@ namespace LispEngine.Datums
             return new Atom(value);
         }
 
+        public static Datum car(Datum d)
+        {
+            var pair = d as Pair;
+            if (pair == null)
+                throw error("'{0}' is not a pair", d);
+            return pair.First;
+        }
+
         public static IEnumerable<Datum> enumerate(Datum list)
         {
             var next = list;

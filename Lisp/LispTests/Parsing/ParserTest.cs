@@ -143,10 +143,20 @@ namespace LispTests.Parsing
             test("#f", atom(false));
         }
 
+        // '3 is not equivalent to (quote . 3). It is
+        // equivalent to (quote 3).
         [Test]
-        public void testQuote()
+        public void testQuoteConsAsList()
         {
-            test("'(3 4)", compound(symbol("quote"), atom(3), atom(4)));
+            test("'3", compound(symbol("quote"), atom(3)));
+        }
+
+        // '(3 4) is not equivalent to (quote 3 4) - 
+        // it's instead equivalent to (quote (3 4))
+        [Test]
+        public void testListQuote()
+        {
+            test("'(3 4)", compound(symbol("quote"), compound(atom(3), atom(4))));
         }
     }
 }
