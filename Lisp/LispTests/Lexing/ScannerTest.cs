@@ -117,11 +117,20 @@ namespace LispTests.Lexing
         }
 
         private static readonly Token quote = token(TokenType.Quote, "'");
+        private static readonly Token quasiquote = token(TokenType.QuasiQuote, "`");
+        private static readonly Token unquote = token(TokenType.Unquote, ",");
+        private static readonly Token splicing = token(TokenType.UnquoteSplicing, ",@");
 
         [Test]
         public void testQuote()
         {
             test("'(3 4)", quote, open, integer("3"), space(" "), integer("4"), close);
+        }
+
+        [Test, Ignore]
+        public void testQuasiQuote()
+        {
+            test("`(,3 ,@(4 5))", quasiquote, open, unquote, integer("3"), splicing, open, integer("4"), space(" "), integer("5"), close, close);
         }
     }
 }

@@ -14,6 +14,9 @@ namespace LispEngine.Lexing
         Close,
         Dot,
         Boolean,
-        Quote
+        Quote,
+        QuasiQuote,
+        Unquote,
+        UnquoteSplicing
     }
 }

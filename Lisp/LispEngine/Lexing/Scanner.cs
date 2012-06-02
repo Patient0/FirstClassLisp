@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using LispEngine.Parsing;
@@ -94,89 +96,105 @@ namespace LispEngine.Lexing
             return isInitial() || isDigit() || isSpecialSubsequent();
         }
 
-        private Token symbol()
-        {
-            if(!isInitial())
-                return null;
-            readChar();
-            while(isSubsequent())
-                readChar();
-            return tok(TokenType.Symbol);
-        }
+        private delegate void MatchDelegate(Scanner s);
 
-        private Token space()
+        private sealed class Matcher
         {
-            while(isWhiteSpace())
-                readChar();
-            return tok(TokenType.Space);
-        }
-
-        private Token integer()
-        {
-            while (isDigit())
-                readChar();
-            
-            return tok(TokenType.Integer);
-        }
-
-        private Token openClose()
-        {
-            if (peek() == '(')
+            public TokenType TokenType
             {
-                readChar();
-                return tok(TokenType.Open);
+                [DebuggerStepThrough]
+                get { return tokenType; }
             }
-            if (peek() == ')')
+
+            public MatchDelegate MatchDelegate
             {
-                readChar();
-                return tok(TokenType.Close);
+                [DebuggerStepThrough]
+                get { return matchDelegate; }
+            }
+
+            private readonly TokenType tokenType;
+            private readonly MatchDelegate matchDelegate;
+            public Matcher(TokenType tokenType, MatchDelegate matchDelegate)
+            {
+                this.tokenType = tokenType;
+                this.matchDelegate = matchDelegate;
+            }
+        }
+
+        private static Matcher match(TokenType tokenType, MatchDelegate matchDelegate)
+        {
+            return new Matcher(tokenType, matchDelegate);
+        }
+
+        // Used to match a single token
+        private static Matcher match(TokenType tokenType, char c)
+        {
+            return match(tokenType, s =>
+                { if (s.peek() == c)
+                    s.readChar(); });
+        }
+
+        // Match characters until the given predicate returns false
+        private static Matcher match(TokenType tokenType, Func<Scanner, bool>  predicate)
+        {
+            return match(tokenType, s =>
+                    {
+                        while(predicate(s))
+                            s.readChar();
+                    }
+                 );
+        }
+
+        private static readonly Matcher[] matchers = new[]
+                                                         {
+                                                            match(TokenType.Quote, '\''),
+                                                            match(TokenType.Symbol,
+                                                                   s =>
+                                                                       {
+                                                                           if (!s.isInitial())
+                                                                               return;
+                                                                           s.readChar();
+                                                                           while (s.isSubsequent())
+                                                                               s.readChar();
+                                                                       }),
+                                                            match(TokenType.Space, 
+                                                                s => s.isWhiteSpace()),
+                                                            match(TokenType.Integer, 
+                                                                s => s.isDigit()),
+                                                            match(TokenType.Open, '('),
+                                                            match(TokenType.Close, ')'),
+                                                            match(TokenType.Dot, '.'),
+                                                            match(TokenType.Boolean,
+                                                                s =>
+                                                                    {
+                                                                        if (s.peek() != '#')
+                                                                            return;
+                                                                        s.readChar();
+                                                                        if(s.isOneOf("tfTF"))
+                                                                        {
+                                                                            s.readChar();
+                                                                            return;
+                                                                        }
+                                                                        throw s.fail("Unrecognized token");
+                                                                    })
+                                                         };
+
+        private Token match()
+        {
+            foreach(var m in matchers)
+            {
+                m.MatchDelegate(this);
+                var token = tok(m.TokenType);
+                if (token != null)
+                    return token;
             }
             return null;
-        }
-
-        private Token boolean()
-        {
-            if (peek() != '#')
-                return null;
-            readChar();
-            if(isOneOf("tfTF"))
-            {
-                readChar();
-                return tok(TokenType.Boolean);
-            }
-            throw fail("Unrecognized token");
-        }
-
-        private Token quote()
-        {
-            if(peek() != '\'')
-                return null;
-            readChar();
-            return tok(TokenType.Quote);
-
         }
 
         public Token GetNext()
         {
-            Token t;
             sb = new StringBuilder();
-            if (!more())
-                return null;
-            if ((t = quote()) != null)
-                return t;
-            if ((t = symbol()) != null)
-                return t;
-            if ((t = space()) != null)
-                return t;
-            if ((t = integer()) != null)
-                return t;
-            if ((t = openClose()) != null)
-                return t;
-            if ((t = dot()) != null)
-                return t;
-            if ((t = boolean()) != null)
-                return t;
-            return null;
+            return !more() ? null : match();
         }
 
         public IEnumerable<Token> Scan()
