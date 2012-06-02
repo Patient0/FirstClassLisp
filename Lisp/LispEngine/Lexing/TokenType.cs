@@ -17,6 +17,7 @@ namespace LispEngine.Lexing
         Quote,
         QuasiQuote,
         Unquote,
-        UnquoteSplicing
+        UnquoteSplicing,
+        Comment
     }
 }

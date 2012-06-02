@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Lexing;
@@ -171,6 +173,19 @@ namespace LispTests.Parsing
             var unquote3 = compound(unquote, atom(3));
             var unquote4 = compound(unquoteSplicing, atomList(4));
             test("`(,3 ,@(4))", compound(quasiquote, compound(unquote3, unquote4)));
+        }
+
+        [Test]
+        public void testLoadLispFile()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream("LispTests.Parsing.MultilineFile.lisp");
+            if (stream == null)
+                throw new Exception("Unable to find MultilineFile.lisp embedded resource");
+            var s = new Scanner(new StreamReader(stream)) {Filename = "MultilineFile.lisp"};
+            var p = new Parser(s);
+            var parsed = p.parse();
+            Console.WriteLine("Parsed:\n{0}\n", parsed);
         }
     }
 }

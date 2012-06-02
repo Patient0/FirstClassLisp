@@ -15,8 +15,8 @@ namespace LispEngine.Parsing
         public Parser(Scanner s)
         {
             this.s = s;
-            // Skip whitespace
-            tokens = s.Scan().Where(token => token.Type != TokenType.Space).GetEnumerator();
+            // Skip whitespace and comments
+            tokens = s.Scan().Where(token => token.Type != TokenType.Space && token.Type != TokenType.Comment).GetEnumerator();
         }
 
         private void readNext()
@@ -120,7 +120,7 @@ namespace LispEngine.Parsing
                 return d;
             if ((d = compound()) != null)
                 return d;
-            throw new Exception(string.Format("Unexpected token: {0}", next));
+            throw fail("Unexpected token: {0}", next);
         }
 
         public Datum parse()

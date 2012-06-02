@@ -11,6 +11,23 @@ namespace LispEngine.Lexing
     public class Scanner
     {
         private readonly TextReader input;
+        private String filename = "";
+
+        public string Filename
+        {
+            get { return filename; }
+            set { filename = value; }
+        }
+
+        private int lineNumber = 1;
+
+        public int LineNumber
+        {
+            [DebuggerStepThrough]
+            get { return lineNumber; }
+        }
+
+        private readonly IList<string> previousLines = new List<string>();
         private readonly StringBuilder lineSoFar = new StringBuilder();
 
         private delegate TokenType? Matcher(Scanner s);
@@ -77,6 +94,15 @@ namespace LispEngine.Lexing
                             while (s.isSubsequent())
                                 s.readChar();
                         }),
+                    match(TokenType.Comment, 
+                        s =>
+                        {
+                            if (s.peek() != ';')
+                                return;
+                            while (s.peek() != '\n')
+                                s.readChar();
+                            s.readChar();
+                        }),
                     match(TokenType.Space, 
                         s => s.isWhiteSpace()),
                     match(TokenType.Integer, 
@@ -118,6 +144,14 @@ namespace LispEngine.Lexing
         private void readChar()
         {
             var next = (char) input.Read();
+            if(next == '\n')
+            {
+                ++lineNumber;
+                previousLines.Add(LineSoFar);
+                if(previousLines.Count > 3)
+                    previousLines.RemoveAt(0);
+                lineSoFar.Clear();
+            }
             sb.Append(next);
             lineSoFar.Append(next);
         }
@@ -197,7 +231,7 @@ namespace LispEngine.Lexing
         {
             get
             {
-                return lineSoFar.ToString();
+                return lineSoFar.Replace("\r", "").Replace("\n", "").ToString();
             }
         }
 
@@ -205,7 +239,15 @@ namespace LispEngine.Lexing
         {
             var errorMsg = string.Format(fmt, args);
             var line = LineSoFar;
-            var msg = string.Format("\n{0}\n{1}^: {2}", line, new string(' ', line.Length), errorMsg);
+            var w = new StringWriter();
+            w.WriteLine("{0}({1}): {2}", Filename, LineNumber, errorMsg);
+            var ln = LineNumber - previousLines.Count;
+            foreach(var l in previousLines)
+                w.WriteLine("{0}({1}): {2}", Filename, ln++, l);
+            w.WriteLine("{0}({1}): {2}", Filename, ln++, line);
+            w.WriteLine("{0}({1}): {2}^: {3}", Filename, ln++, new string(' ', line.Length), errorMsg);
+            w.Flush();
+            var msg = w.ToString();
             return new ParseException(msg);
         }
     }
