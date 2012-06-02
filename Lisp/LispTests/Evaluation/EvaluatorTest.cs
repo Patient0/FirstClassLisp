@@ -16,13 +16,18 @@ namespace LispTests.Evaluation
     {
         private Environment env;
 
-        private void test(string sexp, Datum expected)
+        private void test(string sexp, params Datum[] expected)
         {
             var e = new Evaluator();
-
-            var datum = new Parser(Scanner.Create(sexp)).parse();
-            var result = e.Evaluate(env, datum);
-            Assert.AreEqual(expected, result);
+            var parser = new Parser(Scanner.Create(sexp));
+            Datum datum = null;
+            var actual = new List<Datum>();
+            while ((datum = parser.parse()) != null)
+            {
+                var result = e.Evaluate(env, datum);
+                actual.Add(result);
+            }
+            Assert.AreEqual(expected, actual);
         }
 
         [SetUp]
@@ -240,6 +245,12 @@ namespace LispTests.Evaluation
         {
             test("(pair? '(1 . 2))", atom(true));
             test("(pair? 5)", atom(false));
+        }
+
+        [Test]
+        public void testDefine()
+        {
+            test("(define x 5) x", atom(5), atom(5));
         }
     }
 }
