@@ -25,6 +25,7 @@ namespace LispTests.Lexing
 
         private static readonly Token open = token(TokenType.Open, "(");
         private static readonly Token close = token(TokenType.Close, ")");
+        private static readonly Token sp = space(" ");
 
         private static Token integer(string s)
         {
@@ -47,7 +48,7 @@ namespace LispTests.Lexing
         [Test]
         public void TestSpace()
         {
-            test(" ", space(" "));
+            test(" ", sp);
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace LispTests.Lexing
         [Test]
         public void TestHelloWorld()
         {
-            test("hello world", symbol("hello"), space(" "), symbol("world"));
+            test("hello world", symbol("hello"), sp, symbol("world"));
         }
 
         [Test]
@@ -77,7 +78,7 @@ namespace LispTests.Lexing
         [Test]
         public void testMixedSymbolInteger()
         {
-            test("Hello 22 World", symbol("Hello"), space(" "), integer("22"), space(" "), symbol("World"));
+            test("Hello 22 World", symbol("Hello"), sp, integer("22"), sp, symbol("World"));
         }
 
         [Test]
@@ -89,7 +90,7 @@ namespace LispTests.Lexing
         [Test]
         public void TestDot()
         {
-            test("5 . 6", integer("5"), space(" "), token(TokenType.Dot, "."), space(" "), integer("6"));
+            test("5 . 6", integer("5"), sp, token(TokenType.Dot, "."), sp, integer("6"));
         }
 
         [Test]
@@ -112,8 +113,8 @@ namespace LispTests.Lexing
         [Test]
         public void testBoolean()
         {
-            test("#t #T", boolean("#t"), space(" "), boolean("#T"));
-            test("#f #F", boolean("#f"), space(" "), boolean("#F"));
+            test("#t #T", boolean("#t"), sp, boolean("#T"));
+            test("#f #F", boolean("#f"), sp, boolean("#F"));
         }
 
         private static readonly Token quote = token(TokenType.Quote, "'");
@@ -124,13 +125,13 @@ namespace LispTests.Lexing
         [Test]
         public void testQuote()
         {
-            test("'(3 4)", quote, open, integer("3"), space(" "), integer("4"), close);
+            test("'(3 4)", quote, open, integer("3"), sp, integer("4"), close);
         }
 
-        [Test, Ignore]
+        [Test]
         public void testQuasiQuote()
         {
-            test("`(,3 ,@(4 5))", quasiquote, open, unquote, integer("3"), splicing, open, integer("4"), space(" "), integer("5"), close, close);
+            test("`(,3 ,@(4 5))", quasiquote, open, unquote, integer("3"), sp, splicing, open, integer("4"), sp, integer("5"), close, close);
         }
     }
 }

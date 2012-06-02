@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using LispEngine.Parsing;
 
@@ -11,6 +12,92 @@ namespace LispEngine.Lexing
     {
         private readonly TextReader input;
         private readonly StringBuilder lineSoFar = new StringBuilder();
+
+        private delegate TokenType? Matcher(Scanner s);
+
+        private static Matcher match(TokenType tokenType, Action<Scanner> matchDelegate)
+        {
+            return s =>
+                    {
+                        matchDelegate(s);
+                        TokenType? result = null;
+                        if (s.sb.Length > 0)
+                            result = tokenType;
+                        return result;
+                    };
+        }
+
+        // Used to match a single character
+        private static Matcher match(TokenType tokenType, char c)
+        {
+            return match(tokenType,
+                        s =>
+                        {
+                            if (s.peek() == c)
+                                s.readChar();
+                        });
+        }
+
+        // Match characters until the given predicate returns false
+        private static Matcher match(TokenType tokenType, Func<Scanner, bool> predicate)
+        {
+            return match(tokenType,
+                        s =>
+                        {
+                            while (predicate(s))
+                                s.readChar();
+                        }
+                 );
+        }
+
+        private static TokenType? unquote(Scanner s)
+        {
+            if (s.peek() != ',')
+                return null;
+            s.readChar();
+            if (s.peek() == '@')
+            {
+                s.readChar();
+                return TokenType.UnquoteSplicing;
+            }
+            return TokenType.Unquote;
+        }
+
+        private static readonly Matcher[] matchers = new[]
+                    {
+                    unquote,
+                    match(TokenType.Quote, '\''),
+                    match(TokenType.Symbol,
+                        s =>
+                        {
+                            if (!s.isInitial())
+                                return;
+                            s.readChar();
+                            while (s.isSubsequent())
+                                s.readChar();
+                        }),
+                    match(TokenType.Space, 
+                        s => s.isWhiteSpace()),
+                    match(TokenType.Integer, 
+                        s => s.isDigit()),
+                    match(TokenType.Open, '('),
+                    match(TokenType.Close, ')'),
+                    match(TokenType.Dot, '.'),
+                    match(TokenType.QuasiQuote, '`'),
+                    match(TokenType.Boolean,
+                        s =>
+                            {
+                                if (s.peek() != '#')
+                                    return;
+                                s.readChar();
+                                if(s.isOneOf("tfTF"))
+                                {
+                                    s.readChar();
+                                    return;
+                                }
+                                throw s.fail("Unrecognized token");
+                            })
+                    };
         private StringBuilder sb;
 
         public static Scanner Create(string s)
@@ -60,17 +147,6 @@ namespace LispEngine.Lexing
             return more() && char.IsWhiteSpace(peek());
         }
 
-        // Based on http://people.csail.mit.edu/jaffer/r5rs_9.html
-        private Token dot()
-        {
-            if (peek() == '.')
-            {
-                readChar();
-                return tok(TokenType.Dot);                
-            }
-            return null;
-        }
-
         private bool isOneOf(string chars)
         {
             return more() && chars.IndexOf(peek()) != -1;
@@ -96,99 +172,12 @@ namespace LispEngine.Lexing
             return isInitial() || isDigit() || isSpecialSubsequent();
         }
 
-        private delegate void MatchDelegate(Scanner s);
-
-        private sealed class Matcher
-        {
-            public TokenType TokenType
-            {
-                [DebuggerStepThrough]
-                get { return tokenType; }
-            }
-
-            public MatchDelegate MatchDelegate
-            {
-                [DebuggerStepThrough]
-                get { return matchDelegate; }
-            }
-
-            private readonly TokenType tokenType;
-            private readonly MatchDelegate matchDelegate;
-            public Matcher(TokenType tokenType, MatchDelegate matchDelegate)
-            {
-                this.tokenType = tokenType;
-                this.matchDelegate = matchDelegate;
-            }
-        }
-
-        private static Matcher match(TokenType tokenType, MatchDelegate matchDelegate)
-        {
-            return new Matcher(tokenType, matchDelegate);
-        }
-
-        // Used to match a single token
-        private static Matcher match(TokenType tokenType, char c)
-        {
-            return match(tokenType, s =>
-                { if (s.peek() == c)
-                    s.readChar(); });
-        }
-
-        // Match characters until the given predicate returns false
-        private static Matcher match(TokenType tokenType, Func<Scanner, bool>  predicate)
-        {
-            return match(tokenType, s =>
-                    {
-                        while(predicate(s))
-                            s.readChar();
-                    }
-                 );
-        }
-
-        private static readonly Matcher[] matchers = new[]
-                                                         {
-                                                            match(TokenType.Quote, '\''),
-                                                            match(TokenType.Symbol,
-                                                                   s =>
-                                                                       {
-                                                                           if (!s.isInitial())
-                                                                               return;
-                                                                           s.readChar();
-                                                                           while (s.isSubsequent())
-                                                                               s.readChar();
-                                                                       }),
-                                                            match(TokenType.Space, 
-                                                                s => s.isWhiteSpace()),
-                                                            match(TokenType.Integer, 
-                                                                s => s.isDigit()),
-                                                            match(TokenType.Open, '('),
-                                                            match(TokenType.Close, ')'),
-                                                            match(TokenType.Dot, '.'),
-                                                            match(TokenType.Boolean,
-                                                                s =>
-                                                                    {
-                                                                        if (s.peek() != '#')
-                                                                            return;
-                                                                        s.readChar();
-                                                                        if(s.isOneOf("tfTF"))
-                                                                        {
-                                                                            s.readChar();
-                                                                            return;
-                                                                        }
-                                                                        throw s.fail("Unrecognized token");
-                                                                    })
-                                                         };
-
         private Token match()
         {
-            foreach(var m in matchers)
-            {
-                m.MatchDelegate(this);
-                var token = tok(m.TokenType);
-                if (token != null)
-                    return token;
-            }
-            return null;
+            return (from matcher in matchers
+                    select matcher(this) into tokenType
+                    where tokenType.HasValue
+                    select tok(tokenType.Value)).FirstOrDefault();
         }
 
         public Token GetNext()
