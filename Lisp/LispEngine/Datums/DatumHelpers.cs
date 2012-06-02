@@ -10,6 +10,9 @@ namespace LispEngine.Datums
         public static readonly Datum nil = Null.Instance;
 
         public static readonly Datum quote = symbol("quote");
+        public static readonly Datum quasiquote = symbol("quasiquote");
+        public static readonly Datum unquote = symbol("unquote");
+        public static readonly Datum unquoteSplicing = symbol("unquote-splicing");
 
         public static Exception error(string msg, params object[] args)
         {

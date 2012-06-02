@@ -65,6 +65,7 @@ namespace LispEngine.Lexing
 
         private static readonly Matcher[] matchers = new[]
                     {
+                    match(TokenType.QuasiQuote, '`'),
                     unquote,
                     match(TokenType.Quote, '\''),
                     match(TokenType.Symbol,
@@ -83,7 +84,6 @@ namespace LispEngine.Lexing
                     match(TokenType.Open, '('),
                     match(TokenType.Close, ')'),
                     match(TokenType.Dot, '.'),
-                    match(TokenType.QuasiQuote, '`'),
                     match(TokenType.Boolean,
                         s =>
                             {

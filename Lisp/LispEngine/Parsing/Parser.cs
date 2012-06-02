@@ -81,12 +81,29 @@ namespace LispEngine.Parsing
             return null;
         }
 
+        private static Datum isQuote(TokenType type)
+        {
+            switch(type)
+            {
+                case TokenType.Quote:
+                    return quote;
+                case TokenType.Unquote:
+                    return unquote;
+                case TokenType.QuasiQuote:
+                    return quasiquote;
+                case TokenType.UnquoteSplicing:
+                    return unquoteSplicing;
+            }
+            return null;
+        }
+
         private Datum quotedExpression()
         {
-            if(next.Type == TokenType.Quote)
+            var symbol = isQuote(next.Type);
+            if(symbol != null)
             {
                 var expression = parse();
-                return cons(quote, compound(expression));
+                return cons(symbol, compound(expression));
             }
             return null;
         }

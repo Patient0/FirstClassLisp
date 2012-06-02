@@ -25,7 +25,7 @@ namespace LispTests.Parsing
             Assert.AreEqual(expected, actual.ToArray());
         }
 
-        private static readonly Symbol car = symbol("car");
+        private static readonly Symbol house = symbol("house");
         private static readonly Symbol wheel = symbol("wheel");
         private static readonly Symbol hello = symbol("hello");
         private static readonly Symbol world = symbol("world");
@@ -33,20 +33,20 @@ namespace LispTests.Parsing
         [Test]
         public void testSymbol()
         {
-            test("car", car);
+            test("house", house);
         }
 
         [Test]
         public void testTwoSymbols()
         {
-            test("car wheel", car, wheel);
+            test("house wheel", house, wheel);
         }
 
         [Test]
         public void testCompoundUtilityFunction()
         {
             Assert.AreEqual(nil, compound());
-            Assert.AreEqual(cons(car, nil), compound(car));
+            Assert.AreEqual(cons(house, nil), compound(house));
             Assert.AreEqual(cons(hello, cons(world, nil)), compound(hello, world));
         }
 
@@ -59,7 +59,7 @@ namespace LispTests.Parsing
         [Test]
         public void testCompound()
         {
-            test("(car)", compound(car));
+            test("(house)", compound(house));
         }
 
         [Test]
@@ -121,7 +121,7 @@ namespace LispTests.Parsing
         [Test]
         public void test3Tuple()
         {
-            test("(hello world . car)", cons(hello, cons(world, car)));
+            test("(hello world . house)", cons(hello, cons(world, house)));
         }
 
         [Test]
@@ -148,7 +148,7 @@ namespace LispTests.Parsing
         [Test]
         public void testQuoteConsAsList()
         {
-            test("'3", compound(symbol("quote"), atom(3)));
+            test("'3", compound(quote, atom(3)));
         }
 
         // '(3 4) is not equivalent to (quote 3 4) - 
@@ -156,7 +156,21 @@ namespace LispTests.Parsing
         [Test]
         public void testListQuote()
         {
-            test("'(3 4)", compound(symbol("quote"), compound(atom(3), atom(4))));
+            test("'(3 4)", compound(quote, atomList(3, 4)));
+        }
+
+        [Test]
+        public void testQuasiQuote()
+        {
+            test("`(3 4)", compound(quasiquote, atomList(3, 4)));
+        }
+
+        [Test]
+        public void testQuasiQuoteCombination()
+        {
+            var unquote3 = compound(unquote, atom(3));
+            var unquote4 = compound(unquoteSplicing, atomList(4));
+            test("`(,3 ,@(4))", compound(quasiquote, compound(unquote3, unquote4)));
         }
     }
 }
