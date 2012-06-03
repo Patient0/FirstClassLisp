@@ -111,5 +111,23 @@ namespace LispEngine.Datums
                 yield return pair.First;
             }
         }
+
+        public static object castAtom(Datum d)
+        {
+            var a = d as Atom;
+            if (a == null)
+                throw error("Expected '{0}' to be an atom", d);
+            return a.Value;
+        }
+
+        public static IEnumerable<object> atoms(Datum list)
+        {
+            return enumerate(list).Select(castAtom);
+        }
+
+        public static IEnumerable<int> enumerateInts(Datum list)
+        {
+            return atoms(list).Select(v => (int) v);
+        }
     }
 }

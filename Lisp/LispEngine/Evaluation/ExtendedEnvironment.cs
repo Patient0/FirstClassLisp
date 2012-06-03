@@ -33,5 +33,10 @@ namespace LispEngine.Evaluation
         {
             return new ExtendedEnvironment(e, name, value);
         }
+
+        public static Environment ToMutable(this ImmutableEnvironment e)
+        {
+            return new Environment(e);
+        }
     }
 }

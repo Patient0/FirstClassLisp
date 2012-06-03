@@ -33,7 +33,11 @@ namespace LispTests.Evaluation
 
         public static IEnumerable<TestCaseData> TestCases
         {
-            get { return loadTestCases("EvaluatorTests.lisp").Concat(loadTestCases("QuasiquoteTests.lisp")); }
+            get
+            {
+                var tests = new[] {"EvaluatorTests.lisp", "QuasiquoteTests.lisp", "ArithmeticTests.lisp"};
+                return tests.Select(loadTestCases).Aggregate(Enumerable.Concat);
+            }
         }
     }
 }

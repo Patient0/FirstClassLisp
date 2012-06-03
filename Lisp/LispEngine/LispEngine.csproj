@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap\Append.cs" />
+    <Compile Include="Bootstrap\Arithmetic.cs" />
     <Compile Include="Core\Apply.cs" />
     <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\Cons.cs" />
