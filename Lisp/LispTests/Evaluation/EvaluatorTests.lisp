@@ -42,6 +42,7 @@
 (quotedList (3 4) '(3 4))
 (quotedAtom 3 '3)
 (quotedQuote '3 ''3)
+(quotedSymbol x 'x)
 (let 3 (let x 3 x))
 (letEvaluatesBody #t
 		(let x 3 (eq? x 3)))

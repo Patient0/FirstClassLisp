@@ -45,6 +45,7 @@
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Define.cs" />
     <Compile Include="Core\Eq.cs" />
+    <Compile Include="Bootstrap\Quasiquote.cs" />
     <Compile Include="Evaluation\FunctionExpression.cs" />
     <Compile Include="Core\If.cs" />
     <Compile Include="Core\Quote.cs" />

@@ -47,7 +47,7 @@ namespace LispTests.Evaluation
         public Datum evaluate(Datum expression)
         {
             var result = e.Evaluate(env, expression);
-            Console.WriteLine("Evaluated: {0}", expression);
+            Console.WriteLine("Expression: {0}", expression);
             Console.WriteLine("Result: {0}", result);
             return result;
         }

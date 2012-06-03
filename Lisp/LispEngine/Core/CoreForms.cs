@@ -9,7 +9,7 @@ namespace LispEngine.Core
     {
         public static Environment AddTo(Environment env)
         {
-            return env
+            env = env
                 .Extend("lambda", Lambda.Instance)
                 .Extend("cons", Cons.Instance)
                 .Extend("apply", Apply.Instance)
@@ -18,6 +18,7 @@ namespace LispEngine.Core
                 .Extend("macro", Macro.Instance)
                 .Extend("quote", Quote.Instance)
                 .Extend("define", Define.Instance);
+            return env;
         }
     }
 }

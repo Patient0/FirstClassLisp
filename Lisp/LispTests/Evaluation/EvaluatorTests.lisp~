@@ -1,6 +1,9 @@
-﻿; This file contains test cases used in EvaluatorTest. It is expected to)
-; contain a list of lists. Each list is a test case. The first element is the name,)
-; the second is the expression to evaluate, the third is the expected result.)
+﻿; This file contains test cases used in EvaluatorTest. It is expected to
+; contain a list of lists.
+; Each list is a test case.
+; The first element is the name
+; The second is expected result.
+; The third is the expression to evaluate.
 (atom 5 5)
 (boolAtomTrue #t #t)
 (boolAtomFalse #f #f)

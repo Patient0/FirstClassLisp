@@ -31,6 +31,11 @@ namespace LispEngine.Core
             }
         }
 
+        public static FExpression ToMacro(Function function)
+        {
+            return new MacroClosure(function);
+        }
+
         public Datum Evaluate(Evaluator evaluator, Datum args)
         {
             var a = enumerate(args).ToArray();
@@ -40,7 +45,7 @@ namespace LispEngine.Core
             var function = a[0] as Function;
             if (function == null)
                 throw error("Expected function argument");
-            return new MacroClosure(function);
+            return ToMacro(function);
         }
     }
 }
