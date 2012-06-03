@@ -15,11 +15,10 @@ namespace LispEngine.Core
             var a = enumerate(args).ToArray();
             if (a.Length != 2)
                 throw error("eq?: Expected 2 arguments, got {0}", a.Length);
-            var left = a[0] as Atom;
-            var right = a[1] as Atom;
-            if(left == null || right == null)
-                return atom(false);
-            return atom(left.Equals(right));
+            if ((a[0] as Pair) != null ||
+                (a[1] as Pair) != null)
+                return atom(ReferenceEquals(a[0], a[1]));
+            return atom(a[0].Equals(a[1]));
         }
     }
 }

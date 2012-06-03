@@ -11,15 +11,22 @@ namespace LispEngine.Core
     class If : DatumHelpers, FExpression
     {
         public static readonly FExpression Instance = new If();
+        private static Datum choose(Evaluator evaluator, Environment env, Datum[] clauses)
+        {
+            var clause = 0;
+            while(atom(false).Equals(evaluator.Evaluate(env, clauses[clause])) && clause < clauses.Length - 1)
+            {
+                clause += 2;
+            }
+            return clause < clauses.Length - 1 ? clauses[clause + 1] : clauses[clauses.Length - 1];
+        }
         public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
         {
             var a = enumerate(args).ToArray();
-            if (a.Length != 3)
-                throw error("If: Invalid syntax. Expected 3 arguments: condition, true-case, false-case. Got {0}", a.Length);
-            var condition = a[0];
-            var trueCase = a[1];
-            var falseCase = a[2];
-            return atom(false).Equals(evaluator.Evaluate(env, condition)) ? falseCase : trueCase;
+            if (a.Length % 2 == 0)
+                throw error("If: Invalid syntax. Expected an odd number of arguments: (condition) (body) ... (default). Got {0}", a.Length);
+            var branch = choose(evaluator, env, a);
+            return evaluator.Evaluate(env, branch);
         }
     }
 }

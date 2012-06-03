@@ -1,4 +1,5 @@
-﻿(define list (lambda x x))
+﻿(define nil '())
+(define list (lambda x x))
 (define car (lambda ((x . y)) x))
 (define cdr (lambda ((x . y)) y))
 (define nil? (lambda (()) #t _ #f))
@@ -22,3 +23,15 @@
     (lambda
         (()) 0
         ((x . y)) (+ 1 (length y))))
+
+; Now, let's implement simple quasiquote in terms of Lisp itself
+(define expand-quasiquote
+    (lambda
+        ((x . y))
+            (if
+                (eq? x 'unquote) (car y)
+                (list cons (expand-quasiquote x) (expand-quasiquote y)))
+        x
+            (cons quote x)))
+(define quasiquote
+    (macro expand-quasiquote))

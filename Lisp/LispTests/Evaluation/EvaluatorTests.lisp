@@ -7,6 +7,9 @@
 (atom 5 5)
 (boolAtomTrue #t #t)
 (boolAtomFalse #f #f)
+; Many of these tests require an arbitrary symbol
+; to be defined. So we'll use 'life' as our symbol,
+; which is mapped to the integer '42' in the environment.
 (symbol 42 life)
 (identityFunction 5 ((lambda (x) x) 5))
 (constantFunction 6 ((lambda () 6)))
@@ -33,12 +36,36 @@
 		(eq? 4 4))
 (eqFalse? #f
 		(eq? 4 3))
+(eqSymbolTest #t
+    (eq? 'somesymbol 'somesymbol))
+(eqSymbolTestFalse #f
+    (eq? 'someSymbol 'someOtherSymbol))
+(eqQuotedSymbolWithUnquoted #t
+    (let x 'unquote
+        (eq? x 'unquote)))
+; But we don't want eq? to be traversing
+; arbitrarily large structures for us.
 (eqIsFlat #f
 		(eq? (list 1 2) (list 1 2)))
 (ifTrue? 5
 		(if #t 5 undefined))
 (ifFalse? 5
 		(if #f undefined 5))
+; Discovered quite late on that the if
+; F-expression wasn't actually evaluate either the
+; true or the false case!
+(ifExpressionTrue 42 
+        (if (eq? life 42) life 23))
+(ifExpressionFalse 42 
+        (if (eq? life 98) 5 life))
+; We'll make our 'if' like a 'cond' - allow multiple
+; clauses until one matches. Should always be an
+; odd number of clauses.
+(ifIsLikeCond 42
+        (if (eq? life 23) not-this-one
+            (eq? life 44) not-this-one
+            (eq? life 48) no-not-this-either
+            42))
 (quotedList (3 4) '(3 4))
 (append (1 2 3 4)
     (append '(1 2) '(3 4)))
