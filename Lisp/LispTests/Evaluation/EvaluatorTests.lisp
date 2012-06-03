@@ -40,6 +40,15 @@
 (ifFalse? 5
 		(if #f undefined 5))
 (quotedList (3 4) '(3 4))
+(append (1 2 3 4)
+    (append '(1 2) '(3 4)))
+(appendMultiple (1 2 3 4 5 6)
+    (append '(1 2) '(3 4) '(5 6)))
+; It's very convenient if append works even for a single list
+(appendSingle (1 2)
+    (append '(1 2)))
+(appendNone ()
+    (append))
 (quotedAtom 3 '3)
 (quotedQuote '3 ''3)
 (quotedSymbol x 'x)

@@ -11,3 +11,9 @@
 (quasiquoteQuoted (list a 'a)
     (let name 'a
         `(list ,name ',name)))
+(quasiquoteSplicingSimplest
+    (1 2)
+        `(,@(list 1 2)))
+(quasiquoteSplicing
+    (1 2 3 4 5)
+        `(1 ,@(list 2 3) 4 5))

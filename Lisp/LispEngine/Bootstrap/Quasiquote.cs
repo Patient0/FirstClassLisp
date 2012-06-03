@@ -13,10 +13,12 @@ namespace LispEngine.Bootstrap
     {
         private readonly Datum consF;
         private readonly Datum quoteF;
+        private readonly Datum appendF;
         public Quasiquote(ImmutableEnvironment env)
         {
             this.consF = env.Lookup("cons");
             this.quoteF = env.Lookup("quote");
+            this.appendF = env.Lookup("append");
         }
 
         private Datum expand(Datum arg)
@@ -27,6 +29,15 @@ namespace LispEngine.Bootstrap
                 // `,x => (quasiquote (unquote x)) => x
                 if(pair.First.Equals(unquote))
                     return car(pair.Second);
+
+                // `(,@(list 3 4)) => (quasiquote (unquote-splicing ((list 3 4)))) => (list 3 4)
+                var firstPair = pair.First as Pair;
+                if(firstPair != null && firstPair.First.Equals(unquoteSplicing))
+                {
+                    var spliceBody = firstPair.Second as Pair;
+                    if (spliceBody != null)
+                        return cons(appendF, compound(spliceBody.First, expand(pair.Second)));
+                }
 
                 // `(1 2) => (cons (quote 1) (quote 2))
                 return compound(consF, expand(pair.First), expand(pair.Second));

@@ -23,6 +23,7 @@ namespace LispEngine.Bootstrap
             var evaluator = new Evaluator();
             foreach (var d in ResourceLoader.ReadDatums("LispEngine.Bootstrap.Builtins.lisp"))
                 evaluator.Evaluate(env, d);
+            env = env.Extend("append", Append.Instance);
             // For now, implement Quasiquote in C# - will translate
             // into pure Lisp later hopefully.
             env = env.Extend("quasiquote", Macro.ToMacro(new Quasiquote(env)));
