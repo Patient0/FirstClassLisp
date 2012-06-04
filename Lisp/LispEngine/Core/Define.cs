@@ -20,12 +20,14 @@ namespace LispEngine.Core
             if (name == null)
                 throw error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
             Datum value = null;
+            // Scope any local definitions.
+            var localEnv = new Environment(env);
             for(var i = 1; i < argList.Length; ++i)
             {
                 // Allow multiple statements inside a define. This allows
                 // use to define nested symbols without polluting global
                 // namespace.
-                value = evaluator.Evaluate(env, argList[i]);
+                value = evaluator.Evaluate(localEnv, argList[i]);
             }
             // Symbol is defined to be the last one
             env.Define(name.Identifier, value);
