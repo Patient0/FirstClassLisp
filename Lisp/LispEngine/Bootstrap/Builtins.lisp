@@ -1,7 +1,7 @@
 ﻿(define nil '())
 (define list (lambda x x))
-(define car (lambda ((x . y)) x))
-(define cdr (lambda ((x . y)) y))
+(define car (lambda ((a . b)) a))
+(define cdr (lambda ((c . d)) d))
 (define nil? (lambda (()) #t _ #f))
 (define pair? (lambda ((_ . _)) #t _ #f))
 ; Our let macro is like the one in arc - just
@@ -18,11 +18,14 @@
 	     (z z))))
 ; We could use the Y combinator here, but because we are defining
 ; 'length' using a define form, we can just recurse directly
+(define length-tail
+    (lambda (so-far ()) so-far
+            (so-far (x . y))
+                (length-tail (+ 1 so-far) y)))
 (define length
         ; Here, we make use of the "pattern matching" in lambda
-    (lambda
-        (()) 0
-        ((x . y)) (+ 1 (length y))))
+    (lambda (list)
+        (length-tail 0 list)))
 
 ; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
 ; Using the builtin pattern matching of our lambda primitive makes
@@ -43,3 +46,31 @@
 (define fold-right
     (lambda (op initial ()) initial
             (op initial (x . y)) (fold-right op (op x initial) y)))
+
+(define reverse-tail
+    (lambda (so-far ()) so-far
+            (so-far (x . y))
+                (reverse-tail (cons x so-far) y)))
+(define reverse
+    (lambda (l)
+        (reverse-tail '() l)))
+
+; Properly tail-recursive implementation of mapcar that
+; won't consume extra storage space
+(define mapcar-tail
+    (lambda (f result ()) result
+            (f result (h . t)) (mapcar-tail f (cons (f h) result) t)))
+(define mapcar
+    (lambda (f list)
+        (reverse (mapcar-tail f nil list))))
+
+(define map-tail
+    (lambda
+        (f so-far (() . rest))
+            so-far
+        (f so-far ll)
+            (map-tail f (cons (apply f (mapcar car ll)) so-far)
+                        (mapcar cdr ll))))
+(define map
+    (lambda (f . ll)
+        (reverse (map-tail f '() ll))))

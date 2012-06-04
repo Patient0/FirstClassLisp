@@ -81,3 +81,15 @@
     (fold-right + 10 '()))
 (foldrTest 25
     (fold-right + 10 '(1 2 3 4 5)))
+
+(mapCarSimplest ()
+    (mapcar (lambda (x) (* x x)) '()))
+(mapCarTest (1 4 9)
+    (mapcar (lambda (x) (* x x)) '(1 2 3)))
+
+(mapSquare (1 4 9)
+    (map (lambda (x) (* x x)) '(1 2 3)))
+(mapTest (4 10 18)
+    (map * '(1 2 3) '(4 5 6)))
+(mapThreeTest (28 80 162)
+ (map * '(1 2 3) '(4 5 6) '(7 8 9)))

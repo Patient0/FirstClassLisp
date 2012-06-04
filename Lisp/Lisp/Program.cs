@@ -21,10 +21,16 @@ namespace Lisp
             Console.Write("FCLisp> ");
             while((line = Console.ReadLine()) != null)
             {
-                var parsed = new Parser(Scanner.Create(line)).parse();
-                var result = evaluator.Evaluate(env, parsed);
-                Console.WriteLine("{0}", result);
-                Console.Write("FCLisp> ");
+                try
+                {
+                    var parsed = new Parser(Scanner.Create(line)).parse();
+                    var result = evaluator.Evaluate(env, parsed);
+                    Console.WriteLine("{0}", result);
+                    Console.Write("FCLisp> ");                    
+                } catch (Exception e)
+                {
+                    Console.Error.WriteLine("Error: {0}", e);
+                }
             }
         }
     }
