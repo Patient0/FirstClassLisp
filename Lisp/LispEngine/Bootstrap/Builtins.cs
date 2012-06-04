@@ -22,27 +22,10 @@ namespace LispEngine.Bootstrap
         {
             var evaluator = new Evaluator();
             env = Arithmetic.Extend(env).ToMutable();
+            env = env.Extend("append", Append.Instance);
             foreach (var d in ResourceLoader.ReadDatums("LispEngine.Bootstrap.Builtins.lisp"))
                 evaluator.Evaluate(env, d);
-            env = env.Extend("append", Append.Instance);
-            // For now, implement Quasiquote in C# - will translate
-            // into pure Lisp later hopefully.
-            env = env.Extend("quasiquote", Macro.ToMacro(new Quasiquote(env)));
-
             return env;
-            /*
-            var parsed = p.parse();
-
-            var b = new Builder(env);
-            b.add("list", "(lambda x x)");
-            b.add("car", "(lambda ((x . y)) x)");
-            b.add("cdr", "(lambda ((x . y)) y)");
-            b.add("nil?", "(lambda (()) #t _ #f)");
-            b.add("pair?", "(lambda ((_ . _)) #t _ #f)");
-            b.add("letdef", "(lambda (var value body) (list (list lambda (list var) body) value))");
-            b.add("let", "(macro letdef)");
-            return b.env;
-             */
         }
     }
 }

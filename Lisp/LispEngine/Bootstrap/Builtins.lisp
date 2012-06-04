@@ -24,13 +24,17 @@
         (()) 0
         ((x . y)) (+ 1 (length y))))
 
-; Now, let's implement simple quasiquote in terms of Lisp itself
+; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
+; Using the builtin pattern matching of our lambda primitive makes
+; this significantly simpler to implement.
 (define expand-quasiquote
     (lambda
+        (('unquote e))
+            e
+        ((('unquote-splicing x) . y))
+            (list append x (expand-quasiquote y))
         ((x . y))
-            (if
-                (eq? x 'unquote) (car y)
-                (list cons (expand-quasiquote x) (expand-quasiquote y)))
+            (list cons (expand-quasiquote x) (expand-quasiquote y))
         x
             (cons quote x)))
 (define quasiquote

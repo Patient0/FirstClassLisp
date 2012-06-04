@@ -9,6 +9,7 @@ namespace LispEngine.Bootstrap
 {
     // Implement in C# for now, until we've got it all figured out. Then
     // it can be implemented in Lisp
+    // EDIT: Now implemented entirely in Lisp - see Builtins.lisp
     class Quasiquote : DatumHelpers, Function
     {
         private readonly Datum consF;
