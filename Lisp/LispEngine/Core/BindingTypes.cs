@@ -10,10 +10,10 @@ namespace LispEngine.Core
 {
     class BindingTypes : DatumHelpers
     {
-        private sealed class Rest : Bindings
+        private sealed class Name : Bindings
         {
             private readonly string identifier;
-            public Rest(string identifier)
+            public Name(string identifier)
             {
                 this.identifier = identifier;
             }
@@ -29,17 +29,12 @@ namespace LispEngine.Core
             }
         }
 
-        private static Bindings rest(string identifier)
-        {
-            return new Rest(identifier);
-        }
-
-        private sealed class PairBindings : Bindings
+        private sealed class MatchPair : Bindings
         {
             private readonly Bindings first;
             private readonly Bindings second;
 
-            public PairBindings(Bindings first, Bindings second)
+            public MatchPair(Bindings first, Bindings second)
             {
                 this.first = first;
                 this.second = second;
@@ -59,17 +54,17 @@ namespace LispEngine.Core
             }
         }
 
-        private sealed class AtomBindings : Bindings
+        private sealed class MatchExact : Bindings
         {
-            private readonly Atom atom;
-            public AtomBindings(Atom atom)
+            private readonly Datum item;
+            public MatchExact(Datum item)
             {
-                this.atom = atom;
+                this.item = item;
             }
 
             public Environment apply(Environment to, Datum args)
             {
-                return atom.Equals(args) ? to : null;
+                return item.Equals(args) ? to : null;
             }
         }
 
@@ -87,24 +82,27 @@ namespace LispEngine.Core
             }
         }
 
-        private static Bindings pair(Bindings first, Bindings second)
-        {
-            return new PairBindings(first, second);
-        }
-
         public static Bindings parse(Datum args)
         {
             if (args == nil)
                 return EmptyBindings.Instance;
             var s = args as Symbol;
             if (s != null)
-                return rest(s.Identifier);
+                return new Name(s.Identifier);
             var p = args as Pair;
-            if(p != null)
-                return pair(parse(p.First), parse(p.Second));
+            if (p != null)
+            {
+                if (quote.Equals(p.First))
+                {
+                    var quoted = p.Second as Pair;
+                    if(quoted != null)
+                        return new MatchExact(quoted.First);
+                }
+                return new MatchPair(parse(p.First), parse(p.Second));
+            }
             var a = args as Atom;
             if(a != null)
-                return new AtomBindings(a);
+                return new MatchExact(a);
             throw error("'{0}' is not a valid argument list", args);
         }
     }

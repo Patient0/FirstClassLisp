@@ -35,7 +35,10 @@ namespace LispTests.Evaluation
         {
             get
             {
-                var tests = new[] {"EvaluatorTests.lisp", "QuasiquoteTests.lisp", "ArithmeticTests.lisp"};
+                var tests = new[] {"EvaluatorTests.lisp",
+                                    "PatternMatchingTests.lisp",
+                                    "QuasiquoteTests.lisp",
+                                    "ArithmeticTests.lisp"};
                 return tests.Select(loadTestCases).Aggregate(Enumerable.Concat);
             }
         }
