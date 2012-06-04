@@ -41,8 +41,8 @@
 (ifFalse? 5
 		(if #f undefined 5))
 ; Discovered quite late on that the if
-; F-expression wasn't actually evaluate either the
-; true or the false case!
+; F-expression wasn't actually evaluating either the
+; true or the false cases!
 (ifExpressionTrue 42 
         (if (eq? life 42) life 23))
 (ifExpressionFalse 42 
@@ -77,3 +77,7 @@
 (nil3 #f (nil? #f))
 (pair1 #t (pair? '(1 . 2)))
 (pair2 #f (pair? 5))
+(foldrSimplest 10
+    (fold-right + 10 '()))
+(foldrTest 25
+    (fold-right + 10 '(1 2 3 4 5)))

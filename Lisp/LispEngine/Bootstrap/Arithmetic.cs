@@ -9,27 +9,28 @@ namespace LispEngine.Bootstrap
 {
     class Arithmetic : DatumHelpers
     {
-        class Add : Function
-        {
-            public Datum Evaluate(Evaluator evaluator, Datum args)
-            {
-                return atom(enumerateInts(args).Aggregate(0, (x, y) => x + y));
-            }
-        }
+        private delegate int Op(int x, int y);
 
-        class Subtract : Function
+        class Operation : Function
         {
+            private readonly Op op;
+            public Operation(Op op)
+            {
+                this.op = op;
+            }
             public Datum Evaluate(Evaluator evaluator, Datum args)
             {
-                return atom(enumerateInts(args).Aggregate((x, y) => x - y));
-            }         
+                return atom(enumerateInts(args).Aggregate((x,y) => op(x,y)));
+            }
         }
 
         public static ImmutableEnvironment Extend(ImmutableEnvironment env)
         {
             return env
-                .Extend("+", new Add())
-                .Extend("-", new Subtract());
+                .Extend("+", new Operation((x, y) => x + y))
+                .Extend("-", new Operation((x, y) => x - y))
+                .Extend("*", new Operation((x, y) => x*y))
+                .Extend("/", new Operation((x, y) => x/y));
         }
     }
 }

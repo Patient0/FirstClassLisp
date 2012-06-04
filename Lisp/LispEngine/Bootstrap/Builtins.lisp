@@ -39,3 +39,7 @@
             (cons quote x)))
 (define quasiquote
     (macro expand-quasiquote))
+
+(define fold-right
+    (lambda (op initial ()) initial
+            (op initial (x . y)) (fold-right op (op x initial) y)))
