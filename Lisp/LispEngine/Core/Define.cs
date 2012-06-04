@@ -14,13 +14,22 @@ namespace LispEngine.Core
         public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
         {
             var argList = enumerate(args).ToArray();
-            if (argList.Length != 2)
-                throw error("Expected 2 arguments for define. Got {0}", argList.Length);
+            if (argList.Length < 2)
+                throw error("Expected at least 2 arguments for define. Got {0}", argList.Length);
             var name = argList[0] as Symbol;
             if (name == null)
                 throw error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
-            var value = evaluator.Evaluate(env, argList[1]);
+            Datum value = null;
+            for(var i = 1; i < argList.Length; ++i)
+            {
+                // Allow multiple statements inside a define. This allows
+                // use to define nested symbols without polluting global
+                // namespace.
+                value = evaluator.Evaluate(env, argList[i]);
+            }
+            // Symbol is defined to be the last one
             env.Define(name.Identifier, value);
+            // Have the whole expression also evaluate to the last value.
             return value;
         }
     }

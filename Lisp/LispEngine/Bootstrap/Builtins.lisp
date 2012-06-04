@@ -18,12 +18,12 @@
 	     (z z))))
 ; We could use the Y combinator here, but because we are defining
 ; 'length' using a define form, we can just recurse directly
-(define length-tail
-    (lambda (so-far ()) so-far
-            (so-far (x . y))
-                (length-tail (+ 1 so-far) y)))
 (define length
-        ; Here, we make use of the "pattern matching" in lambda
+    ; Here, we make use of the "pattern matching" in lambda
+    (define length-tail
+        (lambda (so-far ()) so-far
+                (so-far (x . y))
+                    (length-tail (+ 1 so-far) y)))
     (lambda (list)
         (length-tail 0 list)))
 
@@ -47,30 +47,30 @@
     (lambda (op initial ()) initial
             (op initial (x . y)) (fold-right op (op x initial) y)))
 
-(define reverse-tail
-    (lambda (so-far ()) so-far
-            (so-far (x . y))
-                (reverse-tail (cons x so-far) y)))
 (define reverse
+    (define reverse-tail
+        (lambda (so-far ()) so-far
+                (so-far (x . y))
+                    (reverse-tail (cons x so-far) y)))
     (lambda (l)
         (reverse-tail '() l)))
 
 ; Properly tail-recursive implementation of mapcar that
 ; won't consume extra storage space
-(define mapcar-tail
-    (lambda (f result ()) result
-            (f result (h . t)) (mapcar-tail f (cons (f h) result) t)))
 (define mapcar
+    (define mapcar-tail
+        (lambda (f result ()) result
+                (f result (h . t)) (mapcar-tail f (cons (f h) result) t)))
     (lambda (f list)
         (reverse (mapcar-tail f nil list))))
 
-(define map-tail
-    (lambda
-        (f so-far (() . rest))
-            so-far
-        (f so-far ll)
-            (map-tail f (cons (apply f (mapcar car ll)) so-far)
-                        (mapcar cdr ll))))
 (define map
+    (define map-tail
+        (lambda
+            (f so-far (() . rest))
+                so-far
+            (f so-far ll)
+                (map-tail f (cons (apply f (mapcar car ll)) so-far)
+                            (mapcar cdr ll))))
     (lambda (f . ll)
         (reverse (map-tail f '() ll))))
