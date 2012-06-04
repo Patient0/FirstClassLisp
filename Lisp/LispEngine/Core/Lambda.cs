@@ -46,7 +46,7 @@ namespace LispEngine.Core
                     if (closureEnv != null)
                         return evaluator.Evaluate(closureEnv, ab.body);
                 }
-                throw error("Could not bind '{0}' to '{1}'", args, argList());
+                throw error("Could not bind '{0}' to '{1}'", argList(), args);
             }
 
             private string argList()
