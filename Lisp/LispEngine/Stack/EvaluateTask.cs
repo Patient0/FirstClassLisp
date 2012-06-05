@@ -36,7 +36,7 @@ namespace LispEngine.Stack
             stack.PushResult(datum);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return string.Format("Evaluate '{0}'", datum);
         }

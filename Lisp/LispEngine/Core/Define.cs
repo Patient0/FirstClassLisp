@@ -75,13 +75,13 @@ namespace LispEngine.Core
 
             // Scope any local definitions.
             var localEnv = new Environment(env);
-            // Evaluate arguments in reverse - only the last one
-            // should apply.
-            for(var i = argList.Length - 1; i >= 1; --i)
+
+            var remaining = argList.Skip(1).Reverse().ToArray();
+            for (var i = 0; i < remaining.Length; ++i)
             {
-                if(i > 1)
+                if(i > 0)
                     evaluator.PushTask(Ignore.Instance);
-                evaluator.PushTask(new EvaluateTask(argList[i], localEnv));
+                evaluator.PushTask(new EvaluateTask(remaining[i], localEnv));
             }
         }
     }

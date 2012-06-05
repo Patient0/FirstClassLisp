@@ -19,11 +19,11 @@
 ; We could use the Y combinator here, but because we are defining
 ; 'length' using a define form, we can just recurse directly
 (define length
-    ; Here, we make use of the "pattern matching" in lambda
     (define length-tail
         (lambda (so-far ()) so-far
                 (so-far (x . y))
                     (length-tail (+ 1 so-far) y)))
+    ; Here, we make use of the "pattern matching" in lambda
     (lambda (list)
         (length-tail 0 list)))
 

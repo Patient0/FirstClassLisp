@@ -28,6 +28,11 @@ namespace LispEngine.Core
                 this.binding = BindingTypes.parse(argDatum);
                 this.body = body;
             }
+
+            public override string ToString()
+            {
+                return string.Format("{0} {1}", argDatum, body);
+            }
         }
 
         private sealed class Closure : Function
@@ -53,6 +58,11 @@ namespace LispEngine.Core
             private string argList()
             {
                 return string.Join(" or ", argBodies.Select(a => a.argDatum.ToString()));
+            }
+
+            public override string ToString()
+            {
+                return string.Format("(lambda {0})", string.Join(" ", argBodies.Select(x => x.ToString()).ToArray()));
             }
         }
 

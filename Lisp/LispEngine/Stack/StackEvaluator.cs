@@ -40,11 +40,19 @@ namespace LispEngine.Stack
         {
             var stack = new S();
             stack.PushTask(null);
+            stack.PushResult(null);
             stack.PushTask(new EvaluateTask(datum, env));
             Task next;
             while ((next = stack.PopTask()) != null)
                 next.Perform(stack);
-            return stack.PopResult();
+            
+            var result = stack.PopResult();
+            var additional = stack.PopResult();
+            if(additional != null)
+            {
+                throw new Exception(string.Format("Additional '{0}' on result stack", additional));
+            }
+            return result;
         }
     }
 }
