@@ -93,3 +93,5 @@
     (map * '(1 2 3) '(4 5 6)))
 (mapThreeTest (28 80 162)
  (map * '(1 2 3) '(4 5 6) '(7 8 9)))
+(mapQuasiQuoteTest (1 2 3 1 4 9 4 5 6)
+    `(1 2 3 ,@(map (lambda (x) (* x x)) '(1 2 3)) 4 5 6))
