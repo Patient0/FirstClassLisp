@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
+using LispEngine.Stack;
 using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
@@ -55,20 +56,30 @@ namespace LispEngine.Core
             }
         }
 
-        public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
+        private static Datum evaluate(Environment env, Datum args)
         {
             var macroArgs = enumerate(args).ToArray();
-            if(macroArgs.Length % 2 != 0)
+            if (macroArgs.Length % 2 != 0)
                 throw error("Invalid macro syntax for lambda. Argument count '{0}' is not even. Syntax is (lambda [args body]+)", macroArgs.Length);
 
             var argBodies = new List<ArgBody>();
-            for(var i = 0; i < macroArgs.Length; i += 2)
+            for (var i = 0; i < macroArgs.Length; i += 2)
             {
                 var closureArgs = macroArgs[i];
-                var body = macroArgs[i+1];
-                argBodies.Add(new ArgBody(closureArgs,body));
+                var body = macroArgs[i + 1];
+                argBodies.Add(new ArgBody(closureArgs, body));
             }
-            return new Closure(env, argBodies);
+            return new Closure(env, argBodies);            
+        }
+
+        public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
+        {
+            return evaluate(env, args);
+        }
+
+        public void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        {
+            evaluator.PushResult(evaluate(env, args));
         }
     }
 }

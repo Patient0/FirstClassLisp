@@ -6,7 +6,7 @@ using LispEngine.Datums;
 
 namespace LispEngine.Stack
 {
-    interface EvaluatorStack
+    public interface EvaluatorStack
     {
         void PushTask(Task task);
         Task PopTask();

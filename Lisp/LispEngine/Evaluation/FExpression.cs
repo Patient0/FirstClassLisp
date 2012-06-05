@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LispEngine.Datums;
+using LispEngine.Stack;
 
 namespace LispEngine.Evaluation
 {
@@ -14,8 +15,9 @@ namespace LispEngine.Evaluation
      * The "first-class" nature of our lisp interpreter relies on the fact
      * Pair.First in any compound expression implements FExpression
      */
-    interface FExpression : Datum
+    public interface FExpression : Datum
     {
         Datum Evaluate(Evaluator evaluator, Environment env, Datum args);
+        void Evaluate(EvaluatorStack evaluator, Environment env, Datum args);
     }
 }

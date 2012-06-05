@@ -6,6 +6,7 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
+using LispEngine.Stack;
 using LispEngine.Util;
 using Environment = LispEngine.Evaluation.Environment;
 
@@ -20,7 +21,7 @@ namespace LispEngine.Bootstrap
     {
         public static Environment AddTo(Environment env)
         {
-            var evaluator = new Evaluator();
+            var evaluator = new StackEvaluator();
             env = Arithmetic.Extend(env).ToMutable();
             env = env.Extend("append", Append.Instance);
             foreach (var d in ResourceLoader.ReadDatums("LispEngine.Bootstrap.Builtins.lisp"))

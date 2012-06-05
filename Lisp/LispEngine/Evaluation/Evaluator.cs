@@ -9,7 +9,7 @@ namespace LispEngine.Evaluation
 {
     public sealed class Evaluator : DatumHelpers
     {
-        private static FExpression toFExpression(Datum d)
+        public static FExpression toFExpression(Datum d)
         {
             var fexpr = d as FExpression;
             if (fexpr != null)

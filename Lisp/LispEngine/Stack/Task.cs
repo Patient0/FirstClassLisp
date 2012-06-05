@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LispEngine.Stack
 {
-    interface Task
+    public interface Task
     {
         void Perform(EvaluatorStack stack);
     }

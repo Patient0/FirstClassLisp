@@ -6,6 +6,7 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
+using LispEngine.Stack;
 using NUnit.Framework;
 using Environment = LispEngine.Evaluation.Environment;
 
@@ -14,7 +15,7 @@ namespace LispTests.Evaluation
     [TestFixture]
     class EvaluatorTest : DatumHelpers
     {
-        private Evaluator e;
+        private StackEvaluator e;
         private Environment env;
 
         private void test(string sexp, params Datum[] expected)
@@ -33,7 +34,7 @@ namespace LispTests.Evaluation
         [SetUp]
         public void setup()
         {
-            e = new Evaluator();
+            e = new StackEvaluator();
             env = StandardEnvironment.Create().Extend("life", atom(42));            
         }
 
