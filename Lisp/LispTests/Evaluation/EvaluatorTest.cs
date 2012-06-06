@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using LispEngine.Bootstrap;
 using LispEngine.Datums;
-using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
 using LispEngine.Stack;

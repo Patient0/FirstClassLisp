@@ -7,7 +7,7 @@
     (* 5 4))
 (divide 5
     (/ 20 4))
-; Test looping, Y-combinator
+; Test looping
 (length
     3
     (length '(2 4 6)))

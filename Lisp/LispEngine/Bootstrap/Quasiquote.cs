@@ -47,7 +47,7 @@ namespace LispEngine.Bootstrap
             return cons(quoteF, compound(arg));
         }
 
-        public Datum Evaluate(Evaluator evaluator, Datum args)
+        public Datum Evaluate(Datum args)
         {
             var argList = enumerate(args).ToArray();
             if (argList.Length != 1)

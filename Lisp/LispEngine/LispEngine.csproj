@@ -59,7 +59,6 @@
     <Compile Include="Datums\Symbol.cs" />
     <Compile Include="Core\Bindings.cs" />
     <Compile Include="Bootstrap\Builtins.cs" />
-    <Compile Include="Core\Closure.cs" />
     <Compile Include="Core\CoreForms.cs" />
     <Compile Include="Evaluation\EmptyEnvironment.cs" />
     <Compile Include="Evaluation\Environment.cs" />
@@ -70,6 +69,8 @@
     <Compile Include="Evaluation\FExpression.cs" />
     <Compile Include="Bootstrap\StandardEnvironment.cs" />
     <Compile Include="Evaluation\ImmutableEnvironment.cs" />
+    <Compile Include="Evaluation\StackFunction.cs" />
+    <Compile Include="Evaluation\StackFunctionAdapter.cs" />
     <Compile Include="Lexing\Token.cs" />
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\Scanner.cs" />

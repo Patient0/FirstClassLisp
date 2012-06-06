@@ -9,8 +9,8 @@ namespace LispEngine.Core
 {
     class Eq : DatumHelpers, Function
     {
-        public static readonly Function Instance = new Eq();
-        public Datum Evaluate(Evaluator evaluator, Datum args)
+        public static readonly StackFunction Instance = new Eq().ToStack();
+        public Datum Evaluate(Datum args)
         {
             var a = enumerate(args).ToArray();
             if (a.Length != 2)

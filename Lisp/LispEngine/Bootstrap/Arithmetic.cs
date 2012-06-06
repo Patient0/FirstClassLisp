@@ -18,19 +18,24 @@ namespace LispEngine.Bootstrap
             {
                 this.op = op;
             }
-            public Datum Evaluate(Evaluator evaluator, Datum args)
+            public Datum Evaluate(Datum args)
             {
                 return atom(enumerateInts(args).Aggregate((x,y) => op(x,y)));
             }
         }
 
+        private static StackFunction makeOperation(Op op)
+        {
+            return new Operation(op).ToStack();
+        }
+
         public static ImmutableEnvironment Extend(ImmutableEnvironment env)
         {
             return env
-                .Extend("+", new Operation((x, y) => x + y))
-                .Extend("-", new Operation((x, y) => x - y))
-                .Extend("*", new Operation((x, y) => x*y))
-                .Extend("/", new Operation((x, y) => x/y));
+                .Extend("+", makeOperation((x, y) => x + y))
+                .Extend("-", makeOperation((x, y) => x - y))
+                .Extend("*", makeOperation((x, y) => x * y))
+                .Extend("/", makeOperation((x, y) => x / y));
         }
     }
 }

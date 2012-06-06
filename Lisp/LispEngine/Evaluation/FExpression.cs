@@ -17,7 +17,6 @@ namespace LispEngine.Evaluation
      */
     public interface FExpression : Datum
     {
-        Datum Evaluate(Evaluator evaluator, Environment env, Datum args);
         void Evaluate(EvaluatorStack evaluator, Environment env, Datum args);
     }
 }

@@ -17,7 +17,7 @@ namespace LispEngine.Core
         {
         }
 
-        private class ArgBody
+        private sealed class ArgBody
         {
             public readonly Datum argDatum;
             public readonly Bindings binding;
@@ -35,7 +35,7 @@ namespace LispEngine.Core
             }
         }
 
-        private sealed class Closure : Function
+        private sealed class Closure : StackFunction
         {
             private readonly Environment env;
             private readonly IEnumerable<ArgBody> argBodies;
@@ -44,15 +44,10 @@ namespace LispEngine.Core
                 this.env = env;
                 this.argBodies = argBodies;
             }
-            public Datum Evaluate(Evaluator evaluator, Datum args)
+
+            Exception bindError(Datum args)
             {
-                foreach(var ab in argBodies)
-                {
-                    var closureEnv = ab.binding.apply(env, args);
-                    if (closureEnv != null)
-                        return evaluator.Evaluate(closureEnv, ab.body);
-                }
-                throw error("Could not bind '{0}' to '{1}'", argList(), args);
+                return error("Could not bind '{0}' to '{1}'", argList(), args);
             }
 
             private string argList()
@@ -63,6 +58,18 @@ namespace LispEngine.Core
             public override string ToString()
             {
                 return string.Format("(lambda {0})", string.Join(" ", argBodies.Select(x => x.ToString()).ToArray()));
+            }
+
+            public void Evaluate(EvaluatorStack s, Datum args)
+            {
+                foreach (var ab in argBodies)
+                {
+                    var closureEnv = ab.binding.apply(env, args);
+                    if (closureEnv == null) continue;
+                    s.Evaluate(closureEnv, ab.body);
+                    return;
+                }
+                throw bindError(args);
             }
         }
 

@@ -4,26 +4,27 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
+using LispEngine.Stack;
 
 namespace LispEngine.Core
 {
-    class Apply : DatumHelpers, Function
+    class Apply : DatumHelpers, StackFunction
     {
-        public static readonly Function Instance = new Apply();
+        public static readonly StackFunction Instance = new Apply();
 
         private Apply()
         {
         }
 
-        public Datum Evaluate(Evaluator evaluator, Datum args)
+        public void Evaluate(EvaluatorStack s, Datum args)
         {
             var datumArgs = enumerate(args).ToArray();
             if (datumArgs.Length != 2)
                 throw new Exception(string.Format("Apply expects 2 arguments. {0} passed", datumArgs.Length));
-            var function = datumArgs[0] as Function;
+            var function = datumArgs[0] as StackFunction;
             if (function == null)
                 throw new Exception(string.Format("'{0}' is not a function", datumArgs[0]));
-            return function.Evaluate(evaluator, datumArgs[1]);
+            function.Evaluate(s, datumArgs[1]);
         }
     }
 }

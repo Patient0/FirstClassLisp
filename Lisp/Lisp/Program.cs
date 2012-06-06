@@ -6,6 +6,7 @@ using LispEngine.Bootstrap;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
+using LispEngine.Stack;
 
 namespace Lisp
 {
@@ -16,7 +17,7 @@ namespace Lisp
             // Really simple REPL
             var env = StandardEnvironment.Create();
             string line;
-            var evaluator = new Evaluator();
+            var evaluator = new StackEvaluator();
             Console.WriteLine("First Class Lisp. Ctrl-Z + Enter to exit.");
             Console.Write("FCLisp> ");
             while((line = Console.ReadLine()) != null)

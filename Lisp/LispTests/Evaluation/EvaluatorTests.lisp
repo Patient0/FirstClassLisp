@@ -94,3 +94,14 @@
 (mapThreeTest (28 80 162)
  (map * '(1 2 3) '(4 5 6) '(7 8 9)))
 
+; Using the implicit stack for evaluation here would
+; lead to stack overflow. But because this code is
+; properly tail recursive and we are using an explicit
+; stack without too much extra debugging, this test passes
+(properTailRecursion
+    500500
+    (define sum-to-1000
+        (define total
+            (lambda (so-far 0) so-far
+                    (so-far x) (total (+ so-far x) (- x 1))))
+        (total 0 1000)))

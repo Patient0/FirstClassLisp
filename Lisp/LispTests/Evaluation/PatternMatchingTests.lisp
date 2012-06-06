@@ -1,16 +1,15 @@
-﻿; Our lambda macro actually does full "pattern" matching
-; on all of its arguments - this was actually 
-; almost as simple to
-; implement as the standard, which is a subset.
-; If then allowed multiple alternative argument lists
-; we could then support pattern matching.
+﻿; Our lambda f-expression does full "pattern" matching
+; on all of its arguments. If you already have to implement
+; the standard cases (lambda x lambda (x . y) lambda (x y . z))
+; then implementing full recursive pattern matching is not
+; really any more difficult, and makes for substantially
+; simpler code everywhere else.
 (patternMatch1 6
 		((lambda (a (b c)) c) 4 (list 5 6)))
 (patternMatch2 6
 		((lambda ((a b) c) b) (list 5 6) 4))
 (patternMatch3 5
 		((lambda (((a))) a) (list (list 5))))
-; It was easy to implement pattern matching as a builtin for lambda from the start)
 (caseLambdaPair #t
 		((lambda ((x . y)) #t x #f) (list 3 4)))
 (caseLambdaPairWithAtom #f

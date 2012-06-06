@@ -13,52 +13,57 @@ namespace LispEngine.Core
      * Turns a function into something that
      * can be used as a macro.
      */
-    class Macro : DatumHelpers, Function
+    internal class Macro : DatumHelpers, Function
     {
-        public static readonly Function Instance = new Macro();
-        class MacroClosure : FExpression
-        {
-            private readonly Function argFunction;
+        public static readonly StackFunction Instance = new Macro().ToStack();
 
-            public MacroClosure(Function argFunction)
+        private sealed class EvaluateExpansion : Task
+        {
+            private readonly Environment env;
+
+            public EvaluateExpansion(Environment env)
+            {
+                this.env = env;
+            }
+
+            public void Perform(EvaluatorStack stack)
+            {
+                var expansion = stack.PopResult();
+                stack.Evaluate(env, expansion);
+            }
+        }
+
+        private class MacroClosure : FExpression
+        {
+            private readonly StackFunction argFunction;
+
+            public MacroClosure(StackFunction argFunction)
             {
                 this.argFunction = argFunction;
             }
 
-            public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
-            {
-                var expansion = argFunction.Evaluate(evaluator, args);
-                return evaluator.Evaluate(env, expansion);
-            }
-
             public void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
             {
-                // TODO: Functions to be evaluated using non-implicit stack
-                var expansion = argFunction.Evaluate(new Evaluator(), args);
-                evaluator.PushTask(new EvaluateTask(expansion, env));
+                evaluator.PushTask(new EvaluateExpansion(env));
+                argFunction.Evaluate(evaluator, args);
             }
         }
 
-        public static FExpression ToMacro(Function function)
+        public static FExpression ToMacro(StackFunction function)
         {
             return new MacroClosure(function);
         }
 
-        private static Datum evaluate(Datum args)
+        public Datum Evaluate(Datum args)
         {
             var a = enumerate(args).ToArray();
             if (a.Length != 1)
                 // TODO: Move this error boiler plate into DatumHelpers
                 throw error("Incorrect arguments. Expected {0}, got {1}", 1, a.Length);
-            var function = a[0] as Function;
+            var function = a[0] as StackFunction;
             if (function == null)
                 throw error("Expected function argument");
-            return ToMacro(function);            
-        }
-
-        public Datum Evaluate(Evaluator evaluator, Datum args)
-        {
-            return evaluate(args);
+            return ToMacro(function);
         }
     }
 }

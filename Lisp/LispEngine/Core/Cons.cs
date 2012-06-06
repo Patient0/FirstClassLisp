@@ -9,8 +9,8 @@ namespace LispEngine.Core
 {
     class Cons : DatumHelpers, Function
     {
-        public static readonly Cons Instance = new Cons();
-        public Datum Evaluate(Evaluator evaluator, Datum args)
+        public static readonly StackFunction Instance = new Cons().ToStack();
+        public Datum Evaluate(Datum args)
         {
             var argDatums = enumerate(args).ToArray();
             if(argDatums.Length != 2)

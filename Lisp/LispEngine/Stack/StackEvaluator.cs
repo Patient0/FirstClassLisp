@@ -41,7 +41,7 @@ namespace LispEngine.Stack
             var stack = new S();
             stack.PushTask(null);
             stack.PushResult(null);
-            stack.PushTask(new EvaluateTask(datum, env));
+            stack.Evaluate(env, datum);
             Task next;
             while ((next = stack.PopTask()) != null)
                 next.Perform(stack);

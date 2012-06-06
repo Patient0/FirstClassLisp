@@ -8,13 +8,13 @@ namespace LispEngine.Stack
 {
     class EvaluateTask : Task
     {
-        private readonly Datum datum;
         private readonly Environment env;
+        private readonly Datum datum;
 
-        public EvaluateTask(Datum datum, Environment env)
+        public EvaluateTask(Environment env, Datum datum)
         {
-            this.datum = datum;
             this.env = env;
+            this.datum = datum;
         }
 
         public void Perform(EvaluatorStack stack)
@@ -29,7 +29,7 @@ namespace LispEngine.Stack
             if (c != null)
             {
                 stack.PushTask(new EvaluateFExpression(c.Second, env));
-                stack.PushTask(new EvaluateTask(c.First, env));
+                stack.Evaluate(env, c.First);
                 return;
             }
             // Anything else just evaluates to itself
