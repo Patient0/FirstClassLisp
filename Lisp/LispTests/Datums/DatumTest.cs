@@ -84,5 +84,20 @@ namespace LispTests.Datums
         {
             check(",@3", compound(unquoteSplicing, atom(3)));
         }
+
+
+        [Test]
+        public void testDatumEnumerate()
+        {
+            var five = atom("5");
+            var listfive = compound(five);
+            var l = enumerate(listfive);
+            Assert.AreEqual(1, l.Count());
+
+            var listfivefive = compound(five, five);
+            l = enumerate(listfivefive);
+            Assert.AreEqual(2, l.Count());
+        }
+
     }
 }

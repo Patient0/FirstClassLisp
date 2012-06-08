@@ -42,8 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Datums\DatumTest.cs" />
-    <Compile Include="Evaluation\EvaluatorTest.cs" />
-    <Compile Include="Evaluation\EvaluatorTestCases.cs" />
+    <Compile Include="Evaluation\EvaluatorTests.cs" />
     <Compile Include="Parsing\Lexing\ScannerTest.cs" />
     <Compile Include="Parsing\ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
