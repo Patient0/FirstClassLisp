@@ -17,23 +17,19 @@ namespace LispEngine.Stack
             this.datum = datum;
         }
 
-        public void Perform(EvaluatorStack stack)
+        public Continuation Perform(Continuation c)
         {
             var s = datum as Symbol;
             if (s != null)
+                return c.PushResult(env.Lookup(s.Identifier));
+            var p = datum as Pair;
+            if (p != null)
             {
-                stack.PushResult(env.Lookup(s.Identifier));
-                return;
-            }
-            var c = datum as Pair;
-            if (c != null)
-            {
-                stack.PushTask(new EvaluateFExpression(c.Second, env));
-                stack.Evaluate(env, c.First);
-                return;
+                c = c.PushTask(new EvaluateFExpression(p.Second, env));
+                return c.Evaluate(env, p.First);
             }
             // Anything else just evaluates to itself
-            stack.PushResult(datum);
+            return c.PushResult(datum);
         }
 
         public override string ToString()

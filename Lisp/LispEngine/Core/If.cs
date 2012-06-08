@@ -25,36 +25,31 @@ namespace LispEngine.Core
                 this.clauses = clauses;
             }
 
-            public void Perform(EvaluatorStack stack)
+            public Continuation Perform(Continuation c)
             {
-                var result = stack.PopResult();
+                var result = c.Result;
+                c = c.PopResult();
                 if(DatumHelpers.atom(true).Equals(result))
-                {
-                    stack.Evaluate(env, clauses[clause+1]);
-                    return;
-                }
+                    return c.Evaluate(env, clauses[clause+1]);
                 var nextClause = clause + 2;
                 // Result is false. If this was the last clause, then evaluate the default clause.
                 if(nextClause >= clauses.Count)
                 {
                     var defaultClause = clauses[clauses.Count - 1];
-                    stack.Evaluate(env, defaultClause);
-                } 
-                else
-                {
-                    // Result was false but there are more clauses.
-                    // Check the result of the next clause.
-                    stack.PushTask(new CheckResult(env, nextClause, clauses));
-                    stack.Evaluate(env, clauses[nextClause]);
+                    return c.Evaluate(env, defaultClause);
                 }
+                // Result was false but there are more clauses.
+                // Check the result of the next clause.
+                c = c.PushTask(new CheckResult(env, nextClause, clauses));
+                return c.Evaluate(env, clauses[nextClause]);
             }
         }
 
-        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var clauses = DatumHelpers.enumerate(args).ToArray();
-            evaluator.PushTask(new CheckResult(env, 0, clauses));
-            evaluator.Evaluate(env, clauses[0]);
+            c = c.PushTask(new CheckResult(env, 0, clauses));
+            return c.Evaluate(env, clauses[0]);
         }
     }
 }

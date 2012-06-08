@@ -21,9 +21,9 @@ namespace LispEngine.Core
             return argList[0];            
         }
 
-        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation evaluator, Environment env, Datum args)
         {
-            evaluator.PushResult(evaluate(args));
+            return evaluator.PushResult(evaluate(args));
         }
     }
 }

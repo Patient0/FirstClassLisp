@@ -7,6 +7,6 @@ namespace LispEngine.Stack
 {
     public interface Task
     {
-        void Perform(EvaluatorStack stack);
+        Continuation Perform(Continuation c);
     }
 }

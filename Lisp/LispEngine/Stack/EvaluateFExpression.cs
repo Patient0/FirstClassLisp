@@ -34,15 +34,6 @@ namespace LispEngine.Stack
         private static FExpression toFExpression(Datum d)
         {
             return d.accept(FExpressionConverter.Instance);
-            /*
-            var fexpr = d as FExpression;
-            if (fexpr != null)
-                return fexpr;
-            var function = d as StackFunction;
-            if (function != null)
-                return new FunctionExpression(function);
-            throw DatumHelpers.error("'{0}' is not callable", d);
-            */
         }
 
         public EvaluateFExpression(Datum args, Environment env)
@@ -51,10 +42,10 @@ namespace LispEngine.Stack
             this.env = env;
         }
 
-        public void Perform(EvaluatorStack stack)
+        public Continuation Perform(Continuation c)
         {
-            var fexpression = toFExpression(stack.PopResult());
-            fexpression.Evaluate(stack, env, args);
+            var fexpression = toFExpression(c.Result);
+            return fexpression.Evaluate(c.PopResult(), env, args);
         }
     }
 }

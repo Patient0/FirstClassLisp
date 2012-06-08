@@ -27,21 +27,23 @@ namespace LispEngine.Core
                 this.argCount = argCount;
             }
 
-            public void Perform(EvaluatorStack stack)
+            public Continuation Perform(Continuation c)
             {
                 var args = new Datum[argCount];
-                for(var i = 0; i < argCount; ++i)
-                   args[i] = stack.PopResult();
-                function.Evaluate(stack, DatumHelpers.compound(args));
+                for (var i = 0; i < argCount; ++i)
+                {
+                    args[i] = c.Result;
+                    c = c.PopResult();
+                }
+                return function.Evaluate(c, DatumHelpers.compound(args));
             }
         }
 
-        public override void Evaluate(EvaluatorStack stack, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var argArray = DatumHelpers.enumerate(args).ToArray();
-            stack.PushTask(new InvokeFunction(function, argArray.Length));
-            foreach (var arg in argArray)
-                stack.Evaluate(env, arg);
+            c = c.PushTask(new InvokeFunction(function, argArray.Length));
+            return argArray.Aggregate(c, (current, arg) => current.Evaluate(env, arg));
         }
     }
 }

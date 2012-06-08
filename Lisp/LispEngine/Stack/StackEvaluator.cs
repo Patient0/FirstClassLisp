@@ -1,57 +1,69 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using LispEngine.Datums;
-using LispEngine.Evaluation;
 using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Stack
 {
     public class StackEvaluator
     {
-        private class S : EvaluatorStack
+        // TODO: Make this immutable. Then we can save/resume continuations
+        private class S : Continuation
         {
             private readonly Stack<Task> tasks = new Stack<Task>();
             private readonly Stack<Datum> results = new Stack<Datum>();
 
-            public void PushTask(Task task)
+            public Continuation PushTask(Task task)
             {
                 tasks.Push(task);
+                return this;
             }
 
-            public Task PopTask()
+            public Task Task
             {
-                return tasks.Pop();
+                get { return tasks.Peek(); }
             }
 
-            public void PushResult(Datum d)
+            public Datum Result
+            {
+                get { return results.Peek(); }
+            }
+
+            public Continuation PopTask()
+            {
+                tasks.Pop();
+                return this;
+            }
+
+            public Continuation PushResult(Datum d)
             {
                 results.Push(d);
+                return this;
             }
 
-            public Datum PopResult()
+            public Continuation PopResult()
             {
-                return results.Pop();
+                results.Pop();
+                return this;
             }
         }
 
         public Datum Evaluate(Environment env, Datum datum)
         {
-            var stack = new S();
-            stack.PushTask(null);
-            stack.PushResult(null);
-            stack.Evaluate(env, datum);
-            Task next;
-            while ((next = stack.PopTask()) != null)
-                next.Perform(stack);
-            
-            var result = stack.PopResult();
-            var additional = stack.PopResult();
-            if(additional != null)
+            Continuation c = new S();
+            c = c.PushTask(null);
+            c = c.PushResult(null);
+            c = c.Evaluate(env, datum);
+            while(c.Task != null)
             {
-                throw new Exception(string.Format("Additional '{0}' on result stack", additional));
+                var task = c.Task;
+                c = task.Perform(c.PopTask());
             }
+            c = c.PopTask();
+            var result = c.Result;
+            c = c.PopResult();
+            if(c.Result != null)
+                throw new Exception(string.Format("Additional '{0}' on result stack", c.Result));
             return result;
         }
     }

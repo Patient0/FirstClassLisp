@@ -82,7 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stack\EvaluateFExpression.cs" />
     <Compile Include="Stack\EvaluateTask.cs" />
-    <Compile Include="Stack\EvaluatorStack.cs" />
+    <Compile Include="Stack\Continuation.cs" />
     <Compile Include="Stack\StackEvaluator.cs" />
     <Compile Include="Stack\Task.cs" />
     <Compile Include="Util\ResourceLoader.cs" />

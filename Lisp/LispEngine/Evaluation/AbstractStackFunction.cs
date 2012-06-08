@@ -14,6 +14,6 @@ namespace LispEngine.Evaluation
             return visitor.visit(this);
         }
 
-        public abstract void Evaluate(EvaluatorStack s, Datum args);
+        public abstract Continuation Evaluate(Continuation c, Datum args);
     }
 }

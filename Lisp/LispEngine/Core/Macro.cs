@@ -26,10 +26,11 @@ namespace LispEngine.Core
                 this.env = env;
             }
 
-            public void Perform(EvaluatorStack stack)
+            public Continuation Perform(Continuation c)
             {
-                var expansion = stack.PopResult();
-                stack.Evaluate(env, expansion);
+                var expansion = c.Result;
+                c = c.PopResult();
+                return c.Evaluate(env, expansion);
             }
         }
 
@@ -42,10 +43,10 @@ namespace LispEngine.Core
                 this.argFunction = argFunction;
             }
 
-            public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+            public override Continuation Evaluate(Continuation c, Environment env, Datum args)
             {
-                evaluator.PushTask(new EvaluateExpansion(env));
-                argFunction.Evaluate(evaluator, args);
+                c = c.PushTask(new EvaluateExpansion(env));
+                return argFunction.Evaluate(c, args);
             }
         }
 

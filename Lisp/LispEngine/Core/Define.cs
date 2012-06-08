@@ -23,24 +23,23 @@ namespace LispEngine.Core
                 this.name = name;
             }
 
-            public void Perform(EvaluatorStack stack)
+            public Continuation Perform(Continuation c)
             {
-                var result = stack.PopResult();
-                env.Define(name, result);
-                stack.PushResult(result);
+                env.Define(name, c.Result);
+                return c;
             }
         }
 
         class Ignore : Task
         {
             public static readonly Task Instance = new Ignore();
-            public void Perform(EvaluatorStack stack)
+            public Continuation Perform(Continuation c)
             {
-                stack.PopResult();
+                return c.PopResult();
             }
         }
 
-        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var argList = DatumHelpers.enumerate(args).ToArray();
             if (argList.Length < 2)
@@ -48,7 +47,7 @@ namespace LispEngine.Core
             var name = argList[0] as Symbol;
             if (name == null)
                 throw DatumHelpers.error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
-            evaluator.PushTask(new DefineName(env, name.Identifier));
+            c = c.PushTask(new DefineName(env, name.Identifier));
 
             // Scope any local definitions.
             var localEnv = new Environment(env);
@@ -57,9 +56,10 @@ namespace LispEngine.Core
             for (var i = 0; i < remaining.Length; ++i)
             {
                 if(i > 0)
-                    evaluator.PushTask(Ignore.Instance);
-                evaluator.Evaluate(localEnv, remaining[i]);
+                    c = c.PushTask(Ignore.Instance);
+                c = c.Evaluate(localEnv, remaining[i]);
             }
+            return c;
         }
     }
 }

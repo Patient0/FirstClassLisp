@@ -16,7 +16,7 @@ namespace LispEngine.Core
         {
         }
 
-        public override void Evaluate(EvaluatorStack s, Datum args)
+        public override Continuation Evaluate(Continuation c, Datum args)
         {
             var datumArgs = DatumHelpers.enumerate(args).ToArray();
             if (datumArgs.Length != 2)
@@ -24,7 +24,7 @@ namespace LispEngine.Core
             var function = datumArgs[0] as StackFunction;
             if (function == null)
                 throw new Exception(string.Format("'{0}' is not a function", datumArgs[0]));
-            function.Evaluate(s, datumArgs[1]);
+            return function.Evaluate(c, datumArgs[1]);
         }
     }
 }

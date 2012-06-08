@@ -15,9 +15,9 @@ namespace LispEngine.Evaluation
             this.function = function;
         }
 
-        public override void Evaluate(EvaluatorStack s, Datum args)
+        public override Continuation Evaluate(Continuation s, Datum args)
         {
-            s.PushResult(function.Evaluate(args));
+            return s.PushResult(function.Evaluate(args));
         }
     }
 

@@ -60,14 +60,13 @@ namespace LispEngine.Core
                 return string.Format("(lambda {0})", string.Join(" ", argBodies.Select(x => x.ToString()).ToArray()));
             }
 
-            public override void Evaluate(EvaluatorStack s, Datum args)
+            public override Continuation Evaluate(Continuation c, Datum args)
             {
                 foreach (var ab in argBodies)
                 {
                     var closureEnv = ab.binding(env, args);
                     if (closureEnv == null) continue;
-                    s.Evaluate(closureEnv, ab.body);
-                    return;
+                    return c.Evaluate(closureEnv, ab.body);
                 }
                 throw bindError(args);
             }
@@ -89,9 +88,9 @@ namespace LispEngine.Core
             return new Closure(env, argBodies);            
         }
 
-        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
-            evaluator.PushResult(evaluate(env, args));
+            return c.PushResult(evaluate(env, args));
         }
     }
 }

@@ -13,10 +13,11 @@ namespace LispEngine.Evaluation
      * a) Choose to evaluate which (if any) of the input arguments it likes.
      * b) Choose to evaluate the result
      * The "first-class" nature of our lisp interpreter relies on the fact
-     * Pair.First in any compound expression implements FExpression
+     * Pair.First in any compound expression implements (or can be made to implement)
+     * FExpression
      */
     public interface FExpression : Datum
     {
-        void Evaluate(EvaluatorStack evaluator, Environment env, Datum args);
+        Continuation Evaluate(Continuation c, Environment env, Datum args);
     }
 }

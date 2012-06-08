@@ -9,6 +9,6 @@ namespace LispEngine.Evaluation
 {
     public interface StackFunction : Datum
     {
-        void Evaluate(EvaluatorStack s, Datum args);
+        Continuation Evaluate(Continuation s, Datum args);
     }
 }
