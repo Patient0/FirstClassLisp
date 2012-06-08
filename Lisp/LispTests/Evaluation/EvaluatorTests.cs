@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using LispEngine.Bootstrap;
 using LispEngine.Datums;
+using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
-using LispEngine.Stack;
 using LispEngine.Util;
 using NUnit.Framework;
 using Environment = LispEngine.Evaluation.Environment;
@@ -16,6 +16,7 @@ namespace LispTests.Evaluation
     [TestFixture("PatternMatchingTests.lisp")]
     [TestFixture("QuasiquoteTests.lisp")]
     [TestFixture("ArithmeticTests.lisp")]
+    [TestFixture("CallCCTests.lisp")]
     class EvaluatorTests : DatumHelpers
     {
         private readonly string lispResourceFile;

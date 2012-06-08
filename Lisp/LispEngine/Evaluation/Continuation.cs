@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LispEngine.Datums;
-using LispEngine.Evaluation;
+﻿using LispEngine.Datums;
 
-namespace LispEngine.Stack
+namespace LispEngine.Evaluation
 {
     public interface Continuation
     {
@@ -18,7 +14,7 @@ namespace LispEngine.Stack
         Datum Result { get; }
     }
 
-    static class Extensions
+    static class ContinuationExtensions
     {
         public static Continuation Evaluate(this Continuation s, Environment e, Datum expression)
         {

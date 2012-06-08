@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LispEngine.Datums;
-using LispEngine.Evaluation;
+﻿using LispEngine.Datums;
 
-namespace LispEngine.Stack
+namespace LispEngine.Evaluation
 {
     class EvaluateTask : Task
     {

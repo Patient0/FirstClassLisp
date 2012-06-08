@@ -6,7 +6,6 @@ using LispEngine.Bootstrap;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
-using LispEngine.Stack;
 
 namespace Lisp
 {

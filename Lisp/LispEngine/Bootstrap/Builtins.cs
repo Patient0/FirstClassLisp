@@ -6,7 +6,6 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
-using LispEngine.Stack;
 using LispEngine.Util;
 using Environment = LispEngine.Evaluation.Environment;
 

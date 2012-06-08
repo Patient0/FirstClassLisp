@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using LispEngine.Core;
+﻿using LispEngine.Core;
 using LispEngine.Datums;
-using LispEngine.Evaluation;
 
-namespace LispEngine.Stack
+namespace LispEngine.Evaluation
 {
     class EvaluateFExpression : Task
     {

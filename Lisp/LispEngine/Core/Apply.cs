@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using LispEngine.Stack;
 
 namespace LispEngine.Core
 {

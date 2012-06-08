@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LispEngine.Datums;
-using LispEngine.Stack;
 
 namespace LispEngine.Evaluation
 {
