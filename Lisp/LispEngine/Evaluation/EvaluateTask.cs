@@ -13,19 +13,34 @@ namespace LispEngine.Evaluation
             this.datum = datum;
         }
 
+        class Visitor : AbstractVisitor<Continuation>
+        {
+            private readonly Environment env;
+            private readonly Continuation c;
+            public Visitor(Continuation c, Environment env)
+            {
+                this.c = c;
+                this.env = env;
+            }
+            public override Continuation visit(Pair p)
+            {
+                return c
+                    .PushTask(new EvaluateFExpression(p.Second, env))
+                    .Evaluate(env, p.First);
+            }
+            public override Continuation visit(Symbol s)
+            {
+                return c.PushResult(env.Lookup(s.Identifier));
+            }
+            public override Continuation defaultCase(Datum d)
+            {
+                return c.PushResult(d);
+            }
+        }
+
         public Continuation Perform(Continuation c)
         {
-            var s = datum as Symbol;
-            if (s != null)
-                return c.PushResult(env.Lookup(s.Identifier));
-            var p = datum as Pair;
-            if (p != null)
-            {
-                c = c.PushTask(new EvaluateFExpression(p.Second, env));
-                return c.Evaluate(env, p.First);
-            }
-            // Anything else just evaluates to itself
-            return c.PushResult(datum);
+            return datum.accept(new Visitor(c, env));
         }
 
         public override string ToString()

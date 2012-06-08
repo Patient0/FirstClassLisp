@@ -15,7 +15,7 @@ namespace LispEngine.Evaluation
                 return f;
             }
 
-            public override FExpression fail(Datum d)
+            public override FExpression defaultCase(Datum d)
             {
                 throw DatumHelpers.error("'{0}' is not callable", d);
             }

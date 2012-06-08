@@ -27,7 +27,7 @@ namespace LispEngine.Core
 
         class Visitor : AbstractVisitor<Bindings>
         {
-            public override Bindings fail(Datum d)
+            public override Bindings defaultCase(Datum d)
             {
                 throw error("'{0}' is not a valid argument list", d);
             }
