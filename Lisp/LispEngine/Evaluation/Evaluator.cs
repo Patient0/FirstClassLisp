@@ -4,20 +4,16 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    public class StackEvaluator
+    public class Evaluator
     {
-
         public Datum Evaluate(Environment env, Datum datum)
         {
-            Continuation c = StackContinuation.Empty;
-            c = c.PushTask(null);
-            c = c.PushResult(null);
-            c = c.Evaluate(env, datum);
+            var c = StackContinuation.Empty
+                .PushTask(null)
+                .PushResult(null)
+                .Evaluate(env, datum);
             while(c.Task != null)
-            {
-                var task = c.Task;
-                c = task.Perform(c.PopTask());
-            }
+                c = c.Task.Perform(c.PopTask());
             c = c.PopTask();
             var result = c.Result;
             c = c.PopResult();

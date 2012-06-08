@@ -20,7 +20,7 @@ namespace LispEngine.Bootstrap
     {
         public static Environment AddTo(Environment env)
         {
-            var evaluator = new StackEvaluator();
+            var evaluator = new Evaluator();
             env = Arithmetic.Extend(env).ToMutable();
             env = env.Extend("append", Append.Instance);
             foreach (var d in ResourceLoader.ReadDatums("LispEngine.Bootstrap.Builtins.lisp"))

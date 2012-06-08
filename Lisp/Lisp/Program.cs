@@ -16,7 +16,7 @@ namespace Lisp
             // Really simple REPL
             var env = StandardEnvironment.Create();
             string line;
-            var evaluator = new StackEvaluator();
+            var evaluator = new Evaluator();
             Console.WriteLine("First Class Lisp. Ctrl-Z + Enter to exit.");
             Console.Write("FCLisp> ");
             while((line = Console.ReadLine()) != null)

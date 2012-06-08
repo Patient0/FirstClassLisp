@@ -20,7 +20,7 @@ namespace LispTests.Evaluation
     class EvaluatorTests : DatumHelpers
     {
         private readonly string lispResourceFile;
-        private StackEvaluator e;
+        private Evaluator e;
         private Environment env;
 
         public EvaluatorTests(string lispResourceFile)
@@ -31,7 +31,7 @@ namespace LispTests.Evaluation
         [SetUp]
         public void setup()
         {
-            e = new StackEvaluator();
+            e = new Evaluator();
             env = StandardEnvironment.Create().Extend("life", atom(42));            
         }
 

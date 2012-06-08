@@ -87,7 +87,7 @@
     <Compile Include="Evaluation\EvaluateTask.cs" />
     <Compile Include="Evaluation\Continuation.cs" />
     <Compile Include="Evaluation\IStack.cs" />
-    <Compile Include="Evaluation\StackEvaluator.cs" />
+    <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Evaluation\Task.cs" />
     <Compile Include="Util\ResourceLoader.cs" />
   </ItemGroup>
