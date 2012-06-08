@@ -8,7 +8,7 @@ using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
-    class FunctionExpression : DatumHelpers, FExpression
+    class FunctionExpression : AbstractFExpression
     {
         private readonly StackFunction function;
 
@@ -32,13 +32,13 @@ namespace LispEngine.Core
                 var args = new Datum[argCount];
                 for(var i = 0; i < argCount; ++i)
                    args[i] = stack.PopResult();
-                function.Evaluate(stack, compound(args));
+                function.Evaluate(stack, DatumHelpers.compound(args));
             }
         }
 
-        public void Evaluate(EvaluatorStack stack, Environment env, Datum args)
+        public override void Evaluate(EvaluatorStack stack, Environment env, Datum args)
         {
-            var argArray = enumerate(args).ToArray();
+            var argArray = DatumHelpers.enumerate(args).ToArray();
             stack.PushTask(new InvokeFunction(function, argArray.Length));
             foreach (var arg in argArray)
                 stack.Evaluate(env, arg);

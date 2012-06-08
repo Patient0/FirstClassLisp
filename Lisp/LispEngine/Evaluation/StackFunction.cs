@@ -7,7 +7,7 @@ using LispEngine.Stack;
 
 namespace LispEngine.Evaluation
 {
-    interface StackFunction : Datum
+    public interface StackFunction : Datum
     {
         void Evaluate(EvaluatorStack s, Datum args);
     }

@@ -8,7 +8,7 @@ using LispEngine.Stack;
 
 namespace LispEngine.Core
 {
-    class Apply : DatumHelpers, StackFunction
+    class Apply : AbstractStackFunction
     {
         public static readonly StackFunction Instance = new Apply();
 
@@ -16,9 +16,9 @@ namespace LispEngine.Core
         {
         }
 
-        public void Evaluate(EvaluatorStack s, Datum args)
+        public override void Evaluate(EvaluatorStack s, Datum args)
         {
-            var datumArgs = enumerate(args).ToArray();
+            var datumArgs = DatumHelpers.enumerate(args).ToArray();
             if (datumArgs.Length != 2)
                 throw new Exception(string.Format("Apply expects 2 arguments. {0} passed", datumArgs.Length));
             var function = datumArgs[0] as StackFunction;

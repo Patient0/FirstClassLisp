@@ -33,7 +33,7 @@ namespace LispEngine.Core
             }
         }
 
-        private class MacroClosure : FExpression
+        private class MacroClosure : AbstractFExpression
         {
             private readonly StackFunction argFunction;
 
@@ -42,7 +42,7 @@ namespace LispEngine.Core
                 this.argFunction = argFunction;
             }
 
-            public void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+            public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
             {
                 evaluator.PushTask(new EvaluateExpansion(env));
                 argFunction.Evaluate(evaluator, args);

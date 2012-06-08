@@ -102,6 +102,11 @@ namespace LispEngine.Datums
             }
         }
 
+        public T accept<T>(DatumVisitor<T> visitor)
+        {
+            return visitor.visit(this);
+        }
+
         public static bool operator==(Pair left, Pair right)
         {
             return Equals(left, right);

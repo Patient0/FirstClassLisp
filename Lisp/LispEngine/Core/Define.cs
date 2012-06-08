@@ -9,7 +9,7 @@ using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
-    class Define : DatumHelpers, FExpression
+    class Define : AbstractFExpression
     {
         public static readonly FExpression Instance = new Define();
 
@@ -40,14 +40,14 @@ namespace LispEngine.Core
             }
         }
 
-        public void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
         {
-            var argList = enumerate(args).ToArray();
+            var argList = DatumHelpers.enumerate(args).ToArray();
             if (argList.Length < 2)
-                throw error("Expected at least 2 arguments for define. Got {0}", argList.Length);
+                throw DatumHelpers.error("Expected at least 2 arguments for define. Got {0}", argList.Length);
             var name = argList[0] as Symbol;
             if (name == null)
-                throw error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
+                throw DatumHelpers.error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
             evaluator.PushTask(new DefineName(env, name.Identifier));
 
             // Scope any local definitions.

@@ -7,7 +7,7 @@ using LispEngine.Stack;
 
 namespace LispEngine.Evaluation
 {
-    sealed class StackFunctionAdapter : StackFunction
+    sealed class StackFunctionAdapter : AbstractStackFunction
     {
         private readonly Function function;
         public StackFunctionAdapter(Function function)
@@ -15,7 +15,7 @@ namespace LispEngine.Evaluation
             this.function = function;
         }
 
-        public void Evaluate(EvaluatorStack s, Datum args)
+        public override void Evaluate(EvaluatorStack s, Datum args)
         {
             s.PushResult(function.Evaluate(args));
         }

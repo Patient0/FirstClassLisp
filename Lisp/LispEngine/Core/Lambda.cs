@@ -9,7 +9,7 @@ using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
-    internal sealed class Lambda : DatumHelpers, FExpression
+    internal sealed class Lambda : AbstractFExpression
     {
         public static readonly FExpression Instance = new Lambda();
 
@@ -35,7 +35,7 @@ namespace LispEngine.Core
             }
         }
 
-        private sealed class Closure : StackFunction
+        private sealed class Closure : AbstractStackFunction
         {
             private readonly Environment env;
             private readonly IEnumerable<ArgBody> argBodies;
@@ -47,7 +47,7 @@ namespace LispEngine.Core
 
             Exception bindError(Datum args)
             {
-                return error("Could not bind '{0}' to '{1}'", argList(), args);
+                return DatumHelpers.error("Could not bind '{0}' to '{1}'", argList(), args);
             }
 
             private string argList()
@@ -60,7 +60,7 @@ namespace LispEngine.Core
                 return string.Format("(lambda {0})", string.Join(" ", argBodies.Select(x => x.ToString()).ToArray()));
             }
 
-            public void Evaluate(EvaluatorStack s, Datum args)
+            public override void Evaluate(EvaluatorStack s, Datum args)
             {
                 foreach (var ab in argBodies)
                 {
@@ -75,9 +75,9 @@ namespace LispEngine.Core
 
         private static Datum evaluate(Environment env, Datum args)
         {
-            var macroArgs = enumerate(args).ToArray();
+            var macroArgs = DatumHelpers.enumerate(args).ToArray();
             if (macroArgs.Length % 2 != 0)
-                throw error("Invalid macro syntax for lambda. Argument count '{0}' is not even. Syntax is (lambda [args body]+)", macroArgs.Length);
+                throw DatumHelpers.error("Invalid macro syntax for lambda. Argument count '{0}' is not even. Syntax is (lambda [args body]+)", macroArgs.Length);
 
             var argBodies = new List<ArgBody>();
             for (var i = 0; i < macroArgs.Length; i += 2)
@@ -89,12 +89,7 @@ namespace LispEngine.Core
             return new Closure(env, argBodies);            
         }
 
-        public Datum Evaluate(Evaluator evaluator, Environment env, Datum args)
-        {
-            return evaluate(env, args);
-        }
-
-        public void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
         {
             evaluator.PushResult(evaluate(env, args));
         }

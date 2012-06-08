@@ -9,7 +9,7 @@ using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
-    class If : DatumHelpers, FExpression
+    class If : AbstractFExpression
     {
         public static readonly FExpression Instance = new If();
 
@@ -28,7 +28,7 @@ namespace LispEngine.Core
             public void Perform(EvaluatorStack stack)
             {
                 var result = stack.PopResult();
-                if(atom(true).Equals(result))
+                if(DatumHelpers.atom(true).Equals(result))
                 {
                     stack.Evaluate(env, clauses[clause+1]);
                     return;
@@ -50,9 +50,9 @@ namespace LispEngine.Core
             }
         }
 
-        public void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
+        public override void Evaluate(EvaluatorStack evaluator, Environment env, Datum args)
         {
-            var clauses = enumerate(args).ToArray();
+            var clauses = DatumHelpers.enumerate(args).ToArray();
             evaluator.PushTask(new CheckResult(env, 0, clauses));
             evaluator.Evaluate(env, clauses[0]);
         }

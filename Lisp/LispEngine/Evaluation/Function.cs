@@ -9,7 +9,7 @@ namespace LispEngine.Evaluation
     // Alternative is to always wrap/unwrap
     // Function in Atom... but this could get
     // very confusing.
-    public interface Function : Datum
+    public interface Function
     {
         Datum Evaluate(Datum args);
     }

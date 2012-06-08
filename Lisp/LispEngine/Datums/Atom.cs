@@ -41,6 +41,11 @@ namespace LispEngine.Datums
             return (value != null ? value.GetHashCode() : 0);
         }
 
+        public T accept<T>(DatumVisitor<T> visitor)
+        {
+            return visitor.visit(this);
+        }
+
         public static bool operator ==(Atom left, Atom right)
         {
             return Equals(left, right);

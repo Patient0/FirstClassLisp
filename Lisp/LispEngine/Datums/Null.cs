@@ -18,6 +18,11 @@ namespace LispEngine.Datums
             return 0;
         }
 
+        public T accept<T>(DatumVisitor<T> visitor)
+        {
+            return visitor.visit(this);
+        }
+
         public override bool Equals(object obj)
         {
             return obj as Null != null;
@@ -27,5 +32,7 @@ namespace LispEngine.Datums
         {
             return "()";
         }
+
+
     }
 }
