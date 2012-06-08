@@ -12,8 +12,29 @@ namespace LispEngine.Stack
         private readonly Datum args;
         private readonly Environment env;
 
+        class FExpressionConverter : AbstractVisitor<FExpression>
+        {
+            public override FExpression visit(FExpression f)
+            {
+                return f;
+            }
+
+            public override FExpression fail(Datum d)
+            {
+                throw DatumHelpers.error("'{0}' is not callable", d);
+            }
+
+            public override FExpression visit(StackFunction f)
+            {
+                return new FunctionExpression(f);
+            }
+
+            public static readonly DatumVisitor<FExpression> Instance = new FExpressionConverter();
+        }
         private static FExpression toFExpression(Datum d)
         {
+            return d.accept(FExpressionConverter.Instance);
+            /*
             var fexpr = d as FExpression;
             if (fexpr != null)
                 return fexpr;
@@ -21,6 +42,7 @@ namespace LispEngine.Stack
             if (function != null)
                 return new FunctionExpression(function);
             throw DatumHelpers.error("'{0}' is not callable", d);
+            */
         }
 
         public EvaluateFExpression(Datum args, Environment env)

@@ -64,7 +64,7 @@ namespace LispEngine.Core
             {
                 foreach (var ab in argBodies)
                 {
-                    var closureEnv = ab.binding.apply(env, args);
+                    var closureEnv = ab.binding(env, args);
                     if (closureEnv == null) continue;
                     s.Evaluate(closureEnv, ab.body);
                     return;

@@ -12,7 +12,7 @@ namespace LispEngine.Datums
     // of "Datum" will stay quite fixed but there are many cases
     // when we need to execute different behaviour based on the
     // type of the Datum.
-    public interface DatumVisitor<T>
+    public interface DatumVisitor<out T>
     {
         T visit(Pair p);
         T visit(Atom a);

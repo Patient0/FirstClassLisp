@@ -4,11 +4,6 @@ using LispEngine.Evaluation;
 
 namespace LispEngine.Core
 {
-    /**
-     * Encapsulates the arg list of a lambda expression
-     */
-    interface Bindings
-    {
-        Environment apply(Environment to, Datum args);
-    }
+    // Something that knows how to bind some arguments to an environment.
+    delegate Environment Bindings(Environment to, Datum args);
 }

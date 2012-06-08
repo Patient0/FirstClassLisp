@@ -47,6 +47,7 @@
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Define.cs" />
     <Compile Include="Core\Eq.cs" />
+    <Compile Include="Datums\AbstractVisitor.cs" />
     <Compile Include="Datums\DatumVisitor.cs" />
     <Compile Include="Evaluation\AbstractFExpression.cs" />
     <Compile Include="Evaluation\AbstractStackFunction.cs" />
@@ -64,7 +65,6 @@
     <Compile Include="Core\CoreForms.cs" />
     <Compile Include="Evaluation\EmptyEnvironment.cs" />
     <Compile Include="Evaluation\Environment.cs" />
-    <Compile Include="Evaluation\Evaluator.cs" />
     <Compile Include="Evaluation\ExtendedEnvironment.cs" />
     <Compile Include="Evaluation\Function.cs" />
     <Compile Include="Core\Lambda.cs" />
