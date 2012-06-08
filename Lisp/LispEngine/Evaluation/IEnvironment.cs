@@ -6,7 +6,8 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    public interface ImmutableEnvironment
+    // An immutable environment
+    public interface IEnvironment
     {
         Datum Lookup(string name);
     }

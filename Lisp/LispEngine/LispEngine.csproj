@@ -71,7 +71,7 @@
     <Compile Include="Core\Lambda.cs" />
     <Compile Include="Evaluation\FExpression.cs" />
     <Compile Include="Bootstrap\StandardEnvironment.cs" />
-    <Compile Include="Evaluation\ImmutableEnvironment.cs" />
+    <Compile Include="Evaluation\IEnvironment.cs" />
     <Compile Include="Evaluation\Stack.cs" />
     <Compile Include="Evaluation\StackContinuation.cs" />
     <Compile Include="Evaluation\StackFunction.cs" />

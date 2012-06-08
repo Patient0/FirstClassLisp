@@ -29,7 +29,7 @@ namespace LispEngine.Bootstrap
             return new Operation(op).ToStack();
         }
 
-        public static ImmutableEnvironment Extend(ImmutableEnvironment env)
+        public static IEnvironment Extend(IEnvironment env)
         {
             return env
                 .Extend("+", makeOperation((x, y) => x + y))

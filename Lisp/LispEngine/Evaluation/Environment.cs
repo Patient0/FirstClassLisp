@@ -6,10 +6,12 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    public sealed class Environment : ImmutableEnvironment
+    // An environment that can be mutated. Used to implement define, maybe
+    // other things also.
+    public sealed class Environment : IEnvironment
     {
-        private ImmutableEnvironment env;
-        public Environment(ImmutableEnvironment env)
+        private IEnvironment env;
+        public Environment(IEnvironment env)
         {
             this.env = env;
         }

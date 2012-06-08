@@ -6,13 +6,13 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    internal class ExtendedEnvironment : ImmutableEnvironment
+    internal class ExtendedEnvironment : IEnvironment
     {
-        private readonly ImmutableEnvironment parent;
+        private readonly IEnvironment parent;
         private readonly string name;
         private readonly Datum value;
 
-        public ExtendedEnvironment(ImmutableEnvironment parent, string name, Datum value)
+        public ExtendedEnvironment(IEnvironment parent, string name, Datum value)
         {
             this.parent = parent;
             this.name = name;
@@ -21,20 +21,18 @@ namespace LispEngine.Evaluation
 
         public Datum Lookup(string name)
         {
-            if (this.name == name)
-                return value;
-            return parent.Lookup(name);
+            return this.name == name ? value : parent.Lookup(name);
         }
     }
 
     public static class EnvironmentExtensions
     {
-        public static ImmutableEnvironment Extend(this ImmutableEnvironment e, string name, Datum value)
+        public static IEnvironment Extend(this IEnvironment e, string name, Datum value)
         {
             return new ExtendedEnvironment(e, name, value);
         }
 
-        public static Environment ToMutable(this ImmutableEnvironment e)
+        public static Environment ToMutable(this IEnvironment e)
         {
             return new Environment(e);
         }

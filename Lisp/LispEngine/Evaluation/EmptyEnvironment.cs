@@ -6,7 +6,7 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    public sealed class EmptyEnvironment : ImmutableEnvironment
+    public sealed class EmptyEnvironment : IEnvironment
     {
         public Datum Lookup(string name)
         {
@@ -17,6 +17,6 @@ namespace LispEngine.Evaluation
         {
         }
 
-        public static readonly ImmutableEnvironment Instance = new EmptyEnvironment();
+        public static readonly IEnvironment Instance = new EmptyEnvironment();
     }
 }
