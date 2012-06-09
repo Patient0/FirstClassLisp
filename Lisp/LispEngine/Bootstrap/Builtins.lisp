@@ -41,9 +41,20 @@
     `((,lambda (,var) ,body) ,value))
 
 ; Now add support for multiple sub-statements in define:
-; Whenever we see (define x expr1 expr2 ...)
+; Whenever we see
+; (define x expr1 expr2 ...)
 ; we'll expand it to
 ; (raw-define x (begin expr1 expr2 ...))
+; Also, whenever we see
+; (define (name arg1 arg2) expr1 expr2)
+; we'll expand it to 
+; (define name (lambda arg1 arg2) (begin expr1 expr2))
+; This is the traditional syntax used in SICP et al.
+; However, we can't support multiple bodies in our
+; lambdas without screwing up our nice 'case lambda'
+; syntax which I find more useful than being able to
+; define multiple bodies in a lambda. You can aways
+; use 'begin' explicitly if need be.
 (define define
     (macro
         ; Because define itself mutates the environment,
@@ -53,8 +64,10 @@
         (let raw-define define
             (lambda
                 ; Traditional function definition
-                ((fn . args) . exprs) `(,raw-define ,fn (,lambda ,args (,begin ,@exprs)))
-                (symbol . exprs) `(,raw-define ,symbol (,begin ,@exprs))))))
+                ((fn . args) . exprs)
+                    `(,raw-define ,fn (,lambda ,args (,begin ,@exprs)))
+                (symbol . exprs)
+                    `(,raw-define ,symbol (,begin ,@exprs))))))
 
 ; Y combinator allows us to write recursive code without
 ; mutating the environment.
