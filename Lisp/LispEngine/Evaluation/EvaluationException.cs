@@ -14,11 +14,13 @@ namespace LispEngine.Evaluation
             this.c = c;
         }
 
-        public override string ToString()
+        public override string StackTrace
         {
-            return string.Format("EvaluationException!\n{0}\n{1}",
-                                 base.ToString(),
-                                 c.GetStackTrace());
+            get
+            {
+                return string.Format("LispTrace:\n{0}\n{1}",
+                                     c.GetStackTrace(), base.StackTrace);
+            }
         }
 
         /**

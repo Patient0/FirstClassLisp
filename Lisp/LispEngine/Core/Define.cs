@@ -27,6 +27,11 @@ namespace LispEngine.Core
                 env.Define(name, c.Result);
                 return c;
             }
+
+            public override string ToString()
+            {
+                return string.Format("Define name '{0}'", name);
+            }
         }
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)

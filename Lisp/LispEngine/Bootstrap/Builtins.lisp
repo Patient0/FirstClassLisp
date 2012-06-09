@@ -57,10 +57,10 @@
 ; 'length' using a define form, we can just recurse directly
 (define length
     (define length-tail
+        ; Here, we make use of the "pattern matching" in lambda
         (lambda (so-far ()) so-far
                 (so-far (x . y))
                     (length-tail (+ 1 so-far) y)))
-    ; Here, we make use of the "pattern matching" in lambda
     (lambda (list)
         (length-tail 0 list)))
 
@@ -76,14 +76,16 @@
     (lambda (l)
         (reverse-tail '() l)))
 
-; Properly tail-recursive implementation of mapcar that
-; won't consume extra storage space
 (define mapcar
-    (define mapcar-tail
-        (lambda (f result ()) result
-                (f result (h . t)) (mapcar-tail f (cons (f h) result) t)))
     (lambda (f list)
-        (reverse (mapcar-tail f nil list))))
+        ; combiner creates a binary function which
+        ; takes the element, the list, and returns
+        ; the function applied to the element cons'ed
+        ; onto the existing list
+        (let combiner
+            (lambda (x list)
+                (cons (f x) list))
+            (reverse (fold-right combiner () list)))))
 
 (define map
     (define map-tail
