@@ -43,11 +43,13 @@
     <Compile Include="Bootstrap\Append.cs" />
     <Compile Include="Bootstrap\Arithmetic.cs" />
     <Compile Include="Core\Apply.cs" />
+    <Compile Include="Core\Begin.cs" />
     <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\CallCC.cs" />
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Define.cs" />
     <Compile Include="Core\Eq.cs" />
+    <Compile Include="Core\Log.cs" />
     <Compile Include="Datums\AbstractVisitor.cs" />
     <Compile Include="Datums\DatumVisitor.cs" />
     <Compile Include="Evaluation\AbstractFExpression.cs" />

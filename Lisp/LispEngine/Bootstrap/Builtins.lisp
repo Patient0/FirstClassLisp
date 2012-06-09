@@ -7,25 +7,11 @@
 ; Our let macro is like the one in arc - just
 ; a single variable, single expression, and no
 ; nesting.
+; We can define "with" later as a macro that
+; expands into individual sublets.
 (define let (macro
 	      (lambda (var value body)
 		     (list (list lambda (list var) body) value))))
-; Y combinator allows us to write recursive code without
-; mutating the environment.
-(define Y 
-    (lambda (m)
-       (let z (lambda (f) (m (lambda (a) ((f f) a))))
-	     (z z))))
-; We could use the Y combinator here, but because we are defining
-; 'length' using a define form, we can just recurse directly
-(define length
-    (define length-tail
-        (lambda (so-far ()) so-far
-                (so-far (x . y))
-                    (length-tail (+ 1 so-far) y)))
-    ; Here, we make use of the "pattern matching" in lambda
-    (lambda (list)
-        (length-tail 0 list)))
 
 ; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
 ; Using the builtin pattern matching of our lambda primitive makes
@@ -42,6 +28,35 @@
             (cons quote x)))
 (define quasiquote
     (macro expand-quasiquote))
+
+; Now add support for multiple sub-statements in define:
+; we add an implicit 'begin' around the list of exprs
+(define define
+    (macro
+        ; Because define itself mutates the environment,
+        ; we have to capture the original 'define' here
+        ; before we 'hide' it behind our macro replacement.
+        ; Otherwise, we go into an infinite loop when expanding.
+        (let raw-define define
+            (lambda (symbol . exprs)
+                `(,raw-define ,symbol (,begin ,@exprs))))))
+
+; Y combinator allows us to write recursive code without
+; mutating the environment.
+(define Y 
+    (lambda (m)
+       (let z (lambda (f) (m (lambda (a) ((f f) a))))
+	     (z z))))
+; We could use the Y combinator here, but because we are defining
+; 'length' using a define form, we can just recurse directly
+(define length
+    (define length-tail
+        (lambda (so-far ()) so-far
+                (so-far (x . y))
+                    (length-tail (+ 1 so-far) y)))
+    ; Here, we make use of the "pattern matching" in lambda
+    (lambda (list)
+        (length-tail 0 list)))
 
 (define fold-right
     (lambda (op initial ()) initial

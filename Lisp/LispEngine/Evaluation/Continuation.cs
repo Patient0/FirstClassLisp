@@ -1,4 +1,6 @@
-﻿using LispEngine.Datums;
+﻿using System;
+using System.IO;
+using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
@@ -29,6 +31,19 @@ namespace LispEngine.Evaluation
         public static Continuation Invoke(this Continuation s, Function f, Datum args)
         {
             return toStack(f).Evaluate(s, args);
+        }
+
+        public static string GetStackTrace(this Continuation c)
+        {
+            var sw = new StringWriter();
+            while (c.Task != null)
+            {
+                sw.WriteLine("{0}", c.Task);
+                c = c.PopTask();
+            }
+            sw.WriteLine("---TOP---");
+            sw.Flush();
+            return sw.ToString();
         }
     }
 }

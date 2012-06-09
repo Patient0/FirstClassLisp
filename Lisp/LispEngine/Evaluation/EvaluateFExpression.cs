@@ -43,5 +43,10 @@ namespace LispEngine.Evaluation
             var fexpression = toFExpression(c.Result);
             return fexpression.Evaluate(c.PopResult(), env, args);
         }
+
+        public override string ToString()
+        {
+            return string.Format("EvaluateFexpression: {0}", args);
+        }
     }
 }

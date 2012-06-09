@@ -97,7 +97,7 @@
 ; Using the implicit stack for evaluation here would
 ; lead to stack overflow. But because this code is
 ; properly tail recursive and we are using an explicit
-; stack without too much extra debugging, this test passes
+; stack, this test runs in constant memory.
 (properTailRecursion
     500500
     (define sum-to-1000
@@ -105,3 +105,22 @@
             (lambda (so-far 0) so-far
                     (so-far x) (total (+ so-far x) (- x 1))))
         (total 0 1000)))
+; Now that we've allowed mutable state, we need a way to execute multiple
+; statements in sequence.
+(begin
+    23
+    (begin
+        (define x 23)
+        x))
+
+; The forms in a begin statement execute
+; in their own scoped environment - changes
+; to that environment are not seen outside
+; the environment.
+(beginScoping
+    24
+    (begin
+        (define x 24)
+        (begin
+            (define x 48))
+        x))

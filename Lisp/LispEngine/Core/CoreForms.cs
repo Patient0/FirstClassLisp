@@ -10,6 +10,7 @@ namespace LispEngine.Core
         public static Environment AddTo(Environment env)
         {
             env = env
+                .Extend("log", Log.Instance)
                 .Extend("lambda", Lambda.Instance)
                 .Extend("cons", Cons.Instance)
                 .Extend("apply", Apply.Instance)
@@ -18,6 +19,7 @@ namespace LispEngine.Core
                 .Extend("macro", Macro.Instance)
                 .Extend("quote", Quote.Instance)
                 .Extend("define", Define.Instance)
+                .Extend("begin", Begin.Instance)
                 .Extend("call/cc", CallCC.Instance);
             return env;
         }
