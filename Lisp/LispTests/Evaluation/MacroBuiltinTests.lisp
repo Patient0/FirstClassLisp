@@ -7,8 +7,27 @@
         (define-macro slet (var value body)
                 `((,lambda (,var) ,body) ,value))
         (slet x 5 (+ x 3))))
+; We ought to support the traditional scheme
+; "define function" syntax
+(define-function 25
+    (begin
+        (define (square x) (* x x))
+        (square 5)))
+
+(define-function-two-args 18
+    (begin
+        (define (subtract x y) (- x y))
+        (subtract 21 3)))
+
+(define-function-multiple-sub-expressions 10
+    (begin
+        (define (subtract x y)
+            35
+            (- x y))
+        (subtract 15 5)))
+
 ; Our own homegrown 'list comprehension' syntax
-; which is defined simple as a macro that expands to a 'map' call
+; which is implemented in terms of map
 (loop (1 4 9 16)
     (loop x '(1 2 3 4)
         (* x x)))

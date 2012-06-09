@@ -51,8 +51,10 @@
         ; before we 'hide' it behind our macro replacement.
         ; Otherwise, we go into an infinite loop when expanding.
         (let raw-define define
-            (lambda (symbol . exprs)
-                `(,raw-define ,symbol (,begin ,@exprs))))))
+            (lambda
+                ; Traditional function definition
+                ((fn . args) . exprs) `(,raw-define ,fn (,lambda ,args (,begin ,@exprs)))
+                (symbol . exprs) `(,raw-define ,symbol (,begin ,@exprs))))))
 
 ; Y combinator allows us to write recursive code without
 ; mutating the environment.
