@@ -24,14 +24,21 @@
 (define quasiquote
     (macro expand-quasiquote))
 
+; We use define followed by macro and a lambda an awful lot - so 
+; let's define a macro to ease the overhead in
+; writing macros!
+(define define-macro
+    (macro (lambda (name args expansion)
+            `(,define ,name
+                (,macro (,lambda ,args ,expansion))))))
+
 ; Our let macro is like the one in arc - just
 ; a single variable, single expression, and no
 ; nesting.
 ; We can define "with" later as a macro that
 ; expands into individual sublets.
-(define let (macro
-  (lambda (var value body)
-    `((,lambda (,var) ,body) ,value))))
+(define-macro let (var value body)
+    `((,lambda (,var) ,body) ,value))
 
 ; Now add support for multiple sub-statements in define:
 ; Whenever we see (define x expr1 expr2 ...)
@@ -94,14 +101,6 @@
                             (mapcar cdr ll))))
     (lambda (f . ll)
         (reverse (map-tail f '() ll))))
-
-; We use define followed by macro and a lambda an awful lot - so 
-; let's define a macro to ease the overhead in
-; writing macros!
-(define define-macro
-    (macro (lambda (name args expansion)
-            `(,define ,name
-                (,macro (,lambda ,args ,expansion))))))
 
 (define-macro loop (var values body)
     `(,mapcar (,lambda (,var) ,body) ,values))
