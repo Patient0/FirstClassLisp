@@ -124,3 +124,6 @@
         (begin
             (define x 48))
         x))
+
+(lengthTest 3
+    (length '(2 4 6)))

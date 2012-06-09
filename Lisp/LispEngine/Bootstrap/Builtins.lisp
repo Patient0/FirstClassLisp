@@ -64,36 +64,33 @@
 	     (z z))))
 ; We could use the Y combinator here, but because we are defining
 ; 'length' using a define form, we can just recurse directly
-(define length
+(define (length list)
     (define length-tail
         ; Here, we make use of the "pattern matching" in lambda
         (lambda (so-far ()) so-far
                 (so-far (x . y))
                     (length-tail (+ 1 so-far) y)))
-    (lambda (list)
-        (length-tail 0 list)))
+    (length-tail 0 list))
 
 (define fold-right
     (lambda (op initial ()) initial
             (op initial (x . y)) (fold-right op (op x initial) y)))
 
-(define reverse
+(define (reverse l)
     (define reverse-tail
         (lambda (so-far ()) so-far
                 (so-far (x . y))
                     (reverse-tail (cons x so-far) y)))
-    (lambda (l)
-        (reverse-tail '() l)))
+    (reverse-tail '() l))
 
 ; mapcar can be defined in terms of fold
-(define mapcar
-    (lambda (f list)
-        (let combiner
-            (lambda (x list)
-                (cons (f x) list))
-            (reverse (fold-right combiner () list)))))
+(define (mapcar f list)
+    (let combiner
+        (lambda (x list)
+            (cons (f x) list))
+        (reverse (fold-right combiner () list))))
 
-(define map
+(define (map f . ll)
     (define map-tail
         (lambda
             (f so-far (() . rest))
@@ -101,8 +98,7 @@
             (f so-far ll)
                 (map-tail f (cons (apply f (mapcar car ll)) so-far)
                             (mapcar cdr ll))))
-    (lambda (f . ll)
-        (reverse (map-tail f '() ll))))
+    (reverse (map-tail f '() ll)))
 
 (define-macro loop (var values body)
     `(,mapcar (,lambda (,var) ,body) ,values))
