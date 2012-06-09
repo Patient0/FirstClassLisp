@@ -122,3 +122,7 @@
                 body
             ((var . (expr . bindings)) body)
                 `(,let ,var ,expr (,with ,bindings ,body)))))
+
+; let/cc provides "escape" functionality
+(define-macro let/cc (var body)
+    `(,call/cc (,lambda (,var) ,body)))
