@@ -11,6 +11,10 @@ namespace Lisp
 {
     class Program
     {
+        private static void prompt()
+        {
+            Console.Write("FCLisp> ");            
+        }
         static void Main(string[] args)
         {
             // Really simple REPL
@@ -18,7 +22,7 @@ namespace Lisp
             string line;
             var evaluator = new Evaluator();
             Console.WriteLine("First Class Lisp. Ctrl-Z + Enter to exit.");
-            Console.Write("FCLisp> ");
+            prompt();
             while((line = Console.ReadLine()) != null)
             {
                 try
@@ -26,10 +30,12 @@ namespace Lisp
                     var parsed = new Parser(Scanner.Create(line)).parse();
                     var result = evaluator.Evaluate(env, parsed);
                     Console.WriteLine("{0}", result);
-                    Console.Write("FCLisp> ");                    
-                } catch (Exception e)
+                    prompt();
+                }
+                catch (Exception e)
                 {
                     Console.Error.WriteLine("Error: {0}", e);
+                    prompt();
                 }
             }
         }

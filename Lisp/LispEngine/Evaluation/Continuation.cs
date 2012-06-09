@@ -33,6 +33,16 @@ namespace LispEngine.Evaluation
             return toStack(f).Evaluate(s, args);
         }
 
+        public static EvaluationException error(this Continuation c, string msg, params object[] args)
+        {
+            return error(c, null, msg, args);
+        }
+
+        public static EvaluationException error(this Continuation c, Exception cause, string msg, params object[] args)
+        {
+            return new EvaluationException(string.Format(msg, args), c, cause);
+        }
+
         public static string GetStackTrace(this Continuation c)
         {
             var sw = new StringWriter();

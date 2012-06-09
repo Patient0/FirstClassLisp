@@ -71,11 +71,11 @@ namespace LispEngine.Core
             }
         }
 
-        private static Datum evaluate(Environment env, Datum args)
+        private static Datum evaluate(Continuation c, Environment env, Datum args)
         {
-            var macroArgs = DatumHelpers.enumerate(args).ToArray();
+            var macroArgs = args.ToArray();
             if (macroArgs.Length % 2 != 0)
-                throw DatumHelpers.error("Invalid macro syntax for lambda. Argument count '{0}' is not even. Syntax is (lambda [args body]+)", macroArgs.Length);
+                throw c.error("Invalid macro syntax for lambda. Argument count '{0}' is not even. Syntax is (lambda [args body]+)", macroArgs.Length);
 
             var argBodies = new List<ArgBody>();
             for (var i = 0; i < macroArgs.Length; i += 2)
@@ -89,7 +89,7 @@ namespace LispEngine.Core
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
-            return c.PushResult(evaluate(env, args));
+            return c.PushResult(evaluate(c, env, args));
         }
     }
 }

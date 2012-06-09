@@ -46,7 +46,7 @@ namespace LispEngine.Core
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
-            var clauses = DatumHelpers.enumerate(args).ToArray();
+            var clauses = args.ToArray();
             c = c.PushTask(new CheckResult(env, 0, clauses));
             return c.Evaluate(env, clauses[0]);
         }

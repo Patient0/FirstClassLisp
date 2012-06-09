@@ -31,12 +31,12 @@ namespace LispEngine.Core
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
-            var argList = DatumHelpers.enumerate(args).ToArray();
+            var argList = args.ToArray();
             if (argList.Length != 2)
-                throw DatumHelpers.error("Expected 2 arguments: (define <symbol> <expression>). Got {0} instead", argList.Length);
+                throw c.error("Expected 2 arguments: (define <symbol> <expression>). Got {0} instead", argList.Length);
             var name = argList[0] as Symbol;
             if (name == null)
-                throw DatumHelpers.error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
+                throw c.error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
             var expression = argList[1];
             c = c.PushTask(new DefineName(env, name.Identifier));
             return c.Evaluate(env, expression);

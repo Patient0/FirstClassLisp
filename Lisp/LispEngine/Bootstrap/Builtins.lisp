@@ -4,16 +4,11 @@
 (define cdr (lambda ((c . d)) d))
 (define nil? (lambda (()) #t _ #f))
 (define pair? (lambda ((_ . _)) #t _ #f))
-; Our let macro is like the one in arc - just
-; a single variable, single expression, and no
-; nesting.
-; We can define "with" later as a macro that
-; expands into individual sublets.
-(define let (macro
-	      (lambda (var value body)
-		     (list (list lambda (list var) body) value))))
+
 
 ; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
+; We need it quite early because writing macros without quasiquote
+; is extremely painful!
 ; Using the builtin pattern matching of our lambda primitive makes
 ; this significantly simpler to implement.
 (define expand-quasiquote
@@ -29,8 +24,19 @@
 (define quasiquote
     (macro expand-quasiquote))
 
+; Our let macro is like the one in arc - just
+; a single variable, single expression, and no
+; nesting.
+; We can define "with" later as a macro that
+; expands into individual sublets.
+(define let (macro
+  (lambda (var value body)
+    `((,lambda (,var) ,body) ,value))))
+
 ; Now add support for multiple sub-statements in define:
-; we add an implicit 'begin' around the list of exprs
+; Whenever we see (define x expr1 expr2 ...)
+; we'll expand it to
+; (raw-define x (begin expr1 expr2 ...))
 (define define
     (macro
         ; Because define itself mutates the environment,

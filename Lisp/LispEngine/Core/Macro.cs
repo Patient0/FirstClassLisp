@@ -56,7 +56,7 @@ namespace LispEngine.Core
 
         public Datum Evaluate(Datum args)
         {
-            var a = enumerate(args).ToArray();
+            var a = args.ToArray();
             if (a.Length != 1)
                 // TODO: Move this error boiler plate into DatumHelpers
                 throw error("Incorrect arguments. Expected {0}, got {1}", 1, a.Length);

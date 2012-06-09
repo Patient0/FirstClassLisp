@@ -12,17 +12,17 @@ namespace LispEngine.Core
     {
         public static readonly FExpression Instance = new Quote();
 
-        private static Datum evaluate(Datum args)
+        private static Datum evaluate(Continuation c, Datum args)
         {
-            var argList = DatumHelpers.enumerate(args).ToArray();
+            var argList = args.ToArray();
             if (argList.Length != 1)
-                throw DatumHelpers.error("invalid syntax '{0}'", args);
+                throw c.error("invalid syntax '{0}'", args);
             return argList[0];            
         }
 
-        public override Continuation Evaluate(Continuation evaluator, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
-            return evaluator.PushResult(evaluate(args));
+            return c.PushResult(evaluate(c, args));
         }
     }
 }

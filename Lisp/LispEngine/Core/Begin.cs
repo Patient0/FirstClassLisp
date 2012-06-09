@@ -23,9 +23,9 @@ namespace LispEngine.Core
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
-            var argList = DatumHelpers.enumerate(args).ToArray();
+            var argList = args.ToArray();
             if (argList.Length < 1)
-                throw DatumHelpers.error("Expected at least 1 expression for begin. Got none.");
+                throw c.error("Expected at least 1 expression for begin. Got none.");
             // Scope any local definitions.
             var localEnv = new Environment(env);
             var remaining = argList.Reverse().ToArray();

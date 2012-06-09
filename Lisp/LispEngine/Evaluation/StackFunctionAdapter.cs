@@ -14,9 +14,14 @@ namespace LispEngine.Evaluation
             this.function = function;
         }
 
-        public override Continuation Evaluate(Continuation s, Datum args)
+        public override Continuation Evaluate(Continuation c, Datum args)
         {
-            return s.PushResult(function.Evaluate(args));
+            return c.PushResult(function.Evaluate(args));
+        }
+
+        public override string ToString()
+        {
+            return function.ToString();
         }
     }
 

@@ -36,6 +36,11 @@ namespace LispEngine.Core
                 }
                 return function.Evaluate(c, DatumHelpers.compound(args));
             }
+
+            public override string ToString()
+            {
+                return string.Format("Invoke '{0}' with {1} args", function, argCount);
+            }
         }
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)

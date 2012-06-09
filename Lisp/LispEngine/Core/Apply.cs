@@ -17,12 +17,12 @@ namespace LispEngine.Core
 
         public override Continuation Evaluate(Continuation c, Datum args)
         {
-            var datumArgs = DatumHelpers.enumerate(args).ToArray();
+            var datumArgs = args.ToArray();
             if (datumArgs.Length != 2)
-                throw new Exception(string.Format("Apply expects 2 arguments. {0} passed", datumArgs.Length));
+                throw c.error("Apply expects 2 arguments. {0} passed", datumArgs.Length);
             var function = datumArgs[0] as StackFunction;
             if (function == null)
-                throw new Exception(string.Format("'{0}' is not a function", datumArgs[0]));
+                throw c.error("'{0}' is not a function", datumArgs[0]);
             return function.Evaluate(c, datumArgs[1]);
         }
     }

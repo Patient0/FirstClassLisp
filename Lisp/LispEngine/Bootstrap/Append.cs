@@ -7,15 +7,16 @@ using LispEngine.Evaluation;
 
 namespace LispEngine.Bootstrap
 {
-    class Append : DatumHelpers, Function
+    class Append : Function
     {
         // We could implement this in pure lisp but I'm lazy
         // and it's trivial.
         public static readonly StackFunction Instance = new Append().ToStack();
         public Datum Evaluate(Datum args)
         {
-            var result = enumerate(args).Aggregate(Enumerable.Empty<Datum>(), (current, a) => current.Concat(enumerate(a)));
-            return compound(result.ToArray());
+            return args.Enumerate()
+                .Aggregate(Enumerable.Empty<Datum>(), (current, a) => current.Concat(a.Enumerate()))
+                .ToList();
         }
     }
 }

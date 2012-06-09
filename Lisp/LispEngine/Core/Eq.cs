@@ -7,18 +7,15 @@ using LispEngine.Evaluation;
 
 namespace LispEngine.Core
 {
-    class Eq : DatumHelpers, Function
+    class Eq : BinaryFunction
     {
         public static readonly StackFunction Instance = new Eq().ToStack();
-        public Datum Evaluate(Datum args)
+        protected override Datum eval(Datum arg1, Datum arg2)
         {
-            var a = enumerate(args).ToArray();
-            if (a.Length != 2)
-                throw error("eq?: Expected 2 arguments, got {0}", a.Length);
-            if ((a[0] as Pair) != null ||
-                (a[1] as Pair) != null)
-                return atom(ReferenceEquals(a[0], a[1]));
-            return atom(a[0].Equals(a[1]));
+            if ((arg1 as Pair) != null ||
+                (arg2 as Pair) != null)
+                return DatumHelpers.atom(ReferenceEquals(arg1, arg2));
+            return DatumHelpers.atom(arg1.Equals(arg2));
         }
     }
 }

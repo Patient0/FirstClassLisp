@@ -20,7 +20,7 @@ namespace LispEngine.Core
             {
                 // Replace the old continuation with the new continuation - but pass in the
                 // supplied argument as the 'return value' of the new continuation.
-                var returnValue = DatumHelpers.enumerate(args).ToArray()[0];
+                var returnValue = args.ToArray()[0];
                 return c.PushResult(returnValue);
             }
         }
@@ -29,7 +29,7 @@ namespace LispEngine.Core
 
         public override Continuation Evaluate(Continuation c, Datum args)
         {
-            var argArray = DatumHelpers.enumerate(args).ToArray();
+            var argArray = args.ToArray();
             if(argArray.Length != 1)
                 throw DatumHelpers.error("call/cc: expect a single function as an argument. Got {0}", argArray.Length);
             var arg = argArray[0];

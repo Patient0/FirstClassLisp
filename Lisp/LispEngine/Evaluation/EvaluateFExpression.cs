@@ -10,6 +10,11 @@ namespace LispEngine.Evaluation
 
         class FExpressionConverter : AbstractVisitor<FExpression>
         {
+            private readonly Continuation c;
+            public FExpressionConverter(Continuation c)
+            {
+                this.c = c;
+            }
             public override FExpression visit(FExpression f)
             {
                 return f;
@@ -17,19 +22,17 @@ namespace LispEngine.Evaluation
 
             public override FExpression defaultCase(Datum d)
             {
-                throw DatumHelpers.error("'{0}' is not callable", d);
+                throw c.error("'{0}' is not callable", d);
             }
 
             public override FExpression visit(StackFunction f)
             {
                 return new FunctionExpression(f);
             }
-
-            public static readonly DatumVisitor<FExpression> Instance = new FExpressionConverter();
         }
-        private static FExpression toFExpression(Datum d)
+        private static FExpression toFExpression(Continuation c)
         {
-            return d.accept(FExpressionConverter.Instance);
+            return c.Result.accept(new FExpressionConverter(c));
         }
 
         public EvaluateFExpression(Datum args, Environment env)
@@ -40,7 +43,7 @@ namespace LispEngine.Evaluation
 
         public Continuation Perform(Continuation c)
         {
-            var fexpression = toFExpression(c.Result);
+            var fexpression = toFExpression(c);
             return fexpression.Evaluate(c.PopResult(), env, args);
         }
 

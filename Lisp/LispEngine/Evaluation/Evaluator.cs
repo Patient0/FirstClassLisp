@@ -14,7 +14,6 @@ namespace LispEngine.Evaluation
                 .Evaluate(env, datum);
             try
             {
-
                 while (c.Task != null)
                     c = c.Task.Perform(c.PopTask());
                 c = c.PopTask();
@@ -24,10 +23,13 @@ namespace LispEngine.Evaluation
                     throw new Exception(string.Format("Additional '{0}' on result stack", c.Result));
                 return result;
             }
-            catch (Exception e)
+            catch(EvaluationException)
             {
-                Console.WriteLine("Exception: {0}\nContinuation:\n{1}", e, c.GetStackTrace());
                 throw;
+            }
+            catch(Exception ex)
+            {
+                throw c.error("EvaluationError", ex);
             }
         }
     }
