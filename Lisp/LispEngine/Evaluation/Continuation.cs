@@ -51,7 +51,6 @@ namespace LispEngine.Evaluation
                 sw.WriteLine("{0}", c.Task);
                 c = c.PopTask();
             }
-            sw.WriteLine("---TOP---");
             sw.Flush();
             return sw.ToString();
         }

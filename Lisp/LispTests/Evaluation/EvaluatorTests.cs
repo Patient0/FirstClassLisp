@@ -17,6 +17,7 @@ namespace LispTests.Evaluation
     [TestFixture("QuasiquoteTests.lisp")]
     [TestFixture("ArithmeticTests.lisp")]
     [TestFixture("CallCCTests.lisp")]
+    [TestFixture("MacroBuiltinTests.lisp")]
     class EvaluatorTests : DatumHelpers
     {
         private readonly string lispResourceFile;
@@ -38,10 +39,18 @@ namespace LispTests.Evaluation
         [Test, TestCaseSource("TestCases")]
         public Datum evaluate(Datum expression)
         {
-            var result = e.Evaluate(env, expression);
-            Console.WriteLine("Expression: {0}", expression);
-            Console.WriteLine("Result: {0}", result);
-            return result;
+            try
+            {
+
+                var result = e.Evaluate(env, expression);
+                Console.WriteLine("Expression: {0}", expression);
+                Console.WriteLine("Result: {0}", result);
+                return result;
+            } catch (EvaluationException ex)
+            {
+                Console.WriteLine("ex: {0}", ex);
+                throw;
+            }
         }
 
         private static IEnumerable<TestCaseData> loadTestCases(string resourceFile)

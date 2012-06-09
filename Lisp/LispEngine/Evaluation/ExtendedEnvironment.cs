@@ -21,7 +21,21 @@ namespace LispEngine.Evaluation
 
         public Datum Lookup(string name)
         {
-            return this.name == name ? value : parent.Lookup(name);
+            IEnvironment e = this;
+            // To reduce the size of the stack trace when
+            // looking up names in an environment that
+            // has lots of names, we loop iteratively
+            // rather than the more elegant
+            // recursive solution.
+            var ee = e as ExtendedEnvironment;
+            while(ee != null)
+            {
+                if (ee.name.Equals(name))
+                    return ee.value;
+                e = ee.parent;
+                ee = e as ExtendedEnvironment;
+            }
+            return e.Lookup(name);
         }
     }
 

@@ -76,12 +76,9 @@
     (lambda (l)
         (reverse-tail '() l)))
 
+; mapcar can be defined in terms of fold
 (define mapcar
     (lambda (f list)
-        ; combiner creates a binary function which
-        ; takes the element, the list, and returns
-        ; the function applied to the element cons'ed
-        ; onto the existing list
         (let combiner
             (lambda (x list)
                 (cons (f x) list))
@@ -97,3 +94,14 @@
                             (mapcar cdr ll))))
     (lambda (f . ll)
         (reverse (map-tail f '() ll))))
+
+; We use define followed by macro and a lambda an awful lot - so 
+; let's define a macro to ease the overhead in
+; writing macros!
+(define define-macro
+    (macro (lambda (name args expansion)
+            `(,define ,name
+                (,macro (,lambda ,args ,expansion))))))
+
+(define-macro loop (var values body)
+    `(,mapcar (,lambda (,var) ,body) ,values))

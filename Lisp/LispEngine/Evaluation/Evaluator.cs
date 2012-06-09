@@ -29,7 +29,7 @@ namespace LispEngine.Evaluation
             }
             catch(Exception ex)
             {
-                throw c.error("EvaluationError", ex);
+                throw c.error(ex, "EvaluationError", ex.Message);
             }
         }
     }
