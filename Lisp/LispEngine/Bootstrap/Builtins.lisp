@@ -115,3 +115,10 @@
 
 (define-macro loop (var values body)
     `(,mapcar (,lambda (,var) ,body) ,values))
+
+; 'with' macro decomposes recursively into nested 'let' statements
+(define with (macro
+    (lambda (() body)
+                body
+            ((var . (expr . bindings)) body)
+                `(,let ,var ,expr (,with ,bindings ,body)))))

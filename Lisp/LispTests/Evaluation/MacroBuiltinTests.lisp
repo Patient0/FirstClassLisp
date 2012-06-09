@@ -22,7 +22,7 @@
 (define-function-multiple-sub-expressions 10
     (begin
         (define (subtract x y)
-            35
+            35 ; this is evaluated by ignored
             (- x y))
         (subtract 15 5)))
 
@@ -31,3 +31,9 @@
 (loop (1 4 9 16)
     (loop x '(1 2 3 4)
         (* x x)))
+
+; 'with' is like let but allows multiple variable
+; definitions.
+(with (5 100 7)
+    (with (x 5 y 100 z 7)
+        (list x y z)))
