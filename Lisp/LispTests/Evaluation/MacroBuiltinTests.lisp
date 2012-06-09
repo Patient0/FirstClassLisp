@@ -22,7 +22,7 @@
 (define-function-multiple-sub-expressions 10
     (begin
         (define (subtract x y)
-            35 ; this is evaluated by ignored
+            35 ; this is evaluated but ignored
             (- x y))
         (subtract 15 5)))
 

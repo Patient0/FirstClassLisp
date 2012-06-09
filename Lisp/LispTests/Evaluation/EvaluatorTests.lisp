@@ -100,7 +100,7 @@
 ; stack, this test runs in constant memory.
 (properTailRecursion
     500500
-    (define sum-to-1000
+    (begin
         (define total
             (lambda (so-far 0) so-far
                     (so-far x) (total (+ so-far x) (- x 1))))
@@ -124,6 +124,13 @@
         (begin
             (define x 48))
         x))
-
 (lengthTest 3
     (length '(2 4 6)))
+
+; Compute 5! using Y-combinator to perform
+; the recursion rather than 'define' trick
+(y-combinator-test 120
+    (let fac (Y (lambda (fac)
+                   (lambda (0) 1
+                           (x) (* x (fac (- x 1))))))
+        (fac 5)))
