@@ -134,3 +134,13 @@
                    (lambda (0) 1
                            (x) (* x (fac (- x 1))))))
         (fac 5)))
+
+; We can pass macros as arguments to functions,
+; and return them as arguments from functions.
+; Not sure how useful this is in practise - the
+; main reason for making macros first class
+; was because it made hygienic macros easy.
+(macros-are-first-class 9
+    (with (identity (lambda (x) x)
+           square ((identity lambda) (x) (* x x)))
+           (square 3)))
