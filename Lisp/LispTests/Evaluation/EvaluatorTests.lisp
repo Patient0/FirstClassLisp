@@ -40,6 +40,10 @@
 		(if #t 5 undefined))
 (ifFalse? 5
 		(if #f undefined 5))
+; Test that anything that isn't '#f' is considered
+; to be true by our if statement.
+(ifAtom 4
+        (if 5 4 0))
 (ifMoreComplicated1 3
         (if (< 3 4) 3 4))
 (ifMoreComplicated2 4
@@ -63,6 +67,11 @@
             (eq? life 44) not-this-one
             (eq? life 48) no-not-this-either
             42))
+(ifOnlyEvaluatesNecessaryConditions 42
+        (if (eq? life 23) not-this-one
+            (eq? life 42) 42
+            (undefined-operation) no-worries
+            default-also-undefined))
 (quotedList (3 4) '(3 4))
 (append (1 2 3 4)
     (append '(1 2) '(3 4)))

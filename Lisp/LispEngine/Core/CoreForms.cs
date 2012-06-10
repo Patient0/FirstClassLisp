@@ -15,7 +15,6 @@ namespace LispEngine.Core
                 .Extend("cons", Cons.Instance)
                 .Extend("apply", Apply.Instance)
                 .Extend("eq?", Eq.Instance)
-                .Extend("if", If.Instance)
                 .Extend("macro", Macro.Instance)
                 .Extend("quote", Quote.Instance)
                 .Extend("define", Define.Instance)

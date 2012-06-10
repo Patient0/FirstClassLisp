@@ -39,6 +39,20 @@
 (define-macro let (var value body)
     `((,lambda (,var) ,body) ,value))
 
+; Our pattern matching is powerful enough to define 'if'
+; as a macro. In fact, it can even handle
+; "multicase" if, by expanding the remaining
+; clauses into itself.
+(define if (macro
+    (lambda (condition true-case false-case)
+            ; Base case. Anything not false is considered 'true'
+                `((,lambda (#f) ,false-case
+                            _   ,true-case) ,condition)
+            ; Multiple clauses. Expand into recursive if statements.
+            (condition true-case . remainder)
+                `(,if ,condition ,true-case
+                       (,if ,@remainder)))))
+
 ; Now add support for multiple sub-statements in define:
 ; Whenever we see
 ; (define x expr1 expr2 ...)

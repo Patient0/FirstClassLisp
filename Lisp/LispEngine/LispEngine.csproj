@@ -60,7 +60,6 @@
     <Compile Include="Evaluation\AbstractStackFunction.cs" />
     <Compile Include="Evaluation\EvaluationException.cs" />
     <Compile Include="Evaluation\FunctionExpression.cs" />
-    <Compile Include="Core\If.cs" />
     <Compile Include="Core\Quote.cs" />
     <Compile Include="Core\Macro.cs" />
     <Compile Include="Datums\Atom.cs" />
