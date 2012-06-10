@@ -28,7 +28,7 @@ namespace LispEngine.Evaluation
             // rather than the more elegant
             // recursive solution.
             var ee = e as ExtendedEnvironment;
-            while(ee != null)
+            while (ee != null)
             {
                 if (ee.name.Equals(name))
                     return ee.value;
@@ -36,6 +36,15 @@ namespace LispEngine.Evaluation
                 ee = e as ExtendedEnvironment;
             }
             return e.Lookup(name);
+        }
+
+        public IEnvironment Set(string name, Datum newValue)
+        {
+            if(this.name.Equals(name))
+                return new ExtendedEnvironment(parent, name, newValue);
+            // Name might not be defined at this level. Try getting modified
+            // parent variable
+            return new ExtendedEnvironment(parent.Set(name, newValue), this.name, this.value);
         }
     }
 

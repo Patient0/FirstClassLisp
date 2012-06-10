@@ -19,6 +19,7 @@ namespace LispEngine.Core
                 .Extend("macro", Macro.Instance)
                 .Extend("quote", Quote.Instance)
                 .Extend("define", Define.Instance)
+                .Extend("set!", Set.Instance)
                 .Extend("begin", Begin.Instance)
                 .Extend("call/cc", CallCC.Instance);
             return env;

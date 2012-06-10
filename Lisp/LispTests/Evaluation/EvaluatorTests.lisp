@@ -135,12 +135,18 @@
                            (x) (* x (fac (- x 1))))))
         (fac 5)))
 
-; We can pass macros as arguments to functions,
-; and return them as arguments from functions.
+; We can pass almost anything
+; that has a name as an arguments to a functions,
+; and return the same as arguments from functions.
 ; Not sure how useful this is in practise - the
 ; main reason for making macros first class
 ; was because it made hygienic macros easy.
-(macros-are-first-class 9
+(fexprs-are-first-class 9
     (with (identity (lambda (x) x)
            square ((identity lambda) (x) (* x x)))
            (square 3)))
+
+(macros-are-first-class 9
+    (with (identity (lambda (x) x))
+           ((identity let) x 3
+                (* x x))))

@@ -51,6 +51,7 @@
     <Compile Include="Core\Define.cs" />
     <Compile Include="Core\Eq.cs" />
     <Compile Include="Core\Log.cs" />
+    <Compile Include="Core\Set.cs" />
     <Compile Include="Core\UnaryFunction.cs" />
     <Compile Include="Datums\AbstractVisitor.cs" />
     <Compile Include="Datums\DatumExtensions.cs" />

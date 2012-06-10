@@ -21,6 +21,12 @@ namespace LispEngine.Evaluation
             env = env.Extend(name, value);
         }
 
+        public IEnvironment Set(string name, Datum newValue)
+        {
+            env = env.Set(name, newValue);
+            return this;
+        }
+
         public Datum Lookup(string name)
         {
             return env.Lookup(name);

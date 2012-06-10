@@ -5,7 +5,6 @@
 (define nil? (lambda (()) #t _ #f))
 (define pair? (lambda ((_ . _)) #t _ #f))
 
-
 ; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
 ; We need it quite early because writing macros without quasiquote
 ; is extremely painful!

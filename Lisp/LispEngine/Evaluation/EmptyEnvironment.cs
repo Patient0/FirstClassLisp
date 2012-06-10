@@ -13,6 +13,11 @@ namespace LispEngine.Evaluation
             throw new Exception(String.Format("Undefined symbol '{0}'", name));
         }
 
+        public IEnvironment Set(string name, Datum newValue)
+        {
+            throw new Exception(String.Format("Symbol '{0}' not defined. Cannot be set.", name));
+        }
+
         private EmptyEnvironment()
         {
         }

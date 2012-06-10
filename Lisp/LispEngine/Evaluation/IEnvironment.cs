@@ -10,5 +10,6 @@ namespace LispEngine.Evaluation
     public interface IEnvironment
     {
         Datum Lookup(string name);
+        IEnvironment Set(string name, Datum newValue);
     }
 }
