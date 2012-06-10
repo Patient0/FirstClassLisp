@@ -126,3 +126,20 @@
 ; let/cc provides "escape" functionality
 (define-macro let/cc (var body)
     `(,call/cc (,lambda (,var) ,body)))
+
+; In the common case of only wanting to
+; dispatch on the pattern of one variable,
+; define a convenient macro to de-nest
+; the arguments that would otherwise
+; be required in a plain lambda expression
+; TODO: Fix define-macro to allow multiple statements surrounded by
+; an implicit "begin"
+(define match
+    (begin
+        (define denest
+                (lambda
+                    (()) ()
+                    ((pattern . (body . cases)))
+                        `(,(list pattern) ,body ,@(denest cases))))
+        (macro (lambda (var . cases)
+                `((,lambda ,@(denest cases)) ,var)))))

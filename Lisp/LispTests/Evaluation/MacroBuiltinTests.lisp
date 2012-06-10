@@ -41,3 +41,12 @@
 (let/cc 23
     (let/cc return
         (+ 5 (return 23))))
+
+(match 3
+    (with (x 4 y 5)
+        (match `(,x ,y)
+            (1 2) 0
+            (2 3) 1
+            (3 4) 2
+            (4 z) (- z 2)
+            (5 6) 4)))
