@@ -158,53 +158,60 @@
         #f #t
         _ #f))
 
+; A demonstration of 'OO'-style programming.
+; Here, 'contents' is our private state,
+; and we are exposing 'push and 'pop as methods
+; for manipulating the private state.
 (define (make-stack)
     (define contents ())
     (lambda ('push arg)
-                (begin
-                    (log contents)
-                    (set! contents (cons arg contents)))
+                    (set! contents (cons arg contents))
             ('pop)
-                (begin
-                    (log contents)
                     (let top (car contents)
                         (begin
                             (set! contents (cdr contents))
-                            top)))))
+                            top))))
 
 (define (current-continuation) 
   (call/cc
    (lambda (cc)
      (cc cc))))
 
-; fail-stack : list[continuation]
-(define fail-stack ())
-
-(define (error msg)
-    msg)
-
-(define (fail)
-    (match fail-stack
-        (back-track-point . rest)
-            (begin
-                (set! fail-stack rest)
-                (back-track-point back-track-point))
-        _
-            ; We never added support for string literals
-            ; to the parser! Use '404' to indicate failure!
-            (error 404)))
-
-(define (amb choices)
-    (let cc (current-continuation)
-        (match choices
-            () (fail)
-            (choice . remaining-choices)
+; Adapted from
+; http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
+;
+; Matt Might's implementation of amb
+; uses explicit *global* state, which makes me fell queasy:
+; what if you wanted to solve lots of different problems
+; in parallel threads?
+; 
+; In order to let the user keep control of the state,
+; keep the state inside an 'amb-environment'. The
+; amb-environment has to be constructed with
+; an error function which will be called if
+; no solutions exist.
+(define (make-amb-environment error)
+    ; fail-stack : list[continuation]
+    (define fail-stack ())
+    (define (fail)
+        (match fail-stack
+            (back-track-point . rest)
                 (begin
-                    (set! choices remaining-choices)
-                    (set! fail-stack (cons cc fail-stack))
-                    choice))))
+                    (set! fail-stack rest)
+                    (back-track-point back-track-point))
+            _
+                (error)))
+    (lambda
+        ('fail) fail
+        ('amb choices)
+            (let cc (current-continuation)
+                (match choices
+                    () (fail)
+                    (choice . remaining-choices)
+                        (begin
+                            (set! choices remaining-choices)
+                            (set! fail-stack (cons cc fail-stack))
+                            choice)))
 
-(define (assert condition)
-    (if (not condition)
-        (fail)
-        #t))
+        ('assert #t) #t
+        ('assert _) (fail)))
