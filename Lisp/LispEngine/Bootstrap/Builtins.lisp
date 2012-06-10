@@ -28,9 +28,9 @@
 ; let's define a macro to ease the overhead in
 ; writing macros!
 (define define-macro
-    (macro (lambda (name args expansion)
+    (macro (lambda (name args . exprs)
             `(,define ,name
-                (,macro (,lambda ,args ,expansion))))))
+                (,macro (,lambda ,args (,begin ,@exprs)))))))
 
 ; Our let macro is like the one in arc - just
 ; a single variable, single expression, and no
@@ -132,14 +132,10 @@
 ; define a convenient macro to de-nest
 ; the arguments that would otherwise
 ; be required in a plain lambda expression
-; TODO: Fix define-macro to allow multiple statements surrounded by
-; an implicit "begin"
-(define match
-    (begin
-        (define denest
-                (lambda
-                    (()) ()
-                    ((pattern . (body . cases)))
-                        `(,(list pattern) ,body ,@(denest cases))))
-        (macro (lambda (var . cases)
-                `((,lambda ,@(denest cases)) ,var)))))
+(define-macro match (var . cases)
+    (define denest
+        (lambda
+            (()) ()
+            ((pattern . (body . remaining)))
+                `(,(list pattern) ,body ,@(denest remaining))))
+    `((,lambda ,@(denest cases)) ,var))
