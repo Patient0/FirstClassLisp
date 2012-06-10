@@ -7,14 +7,13 @@ using LispEngine.Evaluation;
 
 namespace LispEngine.Core
 {
-    class Log : Function
+    class Log : UnaryFunction
     {
         public static readonly StackFunction Instance = new Log().ToStack();
-        public Datum Evaluate(Datum args)
+        protected override Datum eval(Datum arg)
         {
-            foreach(var arg in DatumHelpers.enumerate(args))
-                Console.WriteLine("{0}", arg);
-            return args;
+            Console.WriteLine("{0}", arg);
+            return arg;
         }
     }
 }

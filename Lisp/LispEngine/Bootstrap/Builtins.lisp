@@ -132,17 +132,60 @@
 ; the arguments that would otherwise
 ; be required in a plain lambda expression
 (define-macro match (var . cases)
-    (define denest
+    (define de-nest
         (lambda
             (()) ()
             ((pattern . (body . remaining)))
-                `(,(list pattern) ,body ,@(denest remaining))))
-    `((,lambda ,@(denest cases)) ,var))
-
-(define fail-stack ())
+                `(,(list pattern) ,body ,@(de-nest remaining))))
+    `((,lambda ,@(de-nest cases)) ,var))
 
 (define (not expr)
     (match expr
         #f #t
         _ false))
 
+(define (make-stack)
+    (define contents ())
+    (lambda ('push arg)
+                (begin
+                    (log contents)
+                    (set! contents (cons arg contents)))
+            ('pop)
+                (begin
+                    (log contents)
+                    (let top (car contents)
+                        (begin
+                            (set! contents (cdr contents))
+                            top)))))
+
+; fail-stack : list[continuation]
+(define fail-stack ())
+
+(define (error msg)
+    msg)
+
+(define (fail)
+    (match fail-stack
+        (back-trace-point . rest)
+            (begin
+                (set! fail-stack rest)
+                (back-trace-point back-trace-point))
+        _
+            ; We never added support for string literals
+            ; to the parser! Use '404' to indicate failure!
+            (error _)))
+
+(define (amb choices)
+    (let/cc cc
+        (match choices
+            () (fail)
+            (choice . remaining-choices)
+                (begin
+                    (set! choices remaining-choices)
+                    (set! fail-stack (cons cc fail-stack))
+                    choice))))
+
+(define (assert condition)
+    (if (not condition)
+        (fail)
+        #t))            

@@ -136,11 +136,9 @@
         (fac 5)))
 
 ; We can pass almost anything
-; that has a name as an arguments to a functions,
-; and return the same as arguments from functions.
-; Not sure how useful this is in practise - the
-; main reason for making macros first class
-; was because it made hygienic macros easy.
+; that has a name as an argument to a function.
+; Also, we can return the same as arguments from functions.
+; Not sure how useful this is in practise!
 (fexprs-are-first-class 9
     (with (identity (lambda (x) x)
            square ((identity lambda) (x) (* x x)))
@@ -153,3 +151,6 @@
 
 (not #t
     (not (< 4 3)))
+
+
+       

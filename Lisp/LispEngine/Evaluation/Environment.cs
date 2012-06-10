@@ -6,8 +6,9 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    // An environment that can be mutated. Used to implement define, maybe
-    // other things also.
+    // Environment supports mutable extension via Define,
+    // and mutable modification of existing values via
+    // Set.
     public sealed class Environment : IEnvironment
     {
         private IEnvironment env;
@@ -21,10 +22,9 @@ namespace LispEngine.Evaluation
             env = env.Extend(name, value);
         }
 
-        public IEnvironment Set(string name, Datum newValue)
+        public void Set(string name, Datum newValue)
         {
-            env = env.Set(name, newValue);
-            return this;
+            env.Set(name, newValue);
         }
 
         public Datum Lookup(string name)

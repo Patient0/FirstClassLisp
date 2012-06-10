@@ -58,6 +58,11 @@ namespace LispTests.Evaluation
             foreach (var d in ResourceLoader.ReadDatums(string.Format("LispTests.Evaluation.{0}", resourceFile)))
             {
                 var combo = d.ToArray();
+                if(combo.Length > 1 && combo[0].Equals(quote))
+                {
+                    Console.WriteLine("Ignoring {0}", d);
+                    continue;
+                }
                 if (combo.Length < 3)
                     throw new Exception(string.Format("'{0}' is not a valid test case", d));
                 var name = combo[0] as Symbol;

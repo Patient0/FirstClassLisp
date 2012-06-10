@@ -13,6 +13,11 @@ namespace LispEngine.Evaluation
             this.datum = datum;
         }
 
+        public Environment Env
+        {
+            get { return env; }
+        }
+
         class Visitor : AbstractVisitor<Continuation>
         {
             private readonly Environment env;

@@ -54,5 +54,27 @@ namespace LispEngine.Evaluation
             sw.Flush();
             return sw.ToString();
         }
+
+        // The following are useful for debugging.
+        public static IEnvironment GetEnvironment(this Continuation c)
+        {
+            EvaluateTask t = null;
+            while(c.Task != null && (t = c.Task as EvaluateTask) == null)
+                c = c.PopTask();
+            return t == null ? null : t.Env;
+        }
+
+        public static Datum Lookup(this Continuation c, string name)
+        {
+            try
+            {
+                var env = GetEnvironment(c);
+                return env == null ? null : env.Lookup(name);                
+            }
+            catch (Exception)
+            {
+                return DatumHelpers.atom("undefined");
+            }
+        }
     }
 }

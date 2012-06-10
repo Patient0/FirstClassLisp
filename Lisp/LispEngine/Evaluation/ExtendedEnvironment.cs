@@ -10,7 +10,7 @@ namespace LispEngine.Evaluation
     {
         private readonly IEnvironment parent;
         private readonly string name;
-        private readonly Datum value;
+        private Datum value;
 
         public ExtendedEnvironment(IEnvironment parent, string name, Datum value)
         {
@@ -19,9 +19,9 @@ namespace LispEngine.Evaluation
             this.value = value;
         }
 
-        public Datum Lookup(string name)
+        private ExtendedEnvironment find(string name, out IEnvironment e)
         {
-            IEnvironment e = this;
+            e = this;
             // To reduce the size of the stack trace when
             // looking up names in an environment that
             // has lots of names, we loop iteratively
@@ -31,20 +31,28 @@ namespace LispEngine.Evaluation
             while (ee != null)
             {
                 if (ee.name.Equals(name))
-                    return ee.value;
+                    return ee;
                 e = ee.parent;
                 ee = e as ExtendedEnvironment;
             }
-            return e.Lookup(name);
+            return null;
         }
 
-        public IEnvironment Set(string name, Datum newValue)
+        public Datum Lookup(string name)
         {
-            if(this.name.Equals(name))
-                return new ExtendedEnvironment(parent, name, newValue);
-            // Name might not be defined at this level. Try getting modified
-            // parent variable
-            return new ExtendedEnvironment(parent.Set(name, newValue), this.name, this.value);
+            IEnvironment p;
+            var e = find(name, out p);
+            return e == null ? p.Lookup(name) : e.value;
+        }
+
+        public void Set(string name, Datum newValue)
+        {
+            IEnvironment p;
+            var e = find(name, out p);
+            if(e == null)
+                p.Set(name, newValue);
+            else
+                e.value = newValue;
         }
     }
 

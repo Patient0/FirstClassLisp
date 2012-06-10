@@ -6,10 +6,12 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    // An immutable environment
+    // Abstract Environment implementation which is immutable
+    // w.r.t the set of names that it defines.
+    // It's not immutable w.r.t the bindings that each name has.
     public interface IEnvironment
     {
         Datum Lookup(string name);
-        IEnvironment Set(string name, Datum newValue);
+        void Set(string name, Datum newValue);
     }
 }
