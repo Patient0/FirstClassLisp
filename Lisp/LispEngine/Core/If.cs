@@ -15,10 +15,12 @@ namespace LispEngine.Core
         class CheckResult : Task
         {
             private readonly Environment env;
+            private readonly int clause;
             private readonly IList<Datum> clauses;
-            public CheckResult(Environment env, IList<Datum> clauses)
+            public CheckResult(Environment env, int clause, IList<Datum> clauses)
             {
                 this.env = env;
+                this.clause = clause;
                 this.clauses = clauses;
             }
 
@@ -26,18 +28,26 @@ namespace LispEngine.Core
             {
                 var result = c.Result;
                 c = c.PopResult();
-                if (DatumHelpers.atom(true).Equals(result))
-                    return c.Evaluate(env, clauses[1]);
-                return c.Evaluate(env, clauses[2]);
+                if(DatumHelpers.atom(true).Equals(result))
+                    return c.Evaluate(env, clauses[clause+1]);
+                var nextClause = clause + 2;
+                // Result is false. If this was the last clause, then evaluate the default clause.
+                if(nextClause >= clauses.Count - 1)
+                {
+                    var defaultClause = clauses[clauses.Count - 1];
+                    return c.Evaluate(env, defaultClause);
+                }
+                // Result was false but there are more clauses.
+                // Check the result of the next clause.
+                c = c.PushTask(new CheckResult(env, nextClause, clauses));
+                return c.Evaluate(env, clauses[nextClause]);
             }
         }
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var clauses = args.ToArray();
-            if (clauses.Length != 3)
-                throw c.error("Invalid if syntax: Expected (if <condition> <true-case> <false-case>). Got '{0}'", args);
-            c = c.PushTask(new CheckResult(env, clauses));
+            c = c.PushTask(new CheckResult(env, 0, clauses));
             return c.Evaluate(env, clauses[0]);
         }
     }

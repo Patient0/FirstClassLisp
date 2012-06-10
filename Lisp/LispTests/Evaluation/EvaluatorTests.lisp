@@ -44,6 +44,10 @@
         (if (< 3 4) 3 4))
 (ifMoreComplicated2 4
         (if (< 4 3) 3 4))
+; There was a bug which was exposed if the 'false'
+; case was, in fact, the expression 'true'
+(ifConvertedToTrue #t
+    (if #f 53 #t))
 ; Discovered quite late on that the if
 ; F-expression wasn't actually evaluating either the
 ; true or the false cases!
@@ -54,7 +58,7 @@
 ; We'll make our 'if' like a 'cond' - allow multiple
 ; clauses until one matches. Should always be an
 ; odd number of clauses.
-'(ifIsLikeCond 42
+(ifIsLikeCond 42
         (if (eq? life 23) not-this-one
             (eq? life 44) not-this-one
             (eq? life 48) no-not-this-either
