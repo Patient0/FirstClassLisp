@@ -114,6 +114,12 @@ namespace LispEngine.Datums
             return a.Value;
         }
 
+        public static int castInt(Datum d)
+        {
+            var value = castAtom(d);
+            return (int) value;
+        }
+
         public static IEnumerable<object> atoms(Datum list)
         {
             return enumerate(list).Select(castAtom);

@@ -138,3 +138,11 @@
             ((pattern . (body . remaining)))
                 `(,(list pattern) ,body ,@(denest remaining))))
     `((,lambda ,@(denest cases)) ,var))
+
+(define fail-stack ())
+
+(define (not expr)
+    (match expr
+        #f #t
+        _ false))
+

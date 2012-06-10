@@ -21,10 +21,11 @@
 ; Now we'll try something more ambitious: implement
 ; the "amb" operator. Based on
 ; http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
-;(amb 42
-;    (begin
-;        (define fail-stack ())
-;        (define (fail)
-;            (match fail-stack
-;                (x . y)
-;                    (
+;(amb (4 3 5)
+;    (with (a (amb '(1 2 3 4 5 6 7))
+;           b (amb '(1 2 3 4 5 6 7))
+;           c (amb '(1 2 3 4 5 6 7)))
+;
+;        (begin
+;            (assert (= (* c c) (+ (* a a) (* b b))))
+;            (assert (<  b a)))))

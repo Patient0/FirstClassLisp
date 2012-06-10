@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LispEngine.Core;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
 
@@ -9,9 +10,9 @@ namespace LispEngine.Bootstrap
 {
     class Arithmetic : DatumHelpers
     {
-        private delegate int Op(int x, int y);
+        private delegate object Op(int x, int y);
 
-        class Operation : Function
+        class Operation : BinaryFunction
         {
             private readonly string name;
             private readonly Op op;
@@ -20,9 +21,9 @@ namespace LispEngine.Bootstrap
                 this.name = name;
                 this.op = op;
             }
-            public Datum Evaluate(Datum args)
+            protected override Datum eval(Datum arg1, Datum arg2)
             {
-                return atom(enumerateInts(args).Aggregate((x,y) => op(x,y)));
+                return atom(op(castInt(arg1), castInt(arg2)));
             }
             public override string ToString()
             {
@@ -40,8 +41,10 @@ namespace LispEngine.Bootstrap
             return env
                 .Extend("+", makeOperation("+", (x, y) => x + y))
                 .Extend("-", makeOperation("-", (x, y) => x - y))
-                .Extend("*", makeOperation("*", (x, y) => x * y))
-                .Extend("/", makeOperation("/", (x, y) => x / y));
+                .Extend("*", makeOperation("*", (x, y) => x*y))
+                .Extend("/", makeOperation("/", (x, y) => x/y))
+                .Extend("<", makeOperation("<", (x, y) => x < y))
+                .Extend(">", makeOperation(">", (x, y) => x > y));
         }
     }
 }

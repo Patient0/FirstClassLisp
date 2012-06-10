@@ -91,8 +91,8 @@
     (map (lambda (x) (* x x)) '(1 2 3)))
 (mapTest (4 10 18)
     (map * '(1 2 3) '(4 5 6)))
-(mapThreeTest (28 80 162)
- (map * '(1 2 3) '(4 5 6) '(7 8 9)))
+(mapThreeTest ((1 4 7) (2 5 8) (3 6 9))
+ (map list '(1 2 3) '(4 5 6) '(7 8 9)))
 
 ; Using the implicit stack for evaluation here would
 ; lead to stack overflow. But because this code is
@@ -150,3 +150,6 @@
     (with (identity (lambda (x) x))
            ((identity let) x 3
                 (* x x))))
+
+(not #t
+    (not (< 4 3)))
