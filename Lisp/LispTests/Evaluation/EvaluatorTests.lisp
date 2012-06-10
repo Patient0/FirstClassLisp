@@ -40,6 +40,10 @@
 		(if #t 5 undefined))
 (ifFalse? 5
 		(if #f undefined 5))
+(ifMoreComplicated1 3
+        (if (< 3 4) 3 4))
+(ifMoreComplicated2 4
+        (if (< 4 3) 3 4))
 ; Discovered quite late on that the if
 ; F-expression wasn't actually evaluating either the
 ; true or the false cases!
@@ -50,7 +54,7 @@
 ; We'll make our 'if' like a 'cond' - allow multiple
 ; clauses until one matches. Should always be an
 ; odd number of clauses.
-(ifIsLikeCond 42
+'(ifIsLikeCond 42
         (if (eq? life 23) not-this-one
             (eq? life 44) not-this-one
             (eq? life 48) no-not-this-either

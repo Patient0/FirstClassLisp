@@ -37,7 +37,7 @@
 ; Now we'll try something more ambitious: implement
 ; the "amb" operator. Based on
 ; http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
-'(ambTest (4 3 5)
+(ambTest (4 3 5)
     (with (a (amb '(1 2 3 4 5 6 7))
            b (amb '(1 2 3 4 5 6 7))
            c (amb '(1 2 3 4 5 6 7)))

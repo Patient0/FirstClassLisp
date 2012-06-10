@@ -142,7 +142,7 @@
 (define (not expr)
     (match expr
         #f #t
-        _ false))
+        _ #f))
 
 (define (make-stack)
     (define contents ())
@@ -158,6 +158,11 @@
                             (set! contents (cdr contents))
                             top)))))
 
+(define (current-continuation) 
+  (call/cc
+   (lambda (cc)
+     (cc cc))))
+
 ; fail-stack : list[continuation]
 (define fail-stack ())
 
@@ -166,17 +171,17 @@
 
 (define (fail)
     (match fail-stack
-        (back-trace-point . rest)
+        (back-track-point . rest)
             (begin
                 (set! fail-stack rest)
-                (back-trace-point back-trace-point))
+                (back-track-point back-track-point))
         _
             ; We never added support for string literals
             ; to the parser! Use '404' to indicate failure!
-            (error _)))
+            (error 404)))
 
 (define (amb choices)
-    (let/cc cc
+    (let cc (current-continuation)
         (match choices
             () (fail)
             (choice . remaining-choices)
@@ -188,4 +193,4 @@
 (define (assert condition)
     (if (not condition)
         (fail)
-        #t))            
+        #t))
