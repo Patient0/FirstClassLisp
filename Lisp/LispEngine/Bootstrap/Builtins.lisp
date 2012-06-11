@@ -4,6 +4,7 @@
 (define cdr (lambda ((c . d)) d))
 (define nil? (lambda (()) #t _ #f))
 (define pair? (lambda ((_ . _)) #t _ #f))
+(define display log)
 
 ; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
 ; We need it quite early because writing macros without quasiquote
