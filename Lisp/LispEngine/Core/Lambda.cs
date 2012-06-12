@@ -75,7 +75,7 @@ namespace LispEngine.Core
         {
             var macroArgs = args.ToArray();
             if (macroArgs.Length % 2 != 0)
-                throw c.error("Invalid macro syntax for lambda. Argument count '{0}' is not even. Syntax is (lambda [args body]+)", macroArgs.Length);
+                throw c.error("Invalid macro syntax for lambda. Argument count for '{0}' is not even ({1}). Syntax is (lambda [args body]+)", args, macroArgs.Length);
 
             var argBodies = new List<ArgBody>();
             for (var i = 0; i < macroArgs.Length; i += 2)

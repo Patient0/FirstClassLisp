@@ -8,6 +8,13 @@
 (backwardsCC 5
     ((call/cc (lambda (k) k)) (lambda (x) 5)))
 
+(letcc 23
+    (let/cc c (+ 3 (c 23))))
+
+;(current 23
+;    (let c (current-continuation)
+;        (+ 3 (c 23))))
+
 
 ; Now we'll try something more ambitious: implement
 ; the "amb" operator. Based on
