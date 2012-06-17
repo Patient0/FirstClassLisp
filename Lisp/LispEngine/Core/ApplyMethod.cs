@@ -16,6 +16,23 @@ namespace LispEngine.Core
         {
         }
 
+        private static Func<Datum, object> CreateEvaluator(Continuation c, Environment env)
+        {
+            Evaluator e = new Evaluator();
+            return datum =>
+                {
+                    var c1 = c.Evaluate(env, datum);
+                    var d1 = e.Evaluate(c1);
+
+                    // TEMP: treat quoted symbols as string literals, until we have proper string expressions
+                    var symbol = d1 as Symbol;
+                    if (symbol == null)
+                        return DatumHelpers.castAtom(d1);
+                    else
+                        return symbol.Identifier;
+                };
+        }
+
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var datumArgs = args.ToArray();
@@ -24,9 +41,13 @@ namespace LispEngine.Core
             var symbol = datumArgs[0] as Symbol;
             if (symbol == null)
                 throw c.error("'{0}' is not a symbol", datumArgs[0]);
-            var obj = DatumHelpers.castAtom(datumArgs[1]);
-            var mi = obj.GetType().GetMethod(symbol.Identifier);
-            var result = mi.Invoke(obj, datumArgs.Skip(2).Select(DatumHelpers.castAtom).ToArray());
+            var evaluator = CreateEvaluator(c, env);
+            var obj = evaluator(datumArgs[1]);
+            var type = obj.GetType();
+            var mi = type.GetMethods().Where(m => m.Name == symbol.Identifier).FirstOrDefault();
+            if (mi == null)
+                throw c.error("No method {0} on {1}", symbol.Identifier, type.Name);
+            var result = mi.Invoke(obj, datumArgs.Skip(2).Select(evaluator).ToArray());
             return c.PushResult(new Atom(result));
         }
     }

@@ -3,7 +3,7 @@
 ;     (System.Convert.ToBoolean "true"))
 (instance-method-reftype
     #t
-    (.ToBoolean 'true))
+    (.Equals 'hello 'hello))
 (instance-method-valuetype
     #t
-    (.ToBoolean 1))
+    (.Equals 1 1))
