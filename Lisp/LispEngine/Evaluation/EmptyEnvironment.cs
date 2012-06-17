@@ -8,9 +8,10 @@ namespace LispEngine.Evaluation
 {
     public sealed class EmptyEnvironment : IEnvironment
     {
-        public Datum Lookup(string name)
+        public bool TryLookup(string name, out Datum datum)
         {
-            throw new Exception(String.Format("Undefined symbol '{0}'", name));
+            datum = null;
+            return false;
         }
 
         public void Set(string name, Datum newValue)

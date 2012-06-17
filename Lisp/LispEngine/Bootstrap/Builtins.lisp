@@ -1,4 +1,6 @@
-﻿(define nil '())
+﻿(ref mscorlib)
+
+(define nil '())
 (define list (lambda x x))
 (define car (lambda ((a . b)) a))
 (define cdr (lambda ((c . d)) d))
