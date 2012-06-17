@@ -1,8 +1,7 @@
 ; Call a static method
-; TODO: invent a syntax for this (not sure the '.'s parse well)
-; (static-method
-;     #t
-;     (System.Convert.ToBoolean "true"))
+(static-method
+    #t
+    (System.Convert.ToBoolean 'true))
 ; Call an instance method (Equals) on a reference type (String)
 (instance-method-reftype
     #t
