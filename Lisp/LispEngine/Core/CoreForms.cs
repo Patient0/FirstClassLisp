@@ -20,7 +20,8 @@ namespace LispEngine.Core
                 .Extend("define", Define.Instance)
                 .Extend("set!", Set.Instance)
                 .Extend("begin", Begin.Instance)
-                .Extend("call/cc", CallCC.Instance);
+                .Extend("call/cc", CallCC.Instance)
+                .Extend(".", ApplyMethod.Instance);
             return env;
         }
     }

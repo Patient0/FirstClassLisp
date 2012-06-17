@@ -43,6 +43,7 @@
     <Compile Include="Bootstrap\Append.cs" />
     <Compile Include="Bootstrap\Arithmetic.cs" />
     <Compile Include="Core\Apply.cs" />
+    <Compile Include="Core\ApplyMethod.cs" />
     <Compile Include="Core\Begin.cs" />
     <Compile Include="Core\BinaryFunction.cs" />
     <Compile Include="Core\BindingTypes.cs" />

@@ -38,7 +38,11 @@ namespace LispEngine.Parsing
 
         private Datum symbol()
         {
-            return next.Type == TokenType.Symbol ? new Symbol(next.Contents) : null;
+            if (next.Type == TokenType.Symbol)
+                return new Symbol(next.Contents);
+            if (next.Type == TokenType.Dot)
+                return new Symbol(".");
+            return null;
         }
 
         private Datum readCdr()
@@ -60,7 +64,7 @@ namespace LispEngine.Parsing
             var cdr = nil;
             while(next.Type != TokenType.Close)
             {
-                if (next.Type == TokenType.Dot)
+                if (elements.Count > 0 && next.Type == TokenType.Dot)
                 {
                     cdr = readCdr();
                     break;

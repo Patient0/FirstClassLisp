@@ -177,6 +177,12 @@ namespace LispTests.Parsing
         }
 
         [Test]
+        public void testListDotSymbol()
+        {
+            test("(.house)", compound(symbol("."), symbol("house")));
+        }
+
+        [Test]
         public void testLoadLispFile()
         {
             foreach(var d in ResourceLoader.ReadDatums("LispTests.Parsing.MultilineFile.lisp"))
