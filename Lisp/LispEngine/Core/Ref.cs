@@ -27,10 +27,13 @@ namespace LispEngine.Core
 
                     // TEMP: treat quoted symbols as string literals, until we have proper string expressions
                     var symbol = d1 as Symbol;
-                    if (symbol == null)
-                        return DatumHelpers.castAtom(d1);
-                    else
+                    if (symbol != null)
                         return symbol.Identifier;
+
+                    if (d1 is Null)
+                        return null;
+
+                    return DatumHelpers.castAtom(d1);
                 };
         }
 
@@ -63,7 +66,8 @@ namespace LispEngine.Core
                 var argTypes = Array.ConvertAll(t.Item3, arg => arg == null ? typeof(object) : arg.GetType());
                 var mi = t.Item1.Where(m => MethodMatches(argTypes, m)).First();
                 var result = mi.Invoke(t.Item2, t.Item3);
-                return c.PushResult(DatumHelpers.atom(result));
+                var resultDatum = result == null ? Null.Instance : DatumHelpers.atom(result);
+                return c.PushResult(resultDatum);
             }
         }
 

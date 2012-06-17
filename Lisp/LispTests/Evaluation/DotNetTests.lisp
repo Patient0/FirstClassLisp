@@ -1,7 +1,11 @@
-; Call a static method
+; Call a static method returning a value type (Boolean)
 (static-method
     #t
     (System.Convert.ToBoolean 'true))
+; Call a static methos returning void
+(static-method-void
+	()
+	(System.Console.WriteLine 'hello))
 ; Call an instance method (Equals) on a reference type (String)
 (instance-method-reftype
     #t
