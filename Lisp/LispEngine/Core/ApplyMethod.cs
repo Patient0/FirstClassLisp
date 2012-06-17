@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
@@ -33,21 +34,50 @@ namespace LispEngine.Core
                 };
         }
 
+        private static bool MethodMatches(bool isStatic, string name, Type[] argTypes, MethodInfo mi)
+        {
+            if (mi.IsStatic != isStatic)
+                return false;
+
+            if (mi.Name != name)
+                return false;
+
+            // TODO: implement variable argument lists
+            var pis = mi.GetParameters();
+            if (pis.Length != argTypes.Length)
+                return false;
+
+            // TODO: give preference to e.g. Int32 arg passed to Int32 param (instead of Int32 arg passed to Object param)
+            // TODO: implement all of the rest of the C# method binding rules
+            for (int i = 0; i < pis.Length; i++)
+            {
+                if (!pis[i].ParameterType.IsAssignableFrom(argTypes[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var datumArgs = args.ToArray();
             if (datumArgs.Length < 2)
                 throw c.error("ApplyMethod expects at least 2 arguments. {0} passed", datumArgs.Length);
+
             var symbol = datumArgs[0] as Symbol;
             if (symbol == null)
                 throw c.error("'{0}' is not a symbol", datumArgs[0]);
+
             var evaluator = CreateEvaluator(c, env);
-            var obj = evaluator(datumArgs[1]);
-            var type = obj.GetType();
-            var mi = type.GetMethods().Where(m => m.Name == symbol.Identifier).FirstOrDefault();
+            var instance = evaluator(datumArgs[1]);
+            var argValues = datumArgs.Skip(2).Select(evaluator).ToArray();
+            var argTypes = Array.ConvertAll(argValues, obj => obj == null ? typeof(object) : obj.GetType());
+            var instanceType = instance.GetType();
+            var mi = instanceType.GetMethods().Where(m => MethodMatches(false, symbol.Identifier, argTypes, m)).FirstOrDefault();
             if (mi == null)
-                throw c.error("No method {0} on {1}", symbol.Identifier, type.Name);
-            var result = mi.Invoke(obj, datumArgs.Skip(2).Select(evaluator).ToArray());
+                throw c.error("No method for {0}.{1}({2})", instanceType.Name, symbol.Identifier, string.Join(", ", argTypes.Select(t => t.Name)));
+
+            var result = mi.Invoke(instance, argValues);
             return c.PushResult(new Atom(result));
         }
     }
