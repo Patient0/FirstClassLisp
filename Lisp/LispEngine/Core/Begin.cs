@@ -37,5 +37,10 @@ namespace LispEngine.Core
             }
             return c;
         }
+
+        public override string ToString()
+        {
+            return ",begin";
+        }
     }
 }

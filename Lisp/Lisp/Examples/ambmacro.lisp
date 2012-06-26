@@ -13,7 +13,7 @@
         ; Based on
         ; http://c2.com/cgi/wiki/?AmbSpecialForm
         ; Haven't got it quite working yet
-        (define amb (macro
+        (define expand-amb
             (lambda ()  `(,amb-fail)
                     (x) x
                     (x . y)
@@ -28,7 +28,10 @@
                                             (,begin
                                                 (,set! amb-fail ,old-fail)
                                                 (cc (,delay ,y))))))
-                                    (,delay ,x))))))))
+                                    (,delay ,x)))))))
+        (define amb (macro expand-amb))
+
+        (display `('expand-amb ,(expand-amb 2 3)))
 
         (with (a (amb 2)
                b (amb 2))

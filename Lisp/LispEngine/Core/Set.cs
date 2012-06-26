@@ -45,5 +45,10 @@ namespace LispEngine.Core
             c = c.PushTask(new SetName(env, name.Identifier));
             return c.Evaluate(env, expression);
         }
+
+        public override string ToString()
+        {
+            return ",set!";
+        }
     }
 }

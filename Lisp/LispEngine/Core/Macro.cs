@@ -47,6 +47,11 @@ namespace LispEngine.Core
                 c = c.PushTask(new EvaluateExpansion(env));
                 return argFunction.Evaluate(c, args);
             }
+
+            public override string ToString()
+            {
+                return string.Format("(,macro {0})", argFunction);
+            }
         }
 
         public static FExpression ToMacro(StackFunction function)
