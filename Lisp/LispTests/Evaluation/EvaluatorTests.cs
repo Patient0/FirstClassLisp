@@ -30,7 +30,7 @@ namespace LispTests.Evaluation
             this.lispResourceFile = lispResourceFile;
         }
 
-        [SetUp]
+        [TestFixtureSetUp]
         public void setup()
         {
             e = new Evaluator();
