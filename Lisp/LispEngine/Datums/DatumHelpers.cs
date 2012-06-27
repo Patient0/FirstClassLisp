@@ -110,7 +110,7 @@ namespace LispEngine.Datums
         {
             var a = d as Atom;
             if (a == null)
-                throw error("Expected '{0}' to be an atom", d);
+                throw error("Expected '{0}' to be an atom, but got '{1}' instead", d, d.GetType().Name);
             return a.Value;
         }
 

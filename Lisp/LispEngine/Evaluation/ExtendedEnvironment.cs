@@ -38,11 +38,17 @@ namespace LispEngine.Evaluation
             return null;
         }
 
-        public Datum Lookup(string name)
+        public bool TryLookup(string name, out Datum datum)
         {
             IEnvironment p;
             var e = find(name, out p);
-            return e == null ? p.Lookup(name) : e.value;
+            if (e == null)
+                return p.TryLookup(name, out datum);
+            else
+            {
+                datum = e.value;
+                return true;
+            }
         }
 
         public void Set(string name, Datum newValue)

@@ -11,7 +11,7 @@ namespace LispEngine.Evaluation
     // It's not immutable w.r.t the bindings that each name has.
     public interface IEnvironment
     {
-        Datum Lookup(string name);
+        bool TryLookup(string name, out Datum datum);
         void Set(string name, Datum newValue);
     }
 }

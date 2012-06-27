@@ -83,15 +83,15 @@ namespace LispEngine.Evaluation
 
         public static Datum Lookup(this Continuation c, string name)
         {
-            try
-            {
-                var env = GetEnvironment(c);
-                return env == null ? null : env.Lookup(name);                
-            }
-            catch (Exception)
-            {
-                return DatumHelpers.atom("undefined");
-            }
+            var env = GetEnvironment(c);
+            if (env == null)
+                return null;
+
+            Datum datum;
+            if (env.TryLookup(name, out datum))
+                return datum;
+
+            return DatumHelpers.atom("undefined");
         }
     }
 }

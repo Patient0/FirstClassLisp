@@ -27,9 +27,18 @@ namespace LispEngine.Evaluation
             env.Set(name, newValue);
         }
 
+        public bool TryLookup(string name, out Datum datum)
+        {
+            return env.TryLookup(name, out datum);
+        }
+
         public Datum Lookup(string name)
         {
-            return env.Lookup(name);
+            Datum datum;
+            if (env.TryLookup(name, out datum))
+                return datum;
+            else
+                throw new Exception(String.Format("Undefined symbol '{0}'", name));
         }
 
         public Environment Extend(string name, Datum value)
