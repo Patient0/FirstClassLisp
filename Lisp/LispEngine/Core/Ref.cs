@@ -25,10 +25,12 @@ namespace LispEngine.Core
                     var c1 = c.Evaluate(env, datum);
                     var d1 = e.Evaluate(c1);
 
+                    /*
                     // TEMP: treat quoted symbols as string literals, until we have proper string expressions
                     var symbol = d1 as Symbol;
                     if (symbol != null)
                         return symbol.Identifier;
+                    */
 
                     if (d1 is Null)
                         return null;
