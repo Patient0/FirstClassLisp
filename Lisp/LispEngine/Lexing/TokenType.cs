@@ -10,6 +10,7 @@ namespace LispEngine.Lexing
         Space,
         Symbol,
         Integer,
+        String,
         Open,
         Close,
         Dot,

@@ -188,5 +188,11 @@ namespace LispTests.Parsing
             foreach(var d in ResourceLoader.ReadDatums("LispTests.Parsing.MultilineFile.lisp"))
                 Console.WriteLine("Parsed:\n{0}\n", d);
         }
+
+        [Test]
+        public void testStringLiteral()
+        {
+            test("\"hello world\"", atom("hello world"));
+        }
     }
 }

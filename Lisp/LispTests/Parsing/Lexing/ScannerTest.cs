@@ -33,6 +33,11 @@ namespace LispTests.Lexing
             return token(TokenType.Integer, s);
         }
 
+        private static Token str(string s)
+        {
+            return token(TokenType.String, s);
+        }
+
         private void test(string text, params Token[] expected)
         {
             var c = 0;
@@ -133,6 +138,12 @@ namespace LispTests.Lexing
         public void testQuasiQuote()
         {
             test("`(,3 ,@(4 5))", quasiquote, open, unquote, integer("3"), sp, splicing, open, integer("4"), sp, integer("5"), close, close);
+        }
+
+        [Test]
+        public void testStringLiteral()
+        {
+            test("\"Hello world\"", str("\"Hello world\""));
         }
     }
 }

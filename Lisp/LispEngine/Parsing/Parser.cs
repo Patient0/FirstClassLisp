@@ -82,6 +82,10 @@ namespace LispEngine.Parsing
                 return atom(int.Parse(next.Contents));
             if(next.Type == TokenType.Boolean)
                 return atom(next.Contents.ToLower().Equals("#t"));
+            // Remove the '"' delimiters surrounding the token that came
+            // back from the lexer
+            if (next.Type == TokenType.String)
+                return atom(next.Contents.Substring(1, next.Contents.Length - 2));
             return null;
         }
 

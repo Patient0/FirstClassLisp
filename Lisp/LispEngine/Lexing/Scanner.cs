@@ -89,6 +89,16 @@ namespace LispEngine.Lexing
                             while (s.isSubsequent())
                                 s.readChar();
                         }),
+                    match(TokenType.String,
+                    s =>
+                        {
+                            if(s.peek() != '"')
+                                return;
+                            s.readChar();
+                            while(s.peek() != '"')
+                                s.readChar();
+                            s.readChar();
+                        }),
                     match(TokenType.Comment, 
                         s =>
                         {
