@@ -82,11 +82,7 @@ namespace LispEngine.Parsing
         {
             // Remove surrounding quotes
             s = s.Substring(1, s.Length - 2);
-            // Remove escape backslashes
-            var sb = new StringBuilder();
-            for(var i = 0; i < s.Length; ++i)
-                sb.Append(s[i] == '\\' ? s[++i] : s[i]);
-            return sb.ToString();
+            return System.Text.RegularExpressions.Regex.Unescape(s);
         }
 
         private Datum atom()

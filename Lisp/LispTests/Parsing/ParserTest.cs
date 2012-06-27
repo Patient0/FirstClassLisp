@@ -200,5 +200,24 @@ namespace LispTests.Parsing
         {
             test("\"A \\\"quoted\\\" word\"", atom("A \"quoted\" word"));
         }
+
+        [Test]
+        public void testUnmatchedStringLiteral()
+        {
+            try
+            {
+                test("\"An unmatched quoted string", null);
+            } catch (ParseException ex)
+            {
+                Console.WriteLine("Got expected Parse exception: {0}", ex);
+                Assert.IsTrue(ex.Message.Contains("expected"));
+            }
+        }
+
+        [Test]
+        public void testEscapedCarriageReturn()
+        {
+            test("\"A newline: \\n\"", atom("A newline: \n"));
+        }
     }
 }

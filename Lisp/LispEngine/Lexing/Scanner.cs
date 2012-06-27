@@ -153,6 +153,8 @@ namespace LispEngine.Lexing
 
         private void readChar()
         {
+            if (!more())
+                throw fail("Unexpected end of input");
             var next = (char) input.Read();
             if(next == '\n')
             {
