@@ -96,7 +96,12 @@ namespace LispEngine.Lexing
                                 return;
                             s.readChar();
                             while(s.peek() != '"')
+                            {
+                                if(s.peek() == '\\')
+                                    s.readChar();
                                 s.readChar();
+
+                            }
                             s.readChar();
                         }),
                     match(TokenType.Comment, 

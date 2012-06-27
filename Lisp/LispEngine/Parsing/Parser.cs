@@ -76,16 +76,27 @@ namespace LispEngine.Parsing
             return elements.Aggregate(cdr, (current, d) => cons(d, current));
         }
 
+        // Remove the '"' delimiters surrounding the token that came
+        // back from the lexer. Also 'unescape' any backslashes.
+        private static string unescape(string s)
+        {
+            // Remove surrounding quotes
+            s = s.Substring(1, s.Length - 2);
+            // Remove escape backslashes
+            var sb = new StringBuilder();
+            for(var i = 0; i < s.Length; ++i)
+                sb.Append(s[i] == '\\' ? s[++i] : s[i]);
+            return sb.ToString();
+        }
+
         private Datum atom()
         {
             if (next.Type == TokenType.Integer)
                 return atom(int.Parse(next.Contents));
             if(next.Type == TokenType.Boolean)
                 return atom(next.Contents.ToLower().Equals("#t"));
-            // Remove the '"' delimiters surrounding the token that came
-            // back from the lexer
             if (next.Type == TokenType.String)
-                return atom(next.Contents.Substring(1, next.Contents.Length - 2));
+                return atom(unescape(next.Contents));
             return null;
         }
 

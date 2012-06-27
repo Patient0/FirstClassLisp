@@ -194,5 +194,11 @@ namespace LispTests.Parsing
         {
             test("\"hello world\"", atom("hello world"));
         }
+
+        [Test]
+        public void testEscapedQuoteStringLiteral()
+        {
+            test("\"A \\\"quoted\\\" word\"", atom("A \"quoted\" word"));
+        }
     }
 }
