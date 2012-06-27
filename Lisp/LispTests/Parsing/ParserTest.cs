@@ -217,7 +217,7 @@ namespace LispTests.Parsing
         [Test]
         public void testEscapedCarriageReturn()
         {
-            test("\"A newline: \\n\"", atom("A newline: \n"));
+            test("\"A newline and a tab character: \\n\\t\"", atom("A newline and a tab character: \n\t"));
         }
     }
 }

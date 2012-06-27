@@ -82,6 +82,8 @@ namespace LispEngine.Parsing
         {
             // Remove surrounding quotes
             s = s.Substring(1, s.Length - 2);
+            // Regex.Unescape solves the problem of converting \n, \t etc
+            // for us.
             return System.Text.RegularExpressions.Regex.Unescape(s);
         }
 
