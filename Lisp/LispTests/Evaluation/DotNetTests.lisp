@@ -20,4 +20,15 @@
     ; Call an instance method (Equals) on a value type (Int32), passing a reference type (String)
     (instance-method-valuetype-boxed-arg
         #f
-        (.Equals 1 "hello")))
+        (.Equals 1 "hello"))
+
+    ; Evaluation always has to be via the main stack rather than
+    ; creating nested "Evaluator" instances.
+    ; Otherwise, as evidenced below, the "exception" (one example
+    ; of how we can use continuations), is only "thrown" to the
+    ; .Net method call site rather than the original source
+    ; of the continuation.
+    '(args-obey-continuations
+        "failed"
+        (let/cc error
+            (.Equals "failed" (error "failed")))))

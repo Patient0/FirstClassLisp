@@ -55,9 +55,25 @@ namespace LispTests.Evaluation
             }
         }
 
+        private static Datum checkQuote(Datum d)
+        {
+            var p = d as Pair;
+            if (p != null && p.First.Equals(quote))
+                return p.Second.ToArray()[0];
+            return null;
+        }
+
         private static TestCaseData datumToTestCase(Datum d)
         {
+            var ignore = false;
+            var quoted = checkQuote(d);
+            if(quoted != null)
+            {
+                d = quoted;
+                ignore = true;
+            }
             var combo = d.ToArray();
+            
             if (combo.Length < 3)
                 throw new Exception(string.Format("'{0}' is not a valid test case", d));
             var name = combo[0] as Symbol;
@@ -69,6 +85,8 @@ namespace LispTests.Evaluation
             var testCase = new TestCaseData(expression);
             testCase.Returns(expected);
             testCase.SetName(name.Identifier);
+            if (ignore)
+                testCase.Ignore("quoted");
             return testCase;
         }
 
