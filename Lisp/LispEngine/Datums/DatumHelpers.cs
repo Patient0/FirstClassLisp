@@ -120,6 +120,11 @@ namespace LispEngine.Datums
             return (int) value;
         }
 
+        public static string castString(Datum datum)
+        {
+            return (string)castAtom(datum);
+        }
+
         public static IEnumerable<object> atoms(Datum list)
         {
             return enumerate(list).Select(castAtom);

@@ -19,5 +19,9 @@ namespace LispEngine.Datums
         {
             return DatumHelpers.compound(datums.ToArray());
         }
+        public static Datum ToAtom(this object o)
+        {
+            return DatumHelpers.atom(o);
+        }
     }
 }

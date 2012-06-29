@@ -196,6 +196,13 @@
             (s 'push 4)
             (s 'push 5)
             (s 'pop)
-            (s 'pop))))
+            (s 'pop)))
+
+    (symbol-to-string "hello"
+        (symbol->string 'hello))
+
+    (string-to-symbol hello
+        (string->symbol "hello"))
+)
 
            

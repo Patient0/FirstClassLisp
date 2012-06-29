@@ -23,6 +23,7 @@ namespace LispEngine.Bootstrap
             var evaluator = new Evaluator();
             env = Arithmetic.Extend(env).ToMutable();
             env = env.Extend("append", Append.Instance);
+            env = SymbolFunctions.Extend(env);
             foreach (var d in ResourceLoader.ReadDatums("LispEngine.Bootstrap.Builtins.lisp"))
                 evaluator.Evaluate(env, d);
             return env;

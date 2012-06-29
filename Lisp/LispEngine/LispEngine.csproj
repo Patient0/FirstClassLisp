@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Bootstrap\Append.cs" />
     <Compile Include="Bootstrap\Arithmetic.cs" />
+    <Compile Include="Bootstrap\SymbolFunctions.cs" />
     <Compile Include="Core\Apply.cs" />
     <Compile Include="Core\Ref.cs" />
     <Compile Include="Core\Begin.cs" />
