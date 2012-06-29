@@ -1,6 +1,4 @@
-﻿(ref mscorlib)
-
-(define nil '())
+﻿(define nil '())
 (define list (lambda x x))
 (define car (lambda ((a . b)) a))
 (define cdr (lambda ((c . d)) d))
@@ -33,6 +31,7 @@
     (macro (lambda (name args . exprs)
             `(,define ,name
                 (,macro (,lambda ,args (,begin ,@exprs)))))))
+
 
 ; Our let macro is like the one in arc - just
 ; a single variable, single expression, and no
@@ -218,3 +217,7 @@
 
         ('assert #t) #t
         ('assert _) (fail)))
+
+; "tests" is effectively just a macro to say "return all of the remaining forms as an un-evaluated list"
+(define-macro tests test-cases (list quote test-cases))
+
