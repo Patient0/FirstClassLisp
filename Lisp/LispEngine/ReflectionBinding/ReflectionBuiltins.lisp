@@ -4,4 +4,4 @@
     `(,define ,(string->symbol ".") ,definition))
 (define-dot (macro
     (lambda (method instance . args)
-        `(,invoke-instance ,instance ,(symbol->string method) (,list ,@args)))))
+        `(,invoke-instance ,(symbol->string method) ,instance ,@args))))

@@ -203,6 +203,11 @@
 
     (string-to-symbol hello
         (string->symbol "hello"))
-)
 
-           
+    ; We've adopted explicit currying... it might
+    ; be nicer to have implicit currying. Need to
+    ; think about the best way to implement though.
+    (curry 5
+        (let add1 (curry + 1)
+            (add1 4)))
+)

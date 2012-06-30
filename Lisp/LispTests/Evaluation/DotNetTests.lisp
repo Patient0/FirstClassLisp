@@ -5,13 +5,13 @@
     ; Call the primitive invoke-method function
     (invoke-instance-simple
         "42"
-        (invoke-instance 42 "ToString" '()))
+        (invoke-instance "ToString" 42))
     (invoke-instance-with-args1
         #t
-        (invoke-instance "hello world" "Equals" '("hello world")))
+        (invoke-instance "Equals" "hello world" "hello world"))
     (invoke-instance-with-args2
         #f
-        (invoke-instance "hello" "Equals" '("nothello")))
+        (invoke-instance "Equals" "hello" "nothello"))
 
     (invoke-instance-macro
         "42"
@@ -56,4 +56,8 @@
     (static-method-is-function
         (#t #f)
         (map System.Convert.ToBoolean '("true" "false")))
+
+    (instance-method-as-function
+        ("23" "34")
+        (map (curry invoke-instance "ToString") '(23 34)))
 )

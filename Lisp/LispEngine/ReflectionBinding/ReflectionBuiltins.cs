@@ -17,9 +17,9 @@ namespace LispEngine.ReflectionBinding
             public Datum Evaluate(Datum args)
             {
                 var argArray = args.ToArray();
-                var target = argArray[0].CastObject();
-                var method = argArray[1].CastString();
-                var methodArgs = argArray[2].Enumerate().Select(DatumHelpers.castObject).ToArray();
+                var method = argArray[0].CastString();
+                var target = argArray[1].CastObject();
+                var methodArgs = args.Enumerate().Skip(2).Select(DatumHelpers.castObject).ToArray();
                 var result = target.GetType().InvokeMember(method, BindingFlags.Default | BindingFlags.InvokeMethod, null, target, methodArgs);
                 return result.ToAtom();
             }

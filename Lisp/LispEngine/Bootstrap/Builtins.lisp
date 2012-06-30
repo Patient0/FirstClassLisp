@@ -218,6 +218,9 @@
         ('assert #t) #t
         ('assert _) (fail)))
 
-; "tests" is effectively just a macro to say "return all of the remaining forms as an un-evaluated list"
-(define-macro tests test-cases (list quote test-cases))
-
+; Explicit currying. It might be nicer to
+; have implicit currying - but need to think
+; about how best to implement first.
+(define (curry fn . args)
+    (lambda x
+        (apply fn (append args x))))
