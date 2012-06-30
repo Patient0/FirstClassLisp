@@ -71,4 +71,8 @@
     (multi-argument-higher-order
         (#t #f #t)
         (map .Equals '(1 "two" 3) '(1 2 3)))
+
+    (invoke-constructor
+        "This is an error"
+        (.get_Message (new System.Exception "This is an error")))
 )

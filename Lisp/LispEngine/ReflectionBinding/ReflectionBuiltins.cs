@@ -75,6 +75,26 @@ namespace LispEngine.ReflectionBinding
             }
         }
 
+        class New : Function
+        {
+            public Datum Evaluate(Datum args)
+            {
+                var argsArray = args.ToArray();
+                if(argsArray.Length < 1)
+                    throw DatumHelpers.error("No type specified for 'new'");
+
+                var type = (Type)argsArray[0].CastObject();
+                var constructorArgs = argsArray.Skip(1).Select(DatumHelpers.castObject).ToArray();
+                var instance = Activator.CreateInstance(type, constructorArgs);
+                return instance.ToAtom();
+            }
+
+            public override string ToString()
+            {
+                return ",new";
+            }
+        }
+
         class Ref : AbstractFExpression
         {
             public override Continuation Evaluate(Continuation c, Environment env, Datum args)
@@ -93,14 +113,14 @@ namespace LispEngine.ReflectionBinding
                 // Add all static methods
                 foreach (var t in assembly.GetTypes())
                 {
+                    // Make each type have a symbol in the environment also.
+                    env.Define(t.FullName, t.ToAtom());
                     foreach (var mi in t.GetMethods())
                     {
-                        var symbol = String.Format("{0}.{1}", t.FullName, mi.Name);
+                        var symbol = string.Format("{0}.{1}", t.FullName, mi.Name);
                         if (mi.IsStatic && symbols.Add(symbol))
                             env.Define(symbol, new StaticMethod(t, mi.Name).ToStack());
                     }
-                    // TODO Maybe add the types themselves as symbols too?
-                    // Then we could implement "new"
                 }
                 return c.PushResult(DatumHelpers.nil);
             }
@@ -115,6 +135,7 @@ namespace LispEngine.ReflectionBinding
         {
             // Invoke a given instance method on an object
             env = env.Extend("make-instance-method", new MakeInstanceMethod().ToStack());
+            env = env.Extend("new", new New().ToStack());
             // Bring all static symbols from a particular assembly into the current environment.
             env = env.Extend("ref", new Ref());
             // Define "." as a macro to invoke a given method
