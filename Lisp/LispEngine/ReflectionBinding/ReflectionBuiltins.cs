@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using LispEngine.Core;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Util;
@@ -12,25 +13,40 @@ namespace LispEngine.ReflectionBinding
 {
     class ReflectionBuiltins
     {
-        class InvokeInstanceMethod : Function
+        class InstanceMethod : Function
         {
+            private readonly string name;
+            public InstanceMethod(string name)
+            {
+                this.name = name;
+            }
+
             public Datum Evaluate(Datum args)
             {
                 var argArray = args.ToArray();
-                var method = argArray[0].CastString();
-                // Special case to allow convenient "the method on this object" syntax. If arguments have stopped short
-                // of the actual instance, return a function that knows how to invoke the remaining arguments when
-                // it is finally called.
 
-                var target = argArray[1].CastObject();
-                var methodArgs = args.Enumerate().Skip(2).Select(DatumHelpers.castObject).ToArray();
-                var result = target.GetType().InvokeMember(method, BindingFlags.Default | BindingFlags.InvokeMethod, null, target, methodArgs);
+                var target = argArray[0].CastObject();
+                var methodArgs = args.Enumerate().Skip(1).Select(DatumHelpers.castObject).ToArray();
+                var result = target.GetType().InvokeMember(name, BindingFlags.Default | BindingFlags.InvokeMethod, null, target, methodArgs);
                 return result.ToAtom();
             }
 
+            public override string ToString()
+            {
+                return string.Format(".{0}", name);
+            }
+        }
+
+        class MakeInstanceMethod : UnaryFunction
+        {
             public override string  ToString()
             {
-                return ",invoke-instance";
+                return ",make-instance-method";
+            }
+
+            protected override Datum eval(Datum arg)
+            {
+                return new InstanceMethod(arg.CastString()).ToStack();
             }
         }
 
@@ -70,7 +86,9 @@ namespace LispEngine.ReflectionBinding
                 var assemblyName = datumArgs[0].CastIdentifier();
                 var assembly = Assembly.Load(assemblyName);
 
-                // Keep a hash set to avoid overloads
+                // Keep a hash set to avoid adding things twice.
+                // Overload resolution is (hopefully) handled by
+                // InvokeMethod.
                 var symbols = new HashSet<object>();
                 // Add all static methods
                 foreach (var t in assembly.GetTypes())
@@ -84,8 +102,7 @@ namespace LispEngine.ReflectionBinding
                     // TODO Maybe add the types themselves as symbols too?
                     // Then we could implement "new"
                 }
-                // Return the list of symbols that we've added to the environment.
-                return c.PushResult(DatumHelpers.atomList(symbols.ToArray()));
+                return c.PushResult(DatumHelpers.nil);
             }
 
             public override string ToString()
@@ -97,7 +114,7 @@ namespace LispEngine.ReflectionBinding
         public static Environment AddTo(Environment env)
         {
             // Invoke a given instance method on an object
-            env = env.Extend("invoke-instance", new InvokeInstanceMethod().ToStack());
+            env = env.Extend("make-instance-method", new MakeInstanceMethod().ToStack());
             // Bring all static symbols from a particular assembly into the current environment.
             env = env.Extend("ref", new Ref());
             // Define "." as a macro to invoke a given method

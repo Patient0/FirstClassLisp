@@ -1,6 +1,8 @@
 (setup
     ; Bring in all static methods in the mscorlib assembly
-    (ref mscorlib))
+    (ref mscorlib)
+    (define (invoke-instance method . args)
+        (apply (make-instance-method method) args)))
 (tests
     ; Call the primitive invoke-method function
     (invoke-instance-simple
@@ -59,8 +61,9 @@
 
     (instance-method-as-function
         ("23" "34")
-        (map (curry invoke-instance "ToString") '(23 34)))
+        (map (make-instance-method "ToString") '(23 34)))
 
+    ; This expands into the above
     (instance-method-macro-as-function
         ("23" "34")
         (map .ToString '(23 34)))

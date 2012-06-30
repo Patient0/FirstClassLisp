@@ -3,6 +3,6 @@
 ; So we end up with:
 ; (.Equals "one" "two") =>
 ; ((dot Equals) "one" "two") =>
-; ((curry invoke-instance "Equals") "one" "two")
+; ((make-instance-method "Equals") "one" "two")
 (define-macro dot (method)
-    `(,curry ,invoke-instance ,(symbol->string method)))
+    `(,make-instance-method ,(symbol->string method)))
