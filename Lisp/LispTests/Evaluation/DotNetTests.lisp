@@ -64,4 +64,8 @@
     (instance-method-macro-as-function
         ("23" "34")
         (map .ToString '(23 34)))
+
+    (multi-argument-higher-order
+        (#t #f #t)
+        (map .Equals '(1 "two" 3) '(1 2 3)))
 )
