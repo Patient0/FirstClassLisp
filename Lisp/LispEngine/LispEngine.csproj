@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Bootstrap\Append.cs" />
     <Compile Include="Bootstrap\Arithmetic.cs" />
+    <Compile Include="Bootstrap\Reader.cs" />
     <Compile Include="Bootstrap\SymbolFunctions.cs" />
     <Compile Include="Core\Apply.cs" />
     <Compile Include="Core\Begin.cs" />
@@ -50,7 +51,9 @@
     <Compile Include="Core\CallCC.cs" />
     <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Define.cs" />
+    <Compile Include="Core\Env.cs" />
     <Compile Include="Core\Eq.cs" />
+    <Compile Include="Core\Eval.cs" />
     <Compile Include="Core\Log.cs" />
     <Compile Include="Core\Set.cs" />
     <Compile Include="Core\UnaryFunction.cs" />
@@ -106,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ReflectionBinding\ReflectionBuiltins.lisp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IO\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
