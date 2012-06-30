@@ -51,4 +51,9 @@
     (static-method-continuations
         "failed"
         (let/cc error
-            (System.Console.WriteLine (error "failed")))))
+            (System.Console.WriteLine (error "failed"))))
+
+    (static-method-is-function
+        (#t #f)
+        (map System.Convert.ToBoolean '("true" "false")))
+)
