@@ -179,7 +179,11 @@ namespace LispTests.Parsing
         [Test]
         public void testListDotSymbol()
         {
-            test("(.house)", compound(symbol("."), symbol("house")));
+            // .NET method syntax:
+            // Anytime a symbol begins with ".", this has a different meaning:
+            // we are in fact invoking a macro (or function), called "dot"
+            // instead.
+            test(".house", compound(symbol("dot"), symbol("house")));
         }
 
         [Test]

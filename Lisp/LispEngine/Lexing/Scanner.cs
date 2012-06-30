@@ -33,6 +33,28 @@ namespace LispEngine.Lexing
 
         private delegate TokenType? Matcher(Scanner s);
 
+        private static void matchSymbol(Scanner s)
+        {
+            if (!s.isInitial())
+                return;
+            s.readChar();
+            while (s.isSubsequent())
+                s.readChar();
+        }
+
+        // .Net method support.
+        // Check if we received a "." or a ".symbol".
+        // Given them different tokens so that the parser
+        // can expand appropriately.
+        private static TokenType? matchDot(Scanner s)
+        {
+            if (s.peek() != '.')
+                return null;
+            s.readChar();
+            matchSymbol(s);
+            return s.sb.Length > 1 ? TokenType.DotSymbol : TokenType.Dot;
+        }
+
         private static Matcher match(TokenType tokenType, Action<Scanner> matchDelegate)
         {
             return s =>
@@ -46,7 +68,7 @@ namespace LispEngine.Lexing
         }
 
         // Used to match a single character
-        private static Matcher match(TokenType tokenType, char c)
+        private static Matcher matchSingle(TokenType tokenType, char c)
         {
             return match(tokenType,
                         s =>
@@ -57,7 +79,7 @@ namespace LispEngine.Lexing
         }
 
         // Match characters until the given predicate returns false
-        private static Matcher match(TokenType tokenType, Func<Scanner, bool> predicate)
+        private static Matcher matchPredicate(TokenType tokenType, Func<Scanner, bool> predicate)
         {
             return match(tokenType,
                         s =>
@@ -80,15 +102,9 @@ namespace LispEngine.Lexing
                                 if(s.peek() == '@')
                                     s.readChar();
                             }),
-                    match(TokenType.Symbol,
-                        s =>
-                        {
-                            if (!s.isInitial())
-                                return;
-                            s.readChar();
-                            while (s.isSubsequent())
-                                s.readChar();
-                        }),
+                    match(TokenType.Symbol, matchSymbol),
+                    // Match either "." or a ".symbol"
+                    matchDot,
                     match(TokenType.String,
                     s =>
                         {
@@ -113,13 +129,12 @@ namespace LispEngine.Lexing
                                 s.readChar();
                             s.readChar();
                         }),
-                    match(TokenType.Space, 
+                    matchPredicate(TokenType.Space, 
                         s => s.isWhiteSpace()),
-                    match(TokenType.Integer, 
+                    matchPredicate(TokenType.Integer, 
                         s => s.isDigit()),
-                    match(TokenType.Open, '('),
-                    match(TokenType.Close, ')'),
-                    match(TokenType.Dot, '.'),
+                    matchSingle(TokenType.Open, '('),
+                    matchSingle(TokenType.Close, ')'),
                     match(TokenType.Boolean,
                         s =>
                             {

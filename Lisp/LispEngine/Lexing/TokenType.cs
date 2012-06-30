@@ -9,6 +9,7 @@ namespace LispEngine.Lexing
     {
         Space,
         Symbol,
+        DotSymbol, // Special token for symbols beginning with "."
         Integer,
         String,
         Open,

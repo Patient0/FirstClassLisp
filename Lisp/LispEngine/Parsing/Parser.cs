@@ -39,9 +39,11 @@ namespace LispEngine.Parsing
         private Datum symbol()
         {
             if (next.Type == TokenType.Symbol)
-                return new Symbol(next.Contents);
-            if (next.Type == TokenType.Dot)
-                return new Symbol(".");
+                return symbol(next.Contents);
+            // read ".Equals" as "(dot Equals)" so that it can be macro
+            // expanded if desired.
+            if (next.Type == TokenType.DotSymbol)
+                return compound(symbol("dot"), symbol(next.Contents.Substring(1)));
             return null;
         }
 
