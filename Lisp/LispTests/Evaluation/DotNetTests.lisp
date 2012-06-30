@@ -1,12 +1,26 @@
-(setup
+'(setup
     (ref mscorlib))
 (tests
+    ; Call the primitive invoke-method function
+    (invoke-instance-simple
+        "42"
+        (invoke-instance 42 "ToString" '()))
+    (invoke-instance-with-args1
+        #t
+        (invoke-instance "hello world" "Equals" '("hello world")))
+    (invoke-instance-with-args2
+        #f
+        (invoke-instance "hello" "Equals" '("nothello")))
+
+    (invoke-instance-macro
+        "42"
+        (.ToString 42))
     ; Call a static method returning a value type (Boolean)
-    (static-method
+    '(static-method
         #t
         (System.Convert.ToBoolean "true"))
     ; Call a static method returning void
-    (static-method-void
+    '(static-method-void
         ()
         (System.Console.WriteLine "hello"))
     ; Call an instance method (Equals) on a reference type (String)
@@ -28,7 +42,7 @@
     ; of how we can use continuations), is only "thrown" to the
     ; .Net method call site rather than the original source
     ; of the continuation.
-    '(args-obey-continuations
+    (args-obey-continuations
         "failed"
         (let/cc error
             (.Equals "failed" (error "failed")))))

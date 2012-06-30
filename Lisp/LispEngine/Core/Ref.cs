@@ -28,7 +28,7 @@ namespace LispEngine.Core
                     if (d1 is Null)
                         return null;
 
-                    return DatumHelpers.castAtom(d1);
+                    return DatumHelpers.castObject(d1);
                 };
         }
 

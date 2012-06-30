@@ -106,7 +106,7 @@ namespace LispEngine.Datums
             }
         }
 
-        public static object castAtom(Datum d)
+        public static object castObject(Datum d)
         {
             var a = d as Atom;
             if (a == null)
@@ -116,18 +116,18 @@ namespace LispEngine.Datums
 
         public static int castInt(Datum d)
         {
-            var value = castAtom(d);
+            var value = castObject(d);
             return (int) value;
         }
 
         public static string castString(Datum datum)
         {
-            return (string)castAtom(datum);
+            return (string)castObject(datum);
         }
 
         public static IEnumerable<object> atoms(Datum list)
         {
-            return enumerate(list).Select(castAtom);
+            return enumerate(list).Select(castObject);
         }
 
         public static IEnumerable<int> enumerateInts(Datum list)

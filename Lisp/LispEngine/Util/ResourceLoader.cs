@@ -5,8 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using LispEngine.Datums;
+using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
+using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Util
 {
@@ -25,6 +27,16 @@ namespace LispEngine.Util
             {
                 yield return d;
             }
+        }
+
+        /**
+         * Used for bootstrapping various .lisp files into the environment.
+         */
+        public static void ExecuteResource(Environment env, string resourceFile)
+        {
+            var evaluator = new Evaluator();
+            foreach (var d in ReadDatums(resourceFile))
+                evaluator.Evaluate(env, d);
         }
     }
 }

@@ -56,6 +56,18 @@ namespace LispTests.Datums
         }
 
         [Test]
+        public void testAtomToString()
+        {
+            check("\"hello\"", atom("hello"));
+        }
+
+        [Test]
+        public void testEscapedStringAtomToString()
+        {
+            check("\"hello\\t\\nworld\"", atom("hello\t\nworld"));
+        }
+
+        [Test]
         public void testQuoteToString()
         {
             check("'5", compound(quote, atom(5)));
