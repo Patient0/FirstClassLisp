@@ -24,6 +24,11 @@ namespace LispEngine.Datums
             return DatumHelpers.atom(o);
         }
 
+        public static string CastIdentifier(this Datum d)
+        {
+            return DatumHelpers.getIdentifier(d);
+        }
+
         public static string CastString(this Datum d)
         {
             return DatumHelpers.castString(d);

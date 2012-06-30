@@ -18,6 +18,10 @@ namespace LispEngine.ReflectionBinding
             {
                 var argArray = args.ToArray();
                 var method = argArray[0].CastString();
+                // Special case to allow convenient "the method on this object" syntax. If arguments have stopped short
+                // of the actual instance, return a function that knows how to invoke the remaining arguments when
+                // it is finally called.
+
                 var target = argArray[1].CastObject();
                 var methodArgs = args.Enumerate().Skip(2).Select(DatumHelpers.castObject).ToArray();
                 var result = target.GetType().InvokeMember(method, BindingFlags.Default | BindingFlags.InvokeMethod, null, target, methodArgs);
@@ -63,7 +67,7 @@ namespace LispEngine.ReflectionBinding
                 if (datumArgs.Length != 1)
                     throw c.error("Ref expect 1s arguments. {0} passed", datumArgs.Length);
 
-                var assemblyName = DatumHelpers.getIdentifier(datumArgs[0]);
+                var assemblyName = datumArgs[0].CastIdentifier();
                 var assembly = Assembly.Load(assemblyName);
 
                 // Keep a hash set to avoid overloads

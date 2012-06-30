@@ -60,4 +60,20 @@
     (instance-method-as-function
         ("23" "34")
         (map (curry invoke-instance "ToString") '(23 34)))
+
+    ; The above is quite tedious, so we've
+    ; "overloaded" the "dot" macro to implicitly curry
+    ; with the method name if no target instance was supplied.
+    ; So we get something fairly succinct
+    ; although still not quite intuitive.
+
+    ; What would be ideal would be if
+    ; (map .ToString '(23 34))
+    ; worked. But unfortunately, the above is parsed into
+    ; (map . ToString '(23 34)) which is indistinguishable
+    ; from
+    ; (map ToString '(23 34))
+    (instance-method-macro-curry
+        ("23" "34")
+        (map (.ToString) '(23 34)))
 )
