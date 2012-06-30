@@ -39,11 +39,9 @@ namespace LispEngine.Core
             var argList = args.ToArray();
             if (argList.Length != 2)
                 throw c.error("Expected 2 arguments: (define <symbol> <expression>). Got {0} instead", argList.Length);
-            var name = argList[0] as Symbol;
-            if (name == null)
-                throw c.error("Invalid define syntax. '{0}' should be a symbol", argList[0]);
+            var name = DatumHelpers.getIdentifier(argList[0]);
             var expression = argList[1];
-            c = c.PushTask(new DefineName(env, name.Identifier));
+            c = c.PushTask(new DefineName(env, name));
             return c.Evaluate(env, expression);
         }
     }

@@ -1,4 +1,5 @@
-'(setup
+(setup
+    ; Bring in all static methods in the mscorlib assembly
     (ref mscorlib))
 (tests
     ; Call the primitive invoke-method function
@@ -16,11 +17,11 @@
         "42"
         (.ToString 42))
     ; Call a static method returning a value type (Boolean)
-    '(static-method
+    (static-method
         #t
         (System.Convert.ToBoolean "true"))
     ; Call a static method returning void
-    '(static-method-void
+    (static-method-void
         ()
         (System.Console.WriteLine "hello"))
     ; Call an instance method (Equals) on a reference type (String)
@@ -45,4 +46,9 @@
     (args-obey-continuations
         "failed"
         (let/cc error
-            (.Equals "failed" (error "failed")))))
+            (.Equals "failed" (error "failed"))))
+
+    (static-method-continuations
+        "failed"
+        (let/cc error
+            (System.Console.WriteLine (error "failed")))))

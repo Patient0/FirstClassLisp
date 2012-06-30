@@ -1,4 +1,5 @@
 ﻿using LispEngine.Evaluation;
+using LispEngine.ReflectionBinding;
 using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
@@ -20,8 +21,7 @@ namespace LispEngine.Core
                 .Extend("define", Define.Instance)
                 .Extend("set!", Set.Instance)
                 .Extend("begin", Begin.Instance)
-                .Extend("call/cc", CallCC.Instance)
-                .Extend("ref", Ref.Instance);
+                .Extend("call/cc", CallCC.Instance);
             return env;
         }
     }
