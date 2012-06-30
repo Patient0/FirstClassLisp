@@ -70,9 +70,14 @@
     ; What would be ideal would be if
     ; (map .ToString '(23 34))
     ; worked. But unfortunately, the above is parsed into
-    ; (map . ToString '(23 34)) which is indistinguishable
-    ; from
-    ; (map ToString '(23 34))
+    ; (map . ToString '(23 34)) which is beyond help.
+
+    ; To fix: we modify the reader to read ".symbol" as
+    ; (dot symbol) uniformly.
+
+    ; Then we can define a "dot" macro that defines what to
+    ; do for all of these cases.
+
     (instance-method-macro-curry
         ("23" "34")
         (map (.ToString) '(23 34)))
