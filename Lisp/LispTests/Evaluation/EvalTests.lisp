@@ -12,7 +12,6 @@
 
     (eof-detect
         (#t #f)
-        (map (lambda (s)
-                 (eof-object? (read (open-input-string s))))
+        (map (compose eof-object? read open-input-string)
                  '("" "(* 5 3)")))
 )
