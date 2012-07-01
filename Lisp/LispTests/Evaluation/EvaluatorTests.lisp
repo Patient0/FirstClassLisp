@@ -210,4 +210,15 @@
     (curry 5
         (let add1 (curry + 1)
             (add1 4)))
+
+    (fold-right-folds-right
+        (1 2 3)
+        (fold-right cons '() '(1 2 3)))
+
+    (compose2
+           5
+           ((compose2 car cdr) '(1 5 12)))
+    (composeN
+           12
+           ((compose car cdr cdr) '(1 5 12)))
 )

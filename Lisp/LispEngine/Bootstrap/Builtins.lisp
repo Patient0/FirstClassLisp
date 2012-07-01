@@ -100,10 +100,6 @@
                     (length-tail (+ 1 so-far) y)))
     (length-tail 0 list))
 
-(define fold-right
-    (lambda (op initial ()) initial
-            (op initial (x . y)) (fold-right op (op x initial) y)))
-
 (define (reverse l)
     (define reverse-tail
         (lambda (so-far ()) so-far
@@ -111,12 +107,18 @@
                     (reverse-tail (cons x so-far) y)))
     (reverse-tail '() l))
 
+(define (fold-right op initial xs)
+    (define fold-right-tail
+        (lambda (so-far ()) so-far
+                (so-far (x . y)) (fold-right-tail (op x so-far) y)))
+    (fold-right-tail initial (reverse xs)))
+
 ; mapcar can be defined in terms of fold
 (define (mapcar f list)
     (let combiner
         (lambda (x list)
             (cons (f x) list))
-        (reverse (fold-right combiner () list))))
+        (fold-right combiner () list)))
 
 (define (map f . ll)
     (define map-tail
@@ -224,3 +226,11 @@
 (define (curry fn . args)
     (lambda x
         (apply fn (append args x))))
+
+(define (identity x) x)
+
+(define (compose2 f g)
+    (lambda (x)
+        (f (g x))))
+(define (compose . fns)
+     (fold-right compose2 identity fns))
