@@ -14,12 +14,11 @@ namespace LispEngine.Evaluation
             this.c = c;
         }
 
-        public override string StackTrace
+        public string LispTrace
         {
             get
             {
-                return string.Format("LispTrace:\n{0}\n{1}",
-                                     c.GetStackTrace(), base.StackTrace);
+                return string.Format("Continuation:\n{0}\n", c.GetStackTrace());
             }
         }
 

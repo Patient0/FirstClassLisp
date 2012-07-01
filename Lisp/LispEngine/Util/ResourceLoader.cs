@@ -16,7 +16,11 @@ namespace LispEngine.Util
     {
         public static IEnumerable<Datum> ReadDatums(string resourceFile)
         {
-            var assembly = Assembly.GetCallingAssembly();
+            return ReadDatums(Assembly.GetCallingAssembly(), resourceFile);
+        }
+
+        public static IEnumerable<Datum> ReadDatums(Assembly assembly, string resourceFile)
+        {
             var stream = assembly.GetManifestResourceStream(resourceFile);
             if (stream == null)
                 throw new Exception(string.Format("Unable to find '{0}' embedded resource", resourceFile));
@@ -29,13 +33,18 @@ namespace LispEngine.Util
             }
         }
 
+        public static void ExecuteResource(Environment env, string resourceFile)
+        {
+            ExecuteResource(Assembly.GetCallingAssembly(), env, resourceFile);
+        }
+
         /**
          * Used for bootstrapping various .lisp files into the environment.
          */
-        public static void ExecuteResource(Environment env, string resourceFile)
+        public static void ExecuteResource(Assembly assembly, Environment env, string resourceFile)
         {
             var evaluator = new Evaluator();
-            foreach (var d in ReadDatums(resourceFile))
+            foreach (var d in ReadDatums(assembly, resourceFile))
                 evaluator.Evaluate(env, d);
         }
     }

@@ -9,9 +9,59 @@ using LispEngine.Parsing;
 
 namespace LispEngine.Lexing
 {
+    interface CharSource
+    {
+        int Peek();
+        int Read();
+    }
+
+    /**
+     * TextReader.Peek() cannot be relied on
+     * when reading from Console.In.
+     * So we have to implement Peek() functionality
+     * ourself
+     */
+    class TextReaderCharSource : CharSource
+    {
+        private readonly TextReader reader;
+        private bool initialized = false;
+        private int buf;
+        public TextReaderCharSource(TextReader reader)
+        {
+            this.reader = reader;
+        }
+
+        // Don't read from the TextReader
+        // until we need to. This is cleaner
+        // in case a Scanner or Parser is created
+        // but never used.
+        private void init()
+        {
+            if(!initialized)
+            {
+                buf = reader.Read();
+                initialized = true;
+            }
+        }
+
+        public int Peek()
+        {
+            init();
+            return buf;
+        }
+
+        public int Read()
+        {
+            init();
+            var prev = buf;
+            buf = reader.Read();
+            return prev;
+        }
+    }
+
     public class Scanner
     {
-        private readonly TextReader input;
+        private readonly CharSource input;
         private String filename = "";
 
         public string Filename
@@ -158,7 +208,7 @@ namespace LispEngine.Lexing
 
         public Scanner(TextReader input)
         {
-            this.input = input;
+            this.input = new TextReaderCharSource(input);
         }
 
         private char peek()
@@ -235,10 +285,13 @@ namespace LispEngine.Lexing
 
         private Token match()
         {
-            return (from matcher in matchers
+            var token = (from matcher in matchers
                     select matcher(this) into tokenType
                     where tokenType.HasValue
                     select tok(tokenType.Value)).FirstOrDefault();
+            if (token == null)
+                throw fail("Unrecognized token");
+            return token;
         }
 
         public Token GetNext()

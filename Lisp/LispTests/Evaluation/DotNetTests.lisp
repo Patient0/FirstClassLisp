@@ -75,4 +75,27 @@
     (invoke-constructor
         "This is an error"
         (.get_Message (new System.Exception "This is an error")))
+
+    (params
+        "4 * 5 is 20"
+        (System.String.Format "{0} * {1} is {2}" 4 5 (* 4 5)))
+
+    ; We have a quandary: What to do if the input parameter
+    ; is *not* an atom and it's passed as a parameter to a reflection
+    ; function? Similarly, if a "reflection" function returns
+    ; a Datum, should it be wrapped as an "atom" or not?
+
+    ; For now, let's go with "smart" behaviour.
+    ; If this doesn't do what's desired, we will also expose
+    ; a "atom" function explicitly for wrapping a Datum so that
+    ; it looks like an atom.
+    (datum-types-static "(1 2 3)" (System.String.Format "{0}" '(1 2 3)))
+    (datum-types-instance "(1 2 3)" (.ToString '(1 2 3)))
+
+    ; If we want to treat an atom explicitly as an atom (no implicit unwrapping),
+    ; wrap it using the 'atom' function (i.e. to turn off the
+    ; builtin "unwrapping" of atoms that is the default).
+    (atom-wrap
+        "LispEngine.Datums.Atom"
+        (.ToString (.GetType (atom 1))))
 )

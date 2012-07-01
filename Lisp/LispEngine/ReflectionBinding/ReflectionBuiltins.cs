@@ -13,6 +13,22 @@ namespace LispEngine.ReflectionBinding
 {
     class ReflectionBuiltins
     {
+        private static object unwrapDatum(Datum d)
+        {
+            var atom = d as Atom;
+            if (atom != null)
+                return atom.Value;
+            // For now, assume that if anything other than atom is
+            // passed into the .Net layer then the target function
+            // actually expects a Datum.
+            return d;
+        }
+
+        private static object[] unwrap(IEnumerable<Datum> datums)
+        {
+            return datums.Select(unwrapDatum).ToArray();
+        }
+
         class InstanceMethod : Function
         {
             private readonly string name;
@@ -25,8 +41,8 @@ namespace LispEngine.ReflectionBinding
             {
                 var argArray = args.ToArray();
 
-                var target = argArray[0].CastObject();
-                var methodArgs = args.Enumerate().Skip(1).Select(DatumHelpers.castObject).ToArray();
+                var target = unwrapDatum(argArray[0]);
+                var methodArgs = unwrap(args.Enumerate().Skip(1));
                 var result = target.GetType().InvokeMember(name, BindingFlags.Default | BindingFlags.InvokeMethod, null, target, methodArgs);
                 return result.ToAtom();
             }
@@ -62,7 +78,7 @@ namespace LispEngine.ReflectionBinding
 
             public Datum Evaluate(Datum args)
             {
-                var methodArgs = args.Enumerate().Select(DatumHelpers.castObject).ToArray();
+                var methodArgs = unwrap(args.Enumerate());
                 var result = type.InvokeMember(methodName,
                                                BindingFlags.Public | BindingFlags.InvokeMethod | BindingFlags.Static,
                                                null, null, methodArgs);
@@ -92,6 +108,14 @@ namespace LispEngine.ReflectionBinding
             public override string ToString()
             {
                 return ",new";
+            }
+        }
+
+        class WrapAtom : UnaryFunction
+        {
+            protected override Datum eval(Datum arg)
+            {
+                return arg.ToAtom();
             }
         }
 
@@ -138,6 +162,7 @@ namespace LispEngine.ReflectionBinding
             env = env.Extend("new", new New().ToStack());
             // Bring all static symbols from a particular assembly into the current environment.
             env = env.Extend("ref", new Ref());
+            env = env.Extend("atom", new WrapAtom().ToStack());
             // Define "." as a macro to invoke a given method
             ResourceLoader.ExecuteResource(env, "LispEngine.ReflectionBinding.ReflectionBuiltins.lisp");
             return env;
