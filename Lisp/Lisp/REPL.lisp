@@ -5,10 +5,12 @@
 (define (prompt)
     (System.Console.Write "FCLisp> "))
 
-(define (repl)
-     (prompt)
-     (with (expr (read console-i/o-port)
-            result (eval expr (env)))
-           (display result))
-     (repl))
-(repl)
+(let/cc exit
+    (begin
+        (define (repl)
+            (prompt)
+            (with (expr (read console-i/o-port)
+                   result (eval expr (env)))
+                   (display result))
+            (repl))
+        (repl)))
