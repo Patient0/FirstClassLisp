@@ -9,4 +9,10 @@
     (simple-read
         (* 5 3)
         (read (open-input-string "(* 5 3)")))
+
+    (eof-detect
+        (#t #f)
+        (map (lambda (s)
+                 (eof-object? (read (open-input-string s))))
+                 '("" "(* 5 3)")))
 )
