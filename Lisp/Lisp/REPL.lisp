@@ -9,6 +9,8 @@
     (begin
         (define (exit)
             (return nil))
+        ; Read an expression, but exit the loop
+        ; if it's eof.
         (define (check-read)
             (let next (read console)
                  (if (eof-object? next)
