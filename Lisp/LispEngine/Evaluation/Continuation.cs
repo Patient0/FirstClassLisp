@@ -4,16 +4,22 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
+    using ErrorHandler = Func<Continuation, Exception, Continuation>;
+
     public interface Continuation
     {
         Continuation PushTask(Task task);
         Continuation PopTask();
         Continuation PushResult(Datum d);
         Continuation PopResult();
+
         // The current task
         Task Task { get; }
         // The current result
         Datum Result { get; }
+
+        ErrorHandler ErrorHandler { get; }
+        Continuation SetErrorHandler(ErrorHandler errorHandler);
     }
 
     static class ContinuationExtensions

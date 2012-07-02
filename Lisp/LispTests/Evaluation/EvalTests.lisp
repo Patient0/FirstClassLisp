@@ -14,4 +14,14 @@
         (#t #f)
         (map (compose eof-object? read open-input-string)
                  '("" "(* 5 3)")))
+
+    ; Allow passing in an extra parameter which is a function that
+    ; will receive an error notification.
+    (eval-with-error
+        "ERROR"
+        (eval 'an-undefined-symbol (env) (lambda (x) "ERROR")))
+
+    (eval-nested-with-error
+        "ERROR"
+        (eval '(* 6 undefined) (env) (lambda (x) "ERROR")))
 )
