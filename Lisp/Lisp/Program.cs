@@ -57,7 +57,6 @@ namespace Lisp
             // Can't seem to get ResourceLoader to figure out to use *our* assembly
             // by default.
             var assembly = Assembly.GetCallingAssembly();
-
             ResourceLoader.ExecuteResource(assembly, env, "Lisp.REPL.lisp");
             /*
             // TODO: We ought to implement the repl in Lisp also
