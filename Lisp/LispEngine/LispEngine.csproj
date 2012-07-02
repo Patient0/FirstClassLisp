@@ -57,6 +57,7 @@
     <Compile Include="Core\Log.cs" />
     <Compile Include="Core\Set.cs" />
     <Compile Include="Core\UnaryFunction.cs" />
+    <Compile Include="Core\ExecuteWithErrorTranslator.cs" />
     <Compile Include="Datums\AbstractVisitor.cs" />
     <Compile Include="Datums\DatumExtensions.cs" />
     <Compile Include="Datums\DatumVisitor.cs" />

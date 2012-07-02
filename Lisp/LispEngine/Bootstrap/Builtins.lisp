@@ -234,3 +234,18 @@
         (f (g x))))
 (define (compose . fns)
      (fold-right compose2 identity fns))
+
+(define cadr (compose2 car cdr))
+(define caddr (compose2 cadr cdr))
+(define cdddr (compose cdr cdr cdr))
+
+(define-macro try clauses
+    (with (clauses-reversed (reverse clauses)
+           error-handler (car clauses-reversed)
+           var (cadr clauses-reversed)
+           catch (caddr clauses-reversed) ; unused
+           body (reverse (cdddr clauses-reversed)))
+        `(,execute-with-error-translator
+            (,lambda (,var) ,error-handler)
+            (,lambda ()
+                (,begin ,@body)))))

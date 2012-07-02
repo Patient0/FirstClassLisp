@@ -221,4 +221,31 @@
     (composeN
            12
            ((compose car cdr cdr) '(1 5 12)))
+
+    ; error-handler provides a way to map from
+    ; .NET exceptions back to the pure 'Lisp' world
+    ; where a continuation can be invoked.
+    (error-translator
+           "ERROR"
+           (let/cc return
+                (execute-with-error-translator
+                    (lambda (x) (return "ERROR"))
+                    (lambda () undefined-symbol))))
+
+    (cadr 5 (cadr '(1 5 12)))
+    (caddr 12 (caddr '(1 5 12)))
+    (cdddr (17) (cdddr '(1 5 12 17)))
+    (try-catch-fail
+        "Undefined symbol \'undefined\'"
+            (try
+                undefined
+             catch ex ex))
+
+    (try-catch-success
+        "SUCCESS"
+            (try
+                "SUCCESS"
+             catch ex
+                ex))
+
 )
