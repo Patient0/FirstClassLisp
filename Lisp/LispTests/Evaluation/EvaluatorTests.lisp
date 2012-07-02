@@ -239,6 +239,7 @@
         "Undefined symbol \'undefined\'"
             (try
                 undefined
+                undefined-not-reach
              catch ex ex))
 
     (try-catch-success

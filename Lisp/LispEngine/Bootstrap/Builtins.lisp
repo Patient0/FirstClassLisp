@@ -245,7 +245,8 @@
            var (cadr clauses-reversed)
            catch (caddr clauses-reversed) ; unused
            body (reverse (cdddr clauses-reversed)))
-        `(,execute-with-error-translator
-            (,lambda (,var) ,error-handler)
-            (,lambda ()
-                (,begin ,@body)))))
+        `(,let/cc return ; hmm... Maybe we need gensym after all...
+            (,execute-with-error-translator
+                (,lambda (,var) (return ,error-handler))
+                (,lambda ()
+                    (,begin ,@body))))))
