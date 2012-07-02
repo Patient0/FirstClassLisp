@@ -23,11 +23,11 @@
         ; If an error occurs, write to stderr and skip
         ; the display step.
         (define (eval-and-display expr)
-            (let/cc return
+            (let/cc abort
                 (begin
                     (define (error-handler msg)
                         (display-error msg)
-                        (return nil))
+                        (abort nil))
                     (display (eval expr repl-env error-handler)))))
 
         (define (repl)

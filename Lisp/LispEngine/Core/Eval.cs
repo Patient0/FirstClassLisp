@@ -24,9 +24,8 @@ namespace LispEngine.Core
             var argArray = args.ToArray();
             var expression = argArray[0];
             var environment = (Environment) argArray[1].CastObject();
-            if(argArray.Length > 2)
-                c = c.SetErrorHandler(makeErrorHandler((StackFunction) argArray[2]));
-            return c.Evaluate(environment, expression);
+            var errorHandler = argArray.Length > 2 ? makeErrorHandler((StackFunction) argArray[2]) : null;
+            return c.NewErrorHandler(errorHandler).Evaluate(environment, expression);
         }
 
         public override string ToString()

@@ -99,5 +99,30 @@ namespace LispEngine.Evaluation
 
             return DatumHelpers.atom("undefined");
         }
+
+        class RestoreErrorHandler : Task
+        {
+            private readonly ErrorHandler previous;
+            public RestoreErrorHandler(ErrorHandler previous)
+            {
+                this.previous = previous;
+            }
+            public Continuation Perform(Continuation c)
+            {
+                return c.SetErrorHandler(previous);
+            }
+            public override string ToString()
+            {
+                return string.Format("Restore error handler '{0}'", previous);
+            }
+        }
+
+        public static Continuation NewErrorHandler(this Continuation c, ErrorHandler errorHandler)
+        {
+            // Set the current error handler to something new, but also
+            // remember to restore the old error handler once we get past this
+            // point.
+            return c.PushTask(new RestoreErrorHandler(c.ErrorHandler)).SetErrorHandler(errorHandler);
+        }
     }
 }
