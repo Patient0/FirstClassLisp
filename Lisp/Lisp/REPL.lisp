@@ -20,19 +20,13 @@
                      (exit)
                      next)))
 
-        ; If an error occurs, write to stderr and skip
-        ; the display step.
-        (define (eval-and-display expr)
-            (let/cc abort
-                (begin
-                    (define (error-handler msg)
-                        (display-error msg)
-                        (abort nil))
-                    (display (eval expr repl-env error-handler)))))
-
         (define (repl)
-            (prompt)
-            (with (expr (check-read))
-                  (eval-and-display expr))
+            (try
+                (prompt)
+                (with (expr (check-read)
+                       result (eval expr repl-env))
+                      (display result))
+             catch msg
+                (display-error msg))
             (repl))
         (repl)))
