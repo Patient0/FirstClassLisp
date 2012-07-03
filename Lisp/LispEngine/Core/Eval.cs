@@ -12,13 +12,6 @@ namespace LispEngine.Core
 
     class Eval : AbstractStackFunction
     {
-        private static ErrorHandler makeErrorHandler(StackFunction f)
-        {
-            // Report the "message" from the exception to the Lisp
-            // error handling function.
-            return (c, ex) => f.Evaluate(c, DatumHelpers.atomList(ex.Message));
-        }
-
         public override Continuation Evaluate(Continuation c, Datum args)
         {
             var argArray = args.ToArray();
