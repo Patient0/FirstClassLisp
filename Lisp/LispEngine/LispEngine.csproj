@@ -84,7 +84,6 @@
     <Compile Include="Bootstrap\StandardEnvironment.cs" />
     <Compile Include="Evaluation\IEnvironment.cs" />
     <Compile Include="Evaluation\Stack.cs" />
-    <Compile Include="Evaluation\StackContinuation.cs" />
     <Compile Include="Evaluation\StackFunction.cs" />
     <Compile Include="Evaluation\StackFunctionAdapter.cs" />
     <Compile Include="Lexing\Token.cs" />

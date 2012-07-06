@@ -26,7 +26,7 @@ namespace LispEngine.Evaluation
 
         public Datum Evaluate(Environment env, Datum datum)
         {
-            var c = StackContinuation.Empty
+            var c = Continuation.Empty
                 .PushTask(null)
                 .PushResult(null)
                 .Evaluate(env, datum);

@@ -6,27 +6,96 @@ namespace LispEngine.Evaluation
 {
     using ErrorHandler = Func<Continuation, Exception, Continuation>;
 
-    public interface Continuation
+    public class Continuation
     {
-        Continuation PushTask(Task task);
-        Continuation PopTask();
-        Continuation PushResult(Datum d);
-        Continuation PopResult();
+        private readonly IStack<Environment> envs;
+        private readonly IStack<Task> tasks;
+        private readonly IStack<Datum> results;
+        private readonly ErrorHandler errorHandler;
 
-        // The current task
-        Task Task { get; }
-        // The current result
-        Datum Result { get; }
+        public static readonly Continuation Empty = new Continuation(Stack<Environment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, null);
 
-        ErrorHandler ErrorHandler { get; }
-        Continuation SetErrorHandler(ErrorHandler errorHandler);
-    }
-
-    static class ContinuationExtensions
-    {
-        public static Continuation Evaluate(this Continuation s, Environment e, Datum expression)
+        private Continuation(IStack<Environment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
         {
-            return s.PushTask(new EvaluateTask(e, expression));
+            this.envs = envs;
+            this.tasks = tasks;
+            this.results = results;
+            this.errorHandler = errorHandler;
+        }
+
+        private Continuation create(IStack<Environment> newEnvs, IStack<Task> newTasks, IStack<Datum> newResults)
+        {
+            return new Continuation(newEnvs, newTasks, newResults, errorHandler);
+        }
+
+        private Continuation SetTasks(IStack<Task> newTasks)
+        {
+            return create(envs, newTasks, results);
+        }
+
+        private Continuation SetEnvs(IStack<Environment> newEnvs)
+        {
+            return create(newEnvs, tasks, results);
+        }
+
+        private Continuation SetResults(IStack<Datum> newResults)
+        {
+            return create(envs, tasks, newResults);
+        }
+
+        public Continuation SetErrorHandler(ErrorHandler newHandler)
+        {
+            return new Continuation(envs, tasks, results, newHandler);
+        }
+
+        public Continuation PushEnv(Environment env)
+        {
+            return SetEnvs(envs.Push(env));
+        }
+
+        public Continuation PopEnv()
+        {
+            return SetEnvs(envs.Pop());
+        }
+
+        public Continuation PushTask(Task task)
+        {
+            return SetTasks(tasks.Push(task));
+        }
+
+        public Continuation PopTask()
+        {
+            return SetTasks(tasks.Pop());
+        }
+
+        public Continuation PushResult(Datum d)
+        {
+            return SetResults(results.Push(d));
+        }
+
+        public Continuation PopResult()
+        {
+            return SetResults(results.Pop());
+        }
+
+        public Task Task
+        {
+            get { return tasks.Peek(); }
+        }
+
+        public Datum Result
+        {
+            get { return results.Peek(); }
+        }
+
+        public Environment Env
+        {
+            get { return envs.Peek(); }
+        }
+
+        public ErrorHandler ErrorHandler
+        {
+            get { return errorHandler; }
         }
 
         private static StackFunction toStack(Function f)
@@ -34,11 +103,44 @@ namespace LispEngine.Evaluation
             return f as StackFunction ?? new StackFunctionAdapter(f);
         }
 
-        public static Continuation Invoke(this Continuation s, Function f, Datum args)
+        public Continuation Invoke(Function f, Datum args)
         {
-            return toStack(f).Evaluate(s, args);
+            return toStack(f).Evaluate(this, args);
         }
 
+        public Continuation Evaluate(Environment e, Datum expression)
+        {
+            return PushEnv(e).PushTask(new EvaluateTask(expression));
+        }
+
+        class RestoreErrorHandler : Task
+        {
+            private readonly ErrorHandler previous;
+            public RestoreErrorHandler(ErrorHandler previous)
+            {
+                this.previous = previous;
+            }
+            public Continuation Perform(Continuation c)
+            {
+                return c.SetErrorHandler(previous);
+            }
+            public override string ToString()
+            {
+                return string.Format("Restore error handler '{0}'", previous);
+            }
+        }
+
+        public Continuation NewErrorHandler(ErrorHandler errorHandler)
+        {
+            // Set the current error handler to something new, but also
+            // remember to restore the old error handler once we get past this
+            // point.
+            return PushTask(new RestoreErrorHandler(ErrorHandler)).SetErrorHandler(errorHandler);
+        }
+    }
+
+    static class ContinuationExtensions
+    {
         public static EvaluationException error(this Continuation c, string msg, params object[] args)
         {
             return error(c, null, msg, args);
@@ -76,53 +178,6 @@ namespace LispEngine.Evaluation
             dumpResults(c, sw);
             sw.Flush();
             return sw.ToString();
-        }
-
-        // The following are useful for debugging.
-        public static IEnvironment GetEnvironment(this Continuation c)
-        {
-            EvaluateTask t = null;
-            while(c.Task != null && (t = c.Task as EvaluateTask) == null)
-                c = c.PopTask();
-            return t == null ? null : t.Env;
-        }
-
-        public static Datum Lookup(this Continuation c, string name)
-        {
-            var env = GetEnvironment(c);
-            if (env == null)
-                return null;
-
-            Datum datum;
-            if (env.TryLookup(name, out datum))
-                return datum;
-
-            return DatumHelpers.atom("undefined");
-        }
-
-        class RestoreErrorHandler : Task
-        {
-            private readonly ErrorHandler previous;
-            public RestoreErrorHandler(ErrorHandler previous)
-            {
-                this.previous = previous;
-            }
-            public Continuation Perform(Continuation c)
-            {
-                return c.SetErrorHandler(previous);
-            }
-            public override string ToString()
-            {
-                return string.Format("Restore error handler '{0}'", previous);
-            }
-        }
-
-        public static Continuation NewErrorHandler(this Continuation c, ErrorHandler errorHandler)
-        {
-            // Set the current error handler to something new, but also
-            // remember to restore the old error handler once we get past this
-            // point.
-            return c.PushTask(new RestoreErrorHandler(c.ErrorHandler)).SetErrorHandler(errorHandler);
         }
     }
 }

@@ -5,18 +5,11 @@ namespace LispEngine.Evaluation
 {
     class EvaluateTask : Task
     {
-        private readonly Environment env;
         private readonly Datum datum;
 
-        public EvaluateTask(Environment env, Datum datum)
+        public EvaluateTask(Datum datum)
         {
-            this.env = env;
             this.datum = datum;
-        }
-
-        public Environment Env
-        {
-            get { return env; }
         }
 
         class Visitor : AbstractVisitor<Continuation>
@@ -46,7 +39,8 @@ namespace LispEngine.Evaluation
 
         public Continuation Perform(Continuation c)
         {
-            return datum.accept(new Visitor(c, env));
+            var env = c.Env;
+            return datum.accept(new Visitor(c.PopEnv(), env));
         }
 
         public override string ToString()
