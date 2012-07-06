@@ -83,9 +83,7 @@
 
 (define-macro try clauses
     (with (body (before 'catch clauses)
-           after-catch (after 'catch clauses)
-           var (car after-catch)
-           error-handler (cdr after-catch)
+           (var . error-handler) (after 'catch clauses)
            c-symbol (gensym))
         `(,let/cc ,c-symbol
             (,execute-with-error-translator

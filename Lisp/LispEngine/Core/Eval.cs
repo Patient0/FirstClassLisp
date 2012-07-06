@@ -8,8 +8,6 @@ using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
-    using ErrorHandler = Func<Continuation, Exception, Continuation>;
-
     class Eval : AbstractStackFunction
     {
         public override Continuation Evaluate(Continuation c, Datum args)

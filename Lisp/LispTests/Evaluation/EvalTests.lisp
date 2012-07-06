@@ -24,9 +24,7 @@
     ; This test demonstrates why we cannot just
     ; have a "setErrorHandler" in the continuation.
     ;
-    ; We need a stack of error handlers so that
-    ; things behave as we expect if we perform an
-    ; eval of an eval.
+    ; We need a stack of error handlers.
     (nested-try-catch
         "ERROR2"
         (try
