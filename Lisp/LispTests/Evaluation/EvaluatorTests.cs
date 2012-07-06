@@ -18,6 +18,7 @@ namespace LispTests.Evaluation
     [TestFixture("MacroBuiltinTests.lisp")]
     [TestFixture("DotNetTests.lisp")]
     [TestFixture("EvalTests.lisp")]
+    [TestFixture("LibraryTests.lisp")]
     class EvaluatorTests : DatumHelpers
     {
         private readonly string lispResourceFile;

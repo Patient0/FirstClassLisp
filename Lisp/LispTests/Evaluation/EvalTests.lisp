@@ -28,11 +28,11 @@
     ; things behave as we expect if we perform an
     ; eval of an eval.
     (nested-try-catch
-        "ERROR1"
+        "ERROR2"
         (try
             (try
-                'undefined
-            catch "ERROR1")
-            'undefined
-        catch "ERROR2"))
+                undefined1
+            catch msg "ERROR1")
+            undefined2
+        catch msg "ERROR2"))
 )

@@ -27,10 +27,22 @@ namespace LispEngine.Bootstrap
             }
         }
 
+        class GenSym : Function
+        {
+            private int counter = 0;
+            public Datum Evaluate(Datum args)
+            {
+                if (!DatumHelpers.nil.Equals(args))
+                    throw DatumHelpers.error("gensym accepts no arguments");
+                return DatumHelpers.symbol(string.Format("generated-{0}", ++counter));
+            }
+        }
+
         public static Environment Extend(Environment env)
         {
             env = env.Extend("symbol->string", new SymbolToString().ToStack());
             env = env.Extend("string->symbol", new StringToSymbol().ToStack());
+            env = env.Extend("gensym", new GenSym().ToStack());
             return env;
         }
     }

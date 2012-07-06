@@ -25,6 +25,7 @@ namespace LispEngine.Bootstrap
             env = env.Extend("append", Append.Instance);
             env = SymbolFunctions.Extend(env);
             ResourceLoader.ExecuteResource(env, "LispEngine.Bootstrap.Builtins.lisp");
+            ResourceLoader.ExecuteResource(env, "LispEngine.Bootstrap.Library.lisp");
             env = Reader.AddTo(env);
             return env;
         }
