@@ -235,6 +235,16 @@
     (cadr 5 (cadr '(1 5 12)))
     (caddr 12 (caddr '(1 5 12)))
     (cdddr (17) (cdddr '(1 5 12 17)))
+
+    (find (5 6 7)
+        (find 5 '(1 2 3 4 5 6 7)))
+
+    (find-non-existent ()
+        (find 3 '(1 2 4)))
+
+    (find-first (1 2 3)
+        (find 1 '(1 2 3)))
+
     (try-catch-fail
         "Undefined symbol \'undefined\'"
             (try

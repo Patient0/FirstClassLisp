@@ -239,6 +239,11 @@
 (define caddr (compose2 cadr cdr))
 (define cdddr (compose cdr cdr cdr))
 
+(define (find item list)
+    (if (nil? list) list
+        (eq? item (car list)) list
+        (find item (cdr list))))
+
 (define-macro try clauses
     (with (clauses-reversed (reverse clauses)
            error-handler (car clauses-reversed)
