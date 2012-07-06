@@ -6,6 +6,11 @@ namespace LispEngine.Evaluation
 {
     public class Evaluator
     {
+        public Evaluator()
+        {
+            Steps = 0;
+        }
+
         public Datum Evaluate(Continuation c)
         {
             while (c.Task != null)
@@ -13,6 +18,7 @@ namespace LispEngine.Evaluation
                 try
                 {
                     c = c.Task.Perform(c.PopTask());
+                    ++Steps;
                 }
                 catch(Exception ex)
                 {
@@ -26,11 +32,13 @@ namespace LispEngine.Evaluation
 
         public Datum Evaluate(Environment env, Datum datum)
         {
+            Steps = 0;
             var c = Continuation.Empty
                 .PushTask(null)
-                .PushResult(null)
                 .Evaluate(env, datum);
             return Evaluate(c);
         }
+
+        public int Steps { get; private set; }
     }
 }

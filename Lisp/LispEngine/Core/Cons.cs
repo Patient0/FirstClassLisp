@@ -15,5 +15,10 @@ namespace LispEngine.Core
         {
             return DatumHelpers.cons(arg1, arg2);
         }
+
+        public override string ToString()
+        {
+            return ",cons";
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace LispTests.Evaluation
         private readonly string lispResourceFile;
         private Evaluator e;
         private Environment env;
+        private int totalSteps;
 
         public EvaluatorTests(string lispResourceFile)
         {
@@ -49,6 +50,8 @@ namespace LispTests.Evaluation
                 var result = e.Evaluate(env, expression);
                 Console.WriteLine("Expression: {0}", expression);
                 Console.WriteLine("Result: {0}", result);
+                totalSteps += e.Steps;
+                Console.WriteLine("Steps: {0} So far: {1}", e.Steps, totalSteps);
                 return result;
             }
             catch (Exception ex)

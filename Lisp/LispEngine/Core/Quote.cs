@@ -24,5 +24,10 @@ namespace LispEngine.Core
         {
             return c.PushResult(evaluate(c, args));
         }
+
+        public override string ToString()
+        {
+            return ",quote";
+        }
     }
 }

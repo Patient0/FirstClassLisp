@@ -18,17 +18,30 @@ namespace LispEngine.Core
 
         private sealed class EvaluateExpansion : Task
         {
-            private readonly Environment env;
+            private readonly Pair args;
 
-            public EvaluateExpansion(Environment env)
+            public EvaluateExpansion(Pair args)
             {
-                this.env = env;
+                this.args = args;
             }
 
             public Continuation Perform(Continuation c)
             {
                 var expansion = c.Result;
+                if(args != null)
+                {
+                    // Cache macro expansions - only incorrect
+                    // if different macros are used to expand
+                    // the same datum instance (which I'll have to
+                    // write a test and check for...).
+
+                    // But this isn't that good yet: we also want to cache the situation in which a macro
+                    // has expanded into another macro.
+                    args.cache = expansion;
+                }
                 c = c.PopResult();
+                var env = c.Env;
+                c = c.PopEnv();
                 return c.Evaluate(env, expansion);
             }
         }
@@ -42,9 +55,14 @@ namespace LispEngine.Core
                 this.argFunction = argFunction;
             }
 
+            public StackFunction Function { get { return argFunction; } }
+
             public override Continuation Evaluate(Continuation c, Environment env, Datum args)
             {
-                c = c.PushTask(new EvaluateExpansion(env));
+                var p = args as Pair;
+                c = c.PushEnv(env).PushTask(new EvaluateExpansion(p));
+                if(p != null && p.cache != null)
+                    return c.PushResult(p.cache);
                 return argFunction.Evaluate(c, args);
             }
 

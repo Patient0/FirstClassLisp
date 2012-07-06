@@ -18,5 +18,10 @@ namespace LispEngine.Bootstrap
                 .Aggregate(Enumerable.Empty<Datum>(), (current, a) => current.Concat(a.Enumerate()))
                 .ToList();
         }
+
+        public override string ToString()
+        {
+            return ",append";
+        }
     }
 }

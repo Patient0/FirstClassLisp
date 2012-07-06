@@ -9,6 +9,7 @@ namespace LispEngine.Datums
     {
         private readonly Datum first;
         private readonly Datum second;
+        public Datum cache;
         public Pair(Datum first, Datum second)
         {
             this.first = first;
