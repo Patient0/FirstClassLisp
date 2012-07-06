@@ -141,14 +141,14 @@ namespace LispEngine.Evaluation
 
     static class ContinuationExtensions
     {
-        public static EvaluationException error(this Continuation c, string msg, params object[] args)
+        public static Exception error(this Continuation c, string msg, params object[] args)
         {
             return error(c, null, msg, args);
         }
 
-        public static EvaluationException error(this Continuation c, Exception cause, string msg, params object[] args)
+        public static Exception error(this Continuation c, Exception cause, string msg, params object[] args)
         {
-            return new EvaluationException(string.Format(msg, args), c, cause);
+            return new Exception(string.Format(msg, args), cause);
         }
 
         private static void dumpTasks(Continuation c, TextWriter sw)

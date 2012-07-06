@@ -34,10 +34,6 @@ namespace Lisp
                 var program = new Program();
                 program.repl();                
             }
-            catch (EvaluationException ex)
-            {
-                Console.Error.WriteLine("ERROR:\n{0}\n{1}\n", ex, ex.LispTrace);
-            }
             catch (Exception ex)
             {
                 Console.Error.WriteLine("ERROR:\n{0}\n{1}\n", ex, ex.StackTrace);

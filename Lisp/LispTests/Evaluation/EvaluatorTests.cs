@@ -49,7 +49,8 @@ namespace LispTests.Evaluation
                 Console.WriteLine("Expression: {0}", expression);
                 Console.WriteLine("Result: {0}", result);
                 return result;
-            } catch (EvaluationException ex)
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine("ex: {0}", ex);
                 throw;
