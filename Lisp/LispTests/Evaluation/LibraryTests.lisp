@@ -78,4 +78,19 @@
                 (log (* 3 5))
                 (car ex)))
 
+    (thunk-simplest
+        5
+        (force (make-thunk 5)))
+
+    (thunk-does-not-evaluate
+        5
+        (begin
+            (make-thunk undefined)
+            5))
+
+    (make-has-implicit-begin
+        6
+        (force
+            (make-thunk 5 6)))
+                
 )

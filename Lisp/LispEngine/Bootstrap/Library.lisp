@@ -90,3 +90,11 @@
                 (,lambda ,ex-var (,c-symbol (,begin ,@error-handler)))
                 (,lambda ()
                     (,begin ,@body))))))
+
+(define-macro make-thunk args
+    `(,lambda ()
+        (,begin ,@args)))
+
+(define (force thunk)
+    (thunk))
+
