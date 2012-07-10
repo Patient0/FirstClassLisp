@@ -81,15 +81,6 @@
 (define (before pivot list)
     (reverse (after pivot (reverse list))))
 
-(define-macro try clauses
-    (with (body (before 'catch clauses)
-           (ex-var . error-handler) (after 'catch clauses)
-           c-symbol (gensym))
-        `(,let/cc ,c-symbol
-            (,execute-with-error-translator
-                (,lambda ,ex-var (,c-symbol (,begin ,@error-handler)))
-                (,lambda ()
-                    (,begin ,@body))))))
 
 (define-macro make-thunk args
     `(,lambda ()
@@ -97,4 +88,14 @@
 
 (define (force thunk)
     (thunk))
+
+(define-macro try clauses
+    (with (body (before 'catch clauses)
+           (ex-var . error-handler) (after 'catch clauses)
+           c-symbol (gensym))
+        `(,let/cc ,c-symbol
+            (,execute-with-error-translator
+                (,lambda ,ex-var (,c-symbol (,begin ,@error-handler)))
+                (,make-thunk ,@body)))))
+
 

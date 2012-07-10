@@ -211,7 +211,7 @@
            (let/cc return
                 (execute-with-error-translator
                     (lambda ex (return "ERROR"))
-                    (lambda () undefined-symbol))))
+                    (make-thunk undefined-symbol))))
 
     (nested-error
         "ERROR"
@@ -238,8 +238,7 @@
                     (lambda()
                         (execute-with-error-translator
                             (lambda ex undefined)
-                            (lambda()
-                                undefined2))))))
+                            (make-thunk undefined2))))))
 
     ; This test shows why we cannot use an
     ; actual stack of error handlers -
@@ -249,6 +248,5 @@
         "ERROR"
         (execute-with-error-translator
             (lambda ex "ERROR")
-            (lambda ()
-                undefined)))
+            (make-thunk undefined)))
 )
