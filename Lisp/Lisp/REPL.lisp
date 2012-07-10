@@ -26,7 +26,7 @@
                 (with (expr (check-read)
                        result (eval expr repl-env))
                       (display result))
-             catch msg
-                (display-error msg))
+             catch ex
+                (display-error (car ex)))
             (repl))
         (repl)))
