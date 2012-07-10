@@ -2,8 +2,15 @@
 (define console (open-input-stream (System.Console.get_In)))
 (define (display result)
     (System.Console.WriteLine "-> {0}" result))
-(define (display-error msg)
-    (.WriteLine (System.Console.get_Error) "ERROR: {0}" msg))
+
+(define (display-error msg c)
+    (define stderr (System.Console.get_Error))
+    (.WriteLine stderr "ERROR: {0}" msg)
+    (.WriteLine stderr "StackTrace:")
+    (loop f (stack-trace c)
+        (.WriteLine stderr "\t{0}" f))
+    nil)
+
 (define (prompt)
     (System.Console.Write "FCLisp> "))
 
@@ -26,7 +33,7 @@
                 (with (expr (check-read)
                        result (eval expr repl-env))
                       (display result))
-             catch ex
-                (display-error (car ex)))
+             catch (msg c)
+                (display-error msg c))
             (repl))
         (repl)))
