@@ -76,7 +76,7 @@
            () ()
            (p . tail) tail))
 
-; Not the most efficient implementation but
+; Not efficient - but
 ; it will do for now
 (define (before pivot list)
     (reverse (after pivot (reverse list))))
@@ -91,11 +91,11 @@
 
 (define-macro try clauses
     (with (body (before 'catch clauses)
-           (ex-var . error-handler) (after 'catch clauses)
+           (ex-symbols . error-handler) (after 'catch clauses)
            c-symbol (gensym))
         `(,let/cc ,c-symbol
             (,execute-with-error-translator
-                (,lambda ,ex-var (,c-symbol (,begin ,@error-handler)))
+                (,lambda ,ex-symbols (,c-symbol (,begin ,@error-handler)))
                 (,make-thunk ,@body)))))
 
 

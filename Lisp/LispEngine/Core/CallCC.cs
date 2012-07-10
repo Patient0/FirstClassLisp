@@ -9,13 +9,19 @@ namespace LispEngine.Core
 {
     class CallCC : AbstractStackFunction
     {
-        private class ContinuationFunction : AbstractStackFunction
+        public class ContinuationFunction : AbstractStackFunction
         {
             private readonly Continuation c;
             public ContinuationFunction(Continuation c)
             {
                 this.c = c;
             }
+
+            public Continuation Continuation
+            {
+                get { return c; }
+            }
+
             public override Continuation Evaluate(Continuation oldContinuation, Datum args)
             {
                 // Replace the old continuation with the new continuation - but pass in the
@@ -23,6 +29,11 @@ namespace LispEngine.Core
                 var returnValue = args.ToArray()[0];
                 return c.PushResult(returnValue);
             }
+        }
+
+        public static StackFunction MakeContinuationFunction(Continuation c)
+        {
+            return new ContinuationFunction(c);
         }
 
         public static readonly StackFunction Instance = new CallCC();
@@ -36,7 +47,7 @@ namespace LispEngine.Core
             var function = arg as StackFunction;
             if(function == null)
                 throw DatumHelpers.error("call/cc: {0} must be a function", arg);
-            return function.Evaluate(c, DatumHelpers.compound(new ContinuationFunction(c)));
+            return function.Evaluate(c, DatumHelpers.compound(MakeContinuationFunction(c)));
         }
     }
 }

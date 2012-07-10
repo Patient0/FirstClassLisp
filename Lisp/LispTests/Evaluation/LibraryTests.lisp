@@ -88,7 +88,7 @@
             (make-thunk undefined)
             5))
 
-    (make-has-implicit-begin
+    (make-thunk-has-implicit-begin
         6
         (force
             (make-thunk 5 6)))

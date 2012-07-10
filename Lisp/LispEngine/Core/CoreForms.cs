@@ -24,6 +24,7 @@ namespace LispEngine.Core
                 .Extend("call/cc", CallCC.Instance)
                 .Extend("eval", Eval.Instance)
                 .Extend("env", Env.Instance)
+                .Extend("stack-trace", StackTrace.Instance)
                 .Extend("execute-with-error-translator", ExecuteWithErrorTranslator.Instance);
             return env;
         }

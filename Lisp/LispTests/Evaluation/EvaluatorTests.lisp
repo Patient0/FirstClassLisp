@@ -249,4 +249,23 @@
         (execute-with-error-translator
             (lambda ex "ERROR")
             (make-thunk undefined)))
+
+    (error-translator-gives-continuation
+        6
+        (execute-with-error-translator
+        (lambda (ex c) (c 6))
+        (make-thunk undefined)))
+
+    (stack-trace
+        6
+        (begin
+            (define (top)
+                (let/cc return
+                    (begin
+                        (define (bottom)
+                            (let/cc c (return c)))
+                        (define (next)
+                            (+ 1 (bottom)))
+                        (- 2 (next)))))
+            (length (stack-trace (top)))))
 )
