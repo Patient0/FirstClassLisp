@@ -15,22 +15,4 @@
         (map (compose eof-object? read open-input-string)
                  '("" "(* 5 3)")))
 
-    (nested-error
-        "ERROR"
-        (try
-            (* 6 undefined)
-        catch x "ERROR"))
-
-    ; This test demonstrates why we cannot just
-    ; have a "setErrorHandler" in the continuation.
-    ;
-    ; We need a stack of error handlers.
-    (nested-try-catch
-        "ERROR2"
-        (try
-            (try
-                undefined1
-            catch msg "ERROR1")
-            undefined2
-        catch msg "ERROR2"))
 )

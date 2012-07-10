@@ -213,6 +213,23 @@
                     (lambda ex (return "ERROR"))
                     (lambda () undefined-symbol))))
 
+    (nested-error
+        "ERROR"
+        (try
+            (* 6 undefined)
+        catch x "ERROR"))
+
+    ; This test checks that we 'remember' to restore
+    ; the old error handler if an error happens
+    (nested-try-catch
+        "ERROR2"
+        (try
+            (try
+                undefined1
+            catch msg "ERROR1")
+            undefined2
+        catch msg "ERROR2"))
+
     (error-translator-with-error-in-the-translator
             "ERROR"
             (let/cc return
@@ -223,5 +240,15 @@
                             (lambda ex undefined)
                             (lambda()
                                 undefined2))))))
-            
+
+    ; This test shows why we cannot use an
+    ; actual stack of error handlers -
+    ; the error handler may or may not
+    ; invoke an escaping continuation.
+    (error-translator-can-just-evaluate
+        "ERROR"
+        (execute-with-error-translator
+            (lambda ex "ERROR")
+            (lambda ()
+                undefined)))
 )
