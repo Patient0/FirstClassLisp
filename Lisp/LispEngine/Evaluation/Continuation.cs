@@ -135,6 +135,8 @@ namespace LispEngine.Evaluation
             // Set the current error handler to something new, but also
             // remember to restore the old error handler once we get past this
             // point.
+            // We can't just keep a 'stack' of error handlers in case the error handling
+            // function itself doesn't escape by invoking a continuation.
             return PushTask(new RestoreErrorHandler(ErrorHandler)).SetErrorHandler(errorHandler);
         }
     }

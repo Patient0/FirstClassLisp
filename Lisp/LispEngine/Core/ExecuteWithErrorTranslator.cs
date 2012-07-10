@@ -16,11 +16,13 @@ namespace LispEngine.Core
      */
     class ExecuteWithErrorTranslator : AbstractStackFunction
     {
-        private static ErrorHandler makeErrorHandler(StackFunction f)
+        private static ErrorHandler makeErrorHandler(ErrorHandler oldErrorHandler, StackFunction f)
         {
             // Report the "message" from the exception to the Lisp
             // error handling function.
-            return (c, ex) => f.Evaluate(c, DatumHelpers.atomList(ex.Message));
+            // Ensure that the original error handler is in scope before evaluating the error function -
+            // otherwise we end up in an infinite loop if there's an error in the error function itself.
+            return (c, ex) => f.Evaluate(c.SetErrorHandler(oldErrorHandler), DatumHelpers.atomList(ex.Message, c));
         }
 
         public override Continuation Evaluate(Continuation c, Datum args)
@@ -28,7 +30,7 @@ namespace LispEngine.Core
             var argArray = args.ToArray();
             if (argArray.Length != 2)
                 throw DatumHelpers.error("Invalid syntax. ArgCount ({0}) != 2. Usage: (execute-with-error-handler <error-function> <fn>)", argArray.Length);
-            var errorHandler = makeErrorHandler((StackFunction)argArray[0]);
+            var errorHandler = makeErrorHandler(c.ErrorHandler, (StackFunction)argArray[0]);
             var fn = (StackFunction)argArray[1];
             return fn.Evaluate(c.NewErrorHandler(errorHandler), DatumHelpers.compound());
         }

@@ -83,10 +83,10 @@
 
 (define-macro try clauses
     (with (body (before 'catch clauses)
-           (var . error-handler) (after 'catch clauses)
+           (ex-var . error-handler) (after 'catch clauses)
            c-symbol (gensym))
         `(,let/cc ,c-symbol
             (,execute-with-error-translator
-                (,lambda (,var) (,c-symbol (,begin ,@error-handler)))
+                (,lambda ,ex-var (,c-symbol (,begin ,@error-handler)))
                 (,lambda ()
                     (,begin ,@body))))))

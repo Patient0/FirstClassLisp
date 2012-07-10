@@ -55,19 +55,21 @@
     (before (1 2)
         (before 3 '(1 2 3 4 5)))
 
+    (define msg car)
+
     (try-catch-fail
         "Undefined symbol \'undefined\'"
             (try
                 undefined
                 undefined-not-reach
-             catch ex (car ex)))
+             catch ex (msg ex)))
 
     (try-catch-success
         "SUCCESS"
             (try
                 "SUCCESS"
              catch ex
-                (car ex)))
+                (msg ex)))
 
     ; We allow multiple statements after the catch
     (catch-has-implicit-begin
@@ -76,6 +78,6 @@
                 undefined
             catch ex
                 (log (* 3 5))
-                (car ex)))
+                (msg ex)))
 
 )

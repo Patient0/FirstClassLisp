@@ -210,6 +210,18 @@
            "ERROR"
            (let/cc return
                 (execute-with-error-translator
-                    (lambda (x) (return "ERROR"))
+                    (lambda ex (return "ERROR"))
                     (lambda () undefined-symbol))))
+
+    (error-translator-with-error-in-the-translator
+            "ERROR"
+            (let/cc return
+                (execute-with-error-translator
+                    (lambda ex ( return "ERROR"))
+                    (lambda()
+                        (execute-with-error-translator
+                            (lambda ex undefined)
+                            (lambda()
+                                undefined2))))))
+            
 )
