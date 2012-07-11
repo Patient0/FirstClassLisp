@@ -12,10 +12,13 @@
     (letcc 23
         (let/cc c (+ 3 (c 23))))
 
-    ;(current 23
-    ;    (let c (current-continuation)
-    ;        (+ 3 (c 23))))
-
+    (letcc-has-implicit-begin
+        6
+        (begin
+            (define x 5)
+            (let/cc c
+                (set! x 6)
+                c x)))
 
     ; Now we'll try something more ambitious: implement
     ; the "amb" operator. Based on

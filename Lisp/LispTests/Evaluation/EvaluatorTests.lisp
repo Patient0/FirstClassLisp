@@ -92,6 +92,11 @@
     (letEvaluatesBody #t
             (let x 3 (eq? x 3)))
 
+    (let-has-implicit-begin
+        8
+        (let x 5
+             6 7 8))
+
     ; Example modified from
     ; http://matt.might.net/articles/metacircular-evaluation-and-first-class-run-time-macros/
     (lambda-hygiene
@@ -262,4 +267,5 @@
                             (+ (bottom) 1))
                         (- (next) 2))))
             (length (task-descriptions (top)))))
+
 )

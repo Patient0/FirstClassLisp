@@ -53,11 +53,23 @@ namespace LispEngine.Core
             }
         }
 
+        // We could probably redo the 'env' f-expression
+        // to use this instead in combination with call/cc.
+        public class GetEnv : UnaryFunction
+        {
+            protected override Datum eval(Datum arg)
+            {
+                var c = asContinuation(arg);
+                return c.Env.ToAtom();
+            }
+        }
+
         public static Environment AddTo(Environment env)
         {
             return env.Extend("task-descriptions", new TaskDescriptions().ToStack())
                 .Extend("execute-with-error-translator", ExecuteWithErrorTranslator.Instance)
-                .Extend("pending-results", new PendingResults().ToStack());
+                .Extend("pending-results", new PendingResults().ToStack())
+                .Extend("get-env", new GetEnv().ToStack());
         }
     }
 }

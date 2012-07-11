@@ -38,8 +38,8 @@
 ; nesting.
 ; We can define "with" later as a macro that
 ; expands into individual sublets.
-(define-macro let (var value body)
-    `((,lambda (,var) ,body) ,value))
+(define-macro let (var value . body)
+    `((,lambda (,var) (,begin ,@body)) ,value))
 
 ; Our pattern matching is powerful enough to define 'if'
 ; as a macro. In fact, it can even handle
@@ -94,8 +94,8 @@
                 `(,let ,var ,expr (,with ,bindings ,body)))))
 
 ; let/cc provides "escape" functionality
-(define-macro let/cc (var body)
-    `(,call/cc (,lambda (,var) ,body)))
+(define-macro let/cc (var . body)
+    `(,call/cc (,lambda (,var) (,begin ,@body))))
 
 ; In the common case of only wanting to
 ; dispatch on the pattern of one variable,
