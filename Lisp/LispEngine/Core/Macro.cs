@@ -33,10 +33,7 @@ namespace LispEngine.Core
                     // Cache macro expansions - only incorrect
                     // if different macros are used to expand
                     // the same datum instance (which I'll have to
-                    // write a test and check for...).
-
-                    // But this isn't that good yet: we also want to cache the situation in which a macro
-                    // has expanded into another macro.
+                    // write a test and check for...)
                     args.cache = expansion;
                 }
                 c = c.PopResult();

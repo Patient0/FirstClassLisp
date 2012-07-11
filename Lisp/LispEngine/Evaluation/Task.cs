@@ -1,4 +1,6 @@
-﻿namespace LispEngine.Evaluation
+﻿using System.Collections.Generic;
+
+namespace LispEngine.Evaluation
 {
     public interface Task
     {

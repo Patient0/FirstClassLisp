@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LispEngine.Datums;
@@ -28,13 +29,13 @@ namespace LispEngine.Core
 
             public Continuation Perform(Continuation c)
             {
-                var args = new Datum[argCount];
+                var args = DatumHelpers.nil;
                 for (var i = 0; i < argCount; ++i)
                 {
-                    args[i] = c.Result;
+                    args = DatumHelpers.cons(c.Result, args);
                     c = c.PopResult();
                 }
-                return function.Evaluate(c, DatumHelpers.compound(args));
+                return function.Evaluate(c, args);
             }
 
             public override string ToString()
@@ -46,6 +47,9 @@ namespace LispEngine.Core
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var argArray = DatumHelpers.enumerate(args).ToArray();
+            // Invoke elements in reverse so that resultant arg list can be constructed
+            // in place.
+            Array.Reverse(argArray);
             c = c.PushTask(new InvokeFunction(function, argArray.Length));
             return argArray.Aggregate(c, (current, arg) => current.Evaluate(env, arg));
         }

@@ -63,6 +63,11 @@ namespace LispEngine.Evaluation
             return SetTasks(tasks.Push(task));
         }
 
+        public Continuation PushTask(Func<Continuation, Continuation> taskDelegate, string fmt, params object[] args)
+        {
+            return PushTask(new DelegateTask(taskDelegate, fmt, args));
+        }
+
         public Continuation PopTask()
         {
             return SetTasks(tasks.Pop());
@@ -113,23 +118,6 @@ namespace LispEngine.Evaluation
             return PushEnv(e).PushTask(new EvaluateTask(expression));
         }
 
-        class RestoreErrorHandler : Task
-        {
-            private readonly ErrorHandler previous;
-            public RestoreErrorHandler(ErrorHandler previous)
-            {
-                this.previous = previous;
-            }
-            public Continuation Perform(Continuation c)
-            {
-                return c.SetErrorHandler(previous);
-            }
-            public override string ToString()
-            {
-                return string.Format("Restore error handler '{0}'", previous);
-            }
-        }
-
         public Continuation NewErrorHandler(ErrorHandler errorHandler)
         {
             // Set the current error handler to something new, but also
@@ -137,7 +125,7 @@ namespace LispEngine.Evaluation
             // point.
             // We can't just keep a 'stack' of error handlers in case the error handling
             // function itself doesn't escape by invoking a continuation.
-            return PushTask(new RestoreErrorHandler(ErrorHandler)).SetErrorHandler(errorHandler);
+            return PushTask(c => c.SetErrorHandler(ErrorHandler), "RestoreErrorHandler").SetErrorHandler(errorHandler);
         }
     }
 

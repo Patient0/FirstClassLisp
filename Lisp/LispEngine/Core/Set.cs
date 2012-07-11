@@ -11,28 +11,6 @@ namespace LispEngine.Core
     {
         public static readonly FExpression Instance = new Set();
 
-        class SetName : Task
-        {
-            private readonly Environment env;
-            private readonly string name;
-            public SetName(Environment env, string name)
-            {
-                this.env = env;
-                this.name = name;
-            }
-
-            public Continuation Perform(Continuation c)
-            {
-                env.Set(name, c.Result);
-                return c;
-            }
-
-            public override string ToString()
-            {
-                return string.Format("set! '{0}'", name);
-            }
-        }
-
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var argList = args.ToArray();
@@ -40,7 +18,11 @@ namespace LispEngine.Core
                 throw c.error("Expected 2 arguments: (set! <symbol> <expression>). Got {0} instead", argList.Length);
             var name = argList[0].CastIdentifier();
             var expression = argList[1];
-            c = c.PushTask(new SetName(env, name));
+            c = c.PushTask(s =>
+                               {
+                                   env.Set(name, s.Result);
+                                   return s;
+                               }, "set! '{0}'", name);
             return c.Evaluate(env, expression);
         }
 

@@ -12,13 +12,9 @@ namespace LispEngine.Core
     {
         public static readonly FExpression Instance = new Begin();
 
-        class Ignore : Task
+        private static Continuation popResult(Continuation c)
         {
-            public static readonly Task Instance = new Ignore();
-            public Continuation Perform(Continuation c)
-            {
-                return c.PopResult();
-            }
+            return c.PopResult();
         }
 
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
@@ -32,7 +28,7 @@ namespace LispEngine.Core
             for (var i = 0; i < remaining.Length; ++i)
             {
                 if (i > 0)
-                    c = c.PushTask(Ignore.Instance);
+                    c = c.PushTask(popResult, "ignore");
                 c = c.Evaluate(localEnv, remaining[i]);
             }
             return c;
