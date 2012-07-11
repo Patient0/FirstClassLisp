@@ -49,7 +49,7 @@ namespace LispEngine.Evaluation
 
         public override string ToString()
         {
-            return string.Format("EvaluateFexpression: {0}", args);
+            return string.Format("EvaluateFExpression: {0}", args);
         }
     }
 }

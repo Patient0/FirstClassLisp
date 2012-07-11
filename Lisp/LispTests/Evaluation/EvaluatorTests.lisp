@@ -250,13 +250,7 @@
             (lambda ex "ERROR")
             (make-thunk undefined)))
 
-    '(error-translator-gives-continuation
-        6
-        (execute-with-error-translator
-        (lambda (ex c) (c 6))
-        (make-thunk undefined)))
-
-    (stack-trace
+    (task-descriptions
         6
         (begin
             (define (top)
@@ -267,5 +261,5 @@
                         (define (next)
                             (+ (bottom) 1))
                         (- (next) 2))))
-            (length (stack-trace (top)))))
+            (length (task-descriptions (top)))))
 )

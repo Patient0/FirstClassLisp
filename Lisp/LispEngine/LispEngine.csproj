@@ -56,7 +56,7 @@
     <Compile Include="Core\Eval.cs" />
     <Compile Include="Core\Log.cs" />
     <Compile Include="Core\Set.cs" />
-    <Compile Include="Core\StackTrace.cs" />
+    <Compile Include="Core\DebugFunctions.cs" />
     <Compile Include="Core\UnaryFunction.cs" />
     <Compile Include="Core\ExecuteWithErrorTranslator.cs" />
     <Compile Include="Datums\AbstractVisitor.cs" />

@@ -35,6 +35,7 @@ namespace LispEngine.Evaluation
             Steps = 0;
             var c = Continuation.Empty
                 .PushTask(null)
+                .PushResult(null)
                 .Evaluate(env, datum);
             return Evaluate(c);
         }

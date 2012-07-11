@@ -140,34 +140,5 @@ namespace LispEngine.Evaluation
         {
             return new Exception(string.Format(msg, args), cause);
         }
-
-        private static void dumpTasks(Continuation c, TextWriter sw)
-        {
-            sw.WriteLine("Tasks:");
-            while (c.Task != null)
-            {
-                sw.WriteLine("{0}", c.Task);
-                c = c.PopTask();
-            }
-        }
-
-        private static void dumpResults(Continuation c, TextWriter sw)
-        {
-            sw.WriteLine("Results:");
-            while (c.Result != null)
-            {
-                sw.WriteLine("{0}", c.Result);
-                c = c.PopResult();
-            }
-        }
-
-        public static string GetStackTrace(this Continuation c)
-        {
-            var sw = new StringWriter();
-            dumpTasks(c, sw);
-            dumpResults(c, sw);
-            sw.Flush();
-            return sw.ToString();
-        }
     }
 }
