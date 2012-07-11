@@ -28,7 +28,7 @@ namespace LispEngine.Core
             for (var i = 0; i < remaining.Length; ++i)
             {
                 if (i > 0)
-                    c = c.PushTask(popResult, "ignore");
+                    c = c.PushTask(popResult, "Ignore result");
                 c = c.Evaluate(localEnv, remaining[i]);
             }
             return c;

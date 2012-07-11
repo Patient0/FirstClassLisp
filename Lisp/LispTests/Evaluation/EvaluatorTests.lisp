@@ -250,7 +250,7 @@
             (lambda ex "ERROR")
             (make-thunk undefined)))
 
-    (error-translator-gives-continuation
+    '(error-translator-gives-continuation
         6
         (execute-with-error-translator
         (lambda (ex c) (c 6))

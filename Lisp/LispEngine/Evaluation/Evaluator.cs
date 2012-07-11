@@ -24,7 +24,7 @@ namespace LispEngine.Evaluation
                 {
                     if (c.ErrorHandler == null)
                         throw;
-                    c = c.ErrorHandler(c.PopTask(), ex);
+                    c = c.ErrorHandler(c, ex);
                 }
             }
             return c.Result;

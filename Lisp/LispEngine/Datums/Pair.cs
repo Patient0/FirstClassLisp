@@ -9,12 +9,20 @@ namespace LispEngine.Datums
     {
         private readonly Datum first;
         private readonly Datum second;
-        public Datum cache;
+
         public Pair(Datum first, Datum second)
         {
             this.first = first;
             this.second = second;
         }
+
+        public Datum Cache { get; set; }
+
+        /**
+         * Location of this Pair if it was read from
+         * a file
+         */
+        public object Location { get; set; }
 
         public Datum Second
         {

@@ -75,7 +75,11 @@ namespace LispEngine.Parsing
                 expectNext(")");
             }
             elements.Reverse();
-            return elements.Aggregate(cdr, (current, d) => cons(d, current));
+            var result = elements.Aggregate(cdr, (current, d) => cons(d, current));
+            var resultPair = result as Pair;
+            if(resultPair != null)
+                resultPair.Location = string.Format("{0}:{1}", s.Filename, s.LineNumber);
+            return result;
         }
 
         // Remove the '"' delimiters surrounding the token that came

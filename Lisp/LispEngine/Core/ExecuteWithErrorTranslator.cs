@@ -22,7 +22,7 @@ namespace LispEngine.Core
             // error handling function.
             // Ensure that the original error handler is in scope before evaluating the error function -
             // otherwise we end up in an infinite loop if there's an error in the error function itself.
-            return (c, ex) => f.Evaluate(c.SetErrorHandler(oldErrorHandler), DatumHelpers.compound(ex.Message.ToAtom(), CallCC.MakeContinuationFunction(c)));
+            return (c, ex) => f.Evaluate(c.PopTask().SetErrorHandler(oldErrorHandler), DatumHelpers.compound(ex.Message.ToAtom(), CallCC.MakeContinuationFunction(c)));
         }
 
         public override Continuation Evaluate(Continuation c, Datum args)

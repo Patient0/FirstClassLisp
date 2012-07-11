@@ -18,23 +18,23 @@ namespace LispEngine.Core
 
         private sealed class EvaluateExpansion : Task
         {
-            private readonly Pair args;
+            private readonly Pair macroDatum;
 
-            public EvaluateExpansion(Pair args)
+            public EvaluateExpansion(Pair macroDatum)
             {
-                this.args = args;
+                this.macroDatum = macroDatum;
             }
 
             public Continuation Perform(Continuation c)
             {
                 var expansion = c.Result;
-                if(args != null)
+                if(macroDatum != null)
                 {
                     // Cache macro expansions - only incorrect
                     // if different macros are used to expand
                     // the same datum instance (which I'll have to
                     // write a test and check for...)
-                    args.cache = expansion;
+                    macroDatum.Cache = expansion;
                 }
                 c = c.PopResult();
                 var env = c.Env;
@@ -52,14 +52,12 @@ namespace LispEngine.Core
                 this.argFunction = argFunction;
             }
 
-            public StackFunction Function { get { return argFunction; } }
-
             public override Continuation Evaluate(Continuation c, Environment env, Datum args)
             {
                 var p = args as Pair;
                 c = c.PushEnv(env).PushTask(new EvaluateExpansion(p));
-                if(p != null && p.cache != null)
-                    return c.PushResult(p.cache);
+                if(p != null && p.Cache != null)
+                    return c.PushResult(p.Cache);
                 return argFunction.Evaluate(c, args);
             }
 

@@ -44,9 +44,15 @@ namespace LispEngine.Evaluation
             return datum.accept(new Visitor(c.PopEnv(), env));
         }
 
+        private static object getLocation(Datum d)
+        {
+            var pair = d as Pair;
+            return pair == null ? null : pair.Location;
+        }
+
         public override string ToString()
         {
-            return string.Format("Evaluate '{0}'", datum);
+            return string.Format("Evaluate '{0}' ({1})", datum, getLocation(datum));
         }
     }
 }
