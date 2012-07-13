@@ -25,12 +25,16 @@
 
 (define (make-repl prompt repl-env)
     (define prompt (curry System.Console.Write prompt))
+    (define env-with-exit (extend repl-env 'exit nil))
     (define (repl)
         (let/cc return
             (define exit (curry return nil))
-            ; Add 'exit' as a function available to the repl
-            ; environment.
-            (define env-with-exit (extend repl-env 'exit exit))
+            ; Change the "exit" function of the
+            ; repl environment to break out of this
+            ; loop
+            ; We have to do it this way so that defines
+            ; made in the repl loop are persisted
+            (eval `(set! exit ,exit) env-with-exit)
             ; Read an expression, but exit the loop
             ; if it's eof.
             (define (check-read)
