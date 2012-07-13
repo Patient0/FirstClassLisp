@@ -267,5 +267,4 @@
                             (+ (bottom) 1))
                         (- (next) 2))))
             (length (task-descriptions (top)))))
-
 )
