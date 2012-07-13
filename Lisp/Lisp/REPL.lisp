@@ -23,25 +23,19 @@
             (,env))
         e))
 
-(define (make-repl prompt repl-env)
+(define (repl prompt repl-env)
     (define prompt (curry System.Console.Write prompt))
-    (define env-with-exit (extend repl-env 'exit nil))
-    (define (repl)
-        (let/cc return
-            (define exit (curry return nil))
-            ; Change the "exit" function of the
-            ; repl environment to break out of this
-            ; loop
-            ; We have to do it this way so that defines
-            ; made in the repl loop are persisted
-            (eval `(set! exit ,exit) env-with-exit)
-            ; Read an expression, but exit the loop
-            ; if it's eof.
-            (define (check-read)
-                (let next (read console)
-                     (if (eof-object? next)
-                         (exit)
-                         next)))
+    (let/cc return
+        (define exit (curry return nil))
+        (define env-with-exit (extend repl-env 'exit exit))
+        ; Read an expression, but exit the loop
+        ; if it's eof.
+        (define (check-read)
+            (let next (read console)
+                 (if (eof-object? next)
+                     (exit)
+                     next)))
+        (define (loop)
             (try
                 (prompt)
                 (with (expr (check-read)
@@ -49,11 +43,8 @@
                       (display result))
              catch (msg c)
                 (display-error msg c)
-                (let debug-repl (make-repl "debug> " (get-env c))
-                    (debug-repl))
-            )
-            (repl))
-    repl))
+                (repl "debug> " (get-env c)))
+            (loop))
+        (loop)))
 
-(let repl (make-repl "FCLisp> " (env))
-    (repl))
+(repl "FCLisp> " (env))
