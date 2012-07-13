@@ -14,27 +14,33 @@
     (indent-list pending-results)
     nil)
 
-; Make an environment in which the given symbol has the specified
-; definition
-(define (extend e symbol definition)
-    (eval
-        `(,begin
-            (,define ,symbol ,definition)
-            (,env))
-        e))
+; Create a new environment with the specified definitions
+(define (extend e . definitions)
+    (define (extend1 (symbol definition) e)
+        (eval
+            `(,begin
+                (,define ,symbol ,definition)
+                (,env))
+            e))
+    (fold-right extend1 e definitions))
+
+(define (get-debug-env (msg c))
+    (extend (get-env c)
+            `(trace ,(curry display-error msg c))
+            `(resume ,c)))
 
 (define (repl prompt repl-env)
     (define prompt (curry System.Console.Write prompt))
     (define last-error nil)
     (define (debug)
-        (display last-error)
-        (match last-error
-                () "No error occurred"
-                (msg c) (repl "debug> " (get-env c))))
+        (if (nil? last-error)
+            "No error occurred"
+            (repl "debug> " (get-debug-env last-error))))
+
     (let/cc return
         (define exit (curry return nil))
-        (define env-with-exit (extend repl-env 'exit exit))
-        (define env-with-debug (extend env-with-exit 'debug debug))
+        (define env-with-exit-and-debug
+            (extend repl-env `(exit ,exit) `(debug ,debug)))
 
         ; Read an expression, but exit the loop
         ; if it's eof.
@@ -47,7 +53,7 @@
             (try
                 (prompt)
                 (with (expr (check-read)
-                       result (eval expr env-with-debug))
+                       result (eval expr env-with-exit-and-debug))
                       (display result))
                 ; Clear last error
                 (set! last-error nil)

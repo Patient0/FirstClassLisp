@@ -26,8 +26,13 @@ namespace LispEngine.Core
             {
                 // Replace the old continuation with the new continuation - but pass in the
                 // supplied argument as the 'return value' of the new continuation.
-                var returnValue = args.ToArray()[0];
-                return c.PushResult(returnValue);
+                var argArray = args.ToArray();
+                // We allow calling a "continuation" with 0 args. Such a continuation
+                // only arises from the error function.
+                // TODO: we should differentiate the two with an "expected args" member which we can error check.
+                if (argArray.Length == 0)
+                    return c;
+                return c.PushResult(argArray[0]);
             }
         }
 
