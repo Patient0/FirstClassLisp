@@ -76,16 +76,20 @@
                 (define (loop so-far)
                     (let next (read input)
                         (if (eof-object? next)
-                            (return (reverse so-far))
+                            (begin
+                                ; TODO Need to dispose on error exit also
+                                (.Dispose file-stream)
+                                (return (reverse so-far)))
                         (loop (cons next so-far)))))
                 (loop nil)))))
 
+(define pwd System.IO.Directory.GetCurrentDirectory)
 (define global-env (env))
 
-(define (load filename)
+(define (run filename)
+    (define last-result nil)
     (loop expr (read-file filename)
-        (begin
-            (write-line "Evaluating: {0}..." expr)
-            (eval expr global-env))))
+        (set! last-result (eval expr global-env)))
+    last-result)
 
 (repl "FCLisp> " global-env)
