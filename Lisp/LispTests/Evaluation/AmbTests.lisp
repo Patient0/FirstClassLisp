@@ -30,4 +30,25 @@
             (let a (anything-starting-from 3)
                 (assert (eq? a 6))
                 a)))
+
+    ; I can't think of a better test for this yet.
+    ; But here, we demonstrate that if you make
+    ; multiple 'amb' operators then they do not
+    ; interact with each other, which is desirable
+    ; if only for performance.
+    (multiple-amb
+        "exhausted"
+        (try
+            (with (amb1 (make-amb throw)
+                   assert1 (make-assert amb1)
+                   amb2 (make-amb throw)
+                   assert2 (make-assert amb2))
+                (define a (amb1 1 2))
+                (define b (amb2 4 8))
+                (assert1 (eq? 9 (+ a b)))
+                (list a b))
+         catch (msg c)
+            msg))
+
+
 )
