@@ -44,8 +44,8 @@
                             (mapcar cdr ll))))
     (reverse (map-tail f '() ll)))
 
-(define-macro loop (var values body)
-    `(,mapcar (,lambda (,var) ,body) ,values))
+(define-macro loop (var values . body)
+    `(,reverse (,mapcar (,lambda (,var) (,begin ,@body)) (reverse ,values))))
 
 ; Explicit currying. It might be nicer to
 ; have implicit currying - but need to think

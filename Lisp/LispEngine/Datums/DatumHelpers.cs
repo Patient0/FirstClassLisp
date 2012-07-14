@@ -68,7 +68,7 @@ namespace LispEngine.Datums
             return new Pair(first, second);
         }
 
-        public static Datum atomList(params object[] e)
+        public static Datum atomList<T>(params T[] e) 
         {
             return compound(e.AsEnumerable().Select(atom).ToArray<Datum>());
         }
@@ -80,7 +80,7 @@ namespace LispEngine.Datums
             return list.Aggregate(nil, (current, l) => cons(l, current));
         }
 
-        public static Atom atom(Object value)
+        public static Atom atom<T>(T value)
         {
             return new Atom(value);
         }

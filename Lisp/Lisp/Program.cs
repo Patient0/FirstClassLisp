@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using LispEngine.Bootstrap;
+using LispEngine.Datums;
 using LispEngine.Util;
 
 namespace Lisp
@@ -11,7 +12,9 @@ namespace Lisp
         {
             try
             {
-                ResourceLoader.ExecuteResource(Assembly.GetCallingAssembly(), StandardEnvironment.Create(), "Lisp.REPL.lisp");
+                var env = StandardEnvironment.Create();
+                env = env.Extend("args", DatumHelpers.atomList(args));
+                ResourceLoader.ExecuteResource(Assembly.GetCallingAssembly(), env, "Lisp.REPL.lisp");
             }
             catch (Exception ex)
             {

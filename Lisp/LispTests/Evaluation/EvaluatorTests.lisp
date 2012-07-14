@@ -255,16 +255,10 @@
             (lambda ex "ERROR")
             (make-thunk undefined)))
 
-    (task-descriptions
-        6
+    (arguments-eval-left-to-right
+        3
         (begin
-            (define (top)
-                (let/cc return
-                    (begin
-                        (define (bottom)
-                            (let/cc c (return c)))
-                        (define (next)
-                            (+ (bottom) 1))
-                        (- (next) 2))))
-            (length (task-descriptions (top)))))
+            (define x nil)
+            (define (fetch a b c) x)
+            (fetch (set! x 1) (set! x 2) (set! x 3))))
 )

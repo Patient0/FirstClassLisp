@@ -29,13 +29,13 @@ namespace LispEngine.Core
 
             public Continuation Perform(Continuation c)
             {
-                var args = DatumHelpers.nil;
+                var argResults = DatumHelpers.nil;
                 for (var i = 0; i < argCount; ++i)
                 {
-                    args = DatumHelpers.cons(c.Result, args);
+                    argResults = DatumHelpers.cons(c.Result, argResults);
                     c = c.PopResult();
                 }
-                return function.Evaluate(c, args);
+                return function.Evaluate(c, argResults);
             }
 
             public override string ToString()
@@ -47,8 +47,6 @@ namespace LispEngine.Core
         public override Continuation Evaluate(Continuation c, Environment env, Datum args)
         {
             var argArray = DatumHelpers.enumerate(args).ToArray();
-            // Invoke elements in reverse so that resultant arg list can be constructed
-            // in place.
             Array.Reverse(argArray);
             c = c.PushTask(new InvokeFunction(function, argArray.Length));
             return argArray.Aggregate(c, (current, arg) => current.Evaluate(env, arg));

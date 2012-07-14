@@ -1,7 +1,4 @@
-﻿; This .lisp test file is for those 'builtins' which
-; have been defined in terms of macros
-; define-macro is itself a macro
-(tests
+﻿(tests
     (define-macro 8
         (begin
             ; Just duplicate the original 'let' macro

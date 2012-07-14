@@ -93,5 +93,17 @@
         (force
             (make-thunk 5 6)))
 
-                
+    (loop-has-implicit-begin
+        (1 2 3)
+        (loop x '(1 2 3)
+            5
+            x))
+
+    (loop-evaluates-left-to-right
+        (3 2 1)
+        (begin
+            (define x nil)
+            (loop y '(1 2 3)
+                (set! x (cons y x)))
+            x))
 )

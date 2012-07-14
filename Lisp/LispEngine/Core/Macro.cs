@@ -43,9 +43,15 @@ namespace LispEngine.Core
             }
         }
 
+
         private class MacroClosure : AbstractFExpression
         {
             private readonly StackFunction argFunction;
+
+            public StackFunction Function
+            {
+                get { return argFunction; }
+            }
 
             public MacroClosure(StackFunction argFunction)
             {

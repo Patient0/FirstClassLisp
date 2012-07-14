@@ -2,6 +2,8 @@
 (define console (open-input-stream (System.Console.get_In)))
 (define display (curry System.Console.WriteLine "-> {0}"))
 (define writeerr (curry .WriteLine (System.Console.get_Error)))
+(define write System.Console.Write)
+(define write-line System.Console.WriteLine)
 
 (define (display-error msg c)
     (define (indent-list continuation-fn)
@@ -24,39 +26,40 @@
             e))
     (fold-right extend1 e definitions))
 
-(define (get-debug-env (msg c))
+(define (make-debug-env (msg c))
     (extend (get-env c)
             `(trace ,(curry display-error msg c))
             `(resume ,c)))
 
+(define last-error nil)
+; Rudimentary repl that lets you evaluate
+; expressions within the context of "last-error".
+(define (debug)
+    (if (nil? last-error)
+        "Nothing to debug"
+        (repl "debug> " (make-debug-env last-error))))
+
 (define (repl prompt repl-env)
-    (define prompt (curry System.Console.Write prompt))
-    (define last-error nil)
-    (define (debug)
-        (if (nil? last-error)
-            "No error occurred"
-            (repl "debug> " (get-debug-env last-error))))
-
+    (define prompt (curry write prompt))
     (let/cc return
-        (define exit (curry return nil))
         (define env-with-exit-and-debug
-            (extend repl-env `(exit ,exit) `(debug ,debug)))
-
-        ; Read an expression, but exit the loop
-        ; if it's eof.
+            (extend repl-env
+                `(exit ,(curry return nil))
+                `(debug ,debug)))
         (define (check-read)
             (let next (read console)
-                 (if (eof-object? next)
-                     (exit)
-                     next)))
+                (if (eof-object? next)
+                    (return nil)
+                next)))
+        (define (repl-eval expr)
+                (eval expr env-with-exit-and-debug))
+
         (define (loop)
             (try
                 (prompt)
                 (with (expr (check-read)
-                       result (eval expr env-with-exit-and-debug))
-                      (display result))
-                ; Clear last error
-                (set! last-error nil)
+                       result (repl-eval expr))
+                  (display result))
              catch error
                 (set! last-error error)
                 (writeerr "ERROR: {0}" (car error))
@@ -64,4 +67,25 @@
             (loop))
         (loop)))
 
-(repl "FCLisp> " (env))
+(define (read-file filename)
+    (let/cc return 
+        (with (file-stream (System.IO.File.OpenRead filename)
+               text-reader (new System.IO.StreamReader file-stream)
+               input (open-input-stream text-reader))
+            (begin
+                (define (loop so-far)
+                    (let next (read input)
+                        (if (eof-object? next)
+                            (return (reverse so-far))
+                        (loop (cons next so-far)))))
+                (loop nil)))))
+
+(define global-env (env))
+
+(define (load filename)
+    (loop expr (read-file filename)
+        (begin
+            (write-line "Evaluating: {0}..." expr)
+            (eval expr global-env))))
+
+(repl "FCLisp> " global-env)
