@@ -90,11 +90,7 @@ namespace LispEngine.Core
 
         public Datum Evaluate(Datum args)
         {
-            var a = args.ToArray();
-            if (a.Length != 1)
-                // TODO: Move this error boiler plate into DatumHelpers
-                throw error("Incorrect arguments. Expected {0}, got {1}", 1, a.Length);
-            var function = a[0] as StackFunction;
+            var function = UnaryFunction.GetSingle(args) as StackFunction;
             if (function == null)
                 throw error("Expected function argument");
             return ToMacro(function);
