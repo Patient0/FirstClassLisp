@@ -39,6 +39,12 @@
     ; arbitrarily large structures for us.
     (eqIsFlat #f
             (eq? (list 1 2) (list 1 2)))
+
+    ; If you want a full depth comparison,
+    ; use equal?
+    (equalIsntFlat #t
+            (equal? (list 1 2) (list 1 2)))
+
     (ifTrue? 5
             (if #t 5 undefined))
     (ifFalse? 5
