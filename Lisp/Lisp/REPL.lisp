@@ -82,6 +82,8 @@
                             (loop (cons next so-far)))))
                     (loop nil))
              catch (msg c)
+                ; Not quite ideal. Ideally we'd "throw" the
+                ; original continuation along with this.
                 (.Dispose file-stream)
                 throw msg))))
 
