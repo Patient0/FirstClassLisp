@@ -148,12 +148,33 @@
         (#f) (amb)
         (condition) #t))
 
-; Flatten a list of lists
+; Flatten takes a list of lists and produces a single list
+; e.g.
+; > (flatten '((1 2) (3 4)))
+; (1 2 3 4)
 (define flatten (curry apply append))
+; Stitch takes a list of tuples and an element
+; and returns another list
+; with that element stitched on to each of the tuples:
+; e.g.
+; > (stitch '(1 2 3) 4)
+; ((4 . 1) (4 . 2) (4 . 3))
 (define (stitch tuples element)
     (mapcar (curry cons element) tuples))
+; Cartesian takes two lists and returns their
+; cartesian product
 (define (cartesian l1 l2)
-    (flatten (map (curry stitch l2) l1)))
+    (flatten (mapcar (curry stitch l2) l1)))
+; cartesian-lists takes a list of lists
+; and returns a single list containing the cartesian product of all of the lists.
+; We start with a list containing a single 'nil', so that we create a
+; "list of lists" rather than a list of "tuples".
 (define cartesian-lists (curry fold-right cartesian '(())))
+; cartesian-map takes a n-argument function and n lists
+; and returns a single list containing the result of calling that
+; n-argument function for each combination of elements in the list:
+; > (cartesian-map list '(a b) '(c d e) '(f g))
+; ((a c f) (a c g) (a d f) (a d g) (a e f) (a e g) (b c f)
+;  (b c g) (b d f) (b d g) (b e f) (b e g))
 (define (cartesian-map f . lists)
     (map (curry apply f) (cartesian-lists lists)))

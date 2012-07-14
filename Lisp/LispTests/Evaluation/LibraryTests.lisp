@@ -116,7 +116,12 @@
                 (set! x (cons y x)))
             x))
 
-    (cartesian-map
+    (cartesian-map1
         ((1 4) (1 8) (2 4) (2 8))
         (cartesian-map list '(1 2) '(4 8)))
+
+    (cartesian-map2
+        ((a c f) (a c g) (a d f) (a d g) (a e f) (a e g)
+         (b c f) (b c g) (b d f) (b d g) (b e f) (b e g))
+        (cartesian-map list '(a b) '(c d e) '(f g)))
 )
