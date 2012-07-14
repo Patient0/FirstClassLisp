@@ -9,12 +9,17 @@ namespace LispEngine.Core
 {
     abstract class UnaryFunction : Function
     {
-        public Datum Evaluate(Datum args)
+        public static Datum GetSingle(Datum args)
         {
             var argArray = args.ToArray();
             if (argArray.Length != 1)
                 throw DatumHelpers.error("Expected a single argument. Got {0}", argArray.Length);
-            return eval(argArray[0]);
+            return argArray[0];
+            
+        }
+        public Datum Evaluate(Datum args)
+        {
+            return eval(GetSingle(args));
         }
 
         protected abstract Datum eval(Datum arg);

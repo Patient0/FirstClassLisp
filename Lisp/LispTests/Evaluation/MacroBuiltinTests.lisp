@@ -5,6 +5,26 @@
             (define-macro slet (var value body)
                     `((,lambda (,var) ,body) ,value))
             (slet x 5 (+ x 3))))
+
+    ; Expand gives useful way to debug macro expansions
+    (expand
+        ((lambda-symbol (x) (+ x 3)) 5)
+        (begin
+            ; So that the unit test can 'work'
+            (define lambda 'lambda-symbol)
+            (define-macro slet (var value body)
+                    `((,lambda (,var) ,body) ,value))
+            (expand (slet x 5 (+ x 3)))))
+
+    ; For a non-macro, we'll have expand just
+    ; return the original expression
+    (expand-non-macro
+        (square 3)
+        (begin
+            (define (square x)
+                (* x x))
+            (expand (square 3))))
+        
     ; We ought to support the traditional scheme
     ; "define function" syntax
     (define-function 25

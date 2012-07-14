@@ -15,6 +15,7 @@ namespace LispEngine.Core
     internal class Macro : DatumHelpers, Function
     {
         public static readonly StackFunction Instance = new Macro().ToStack();
+        public static readonly FExpression Expand = new MacroExpand();
 
         private sealed class EvaluateExpansion : Task
         {
@@ -43,6 +44,37 @@ namespace LispEngine.Core
             }
         }
 
+
+        private class MacroExpand : AbstractFExpression
+        {
+            private static Func<Continuation, Continuation> expandMacro(Datum original, Datum args)
+            {
+                return c =>
+                           {
+                               // If they did a macro expand on something that didn't
+                               // become a macro, just return the original expression
+                               var macro = c.Result as MacroClosure;
+                               if (macro == null)
+                                   return c.PopResult().PushResult(original);
+                               // Otherwise, evaluate the contained macro function only,
+                               // so we can see what it evaluated to.
+                               return macro.Function.Evaluate(c.PopResult(), args);
+                           };
+            }
+
+            public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+            {
+                var expr = UnaryFunction.GetSingle(args);
+                var pair = expr as Pair;
+                if (pair == null)
+                    return c.PushResult(args);
+                var macroExpr = pair.First;
+                var argExpr = pair.Second;
+                c = c.PushTask(expandMacro(pair, argExpr), "MacroExpand");
+                c = c.Evaluate(env, macroExpr);
+                return c;
+            }
+        }
 
         private class MacroClosure : AbstractFExpression
         {
