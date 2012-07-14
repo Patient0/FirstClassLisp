@@ -1,4 +1,7 @@
 ﻿; Unit tests for call/cc
+(setup
+    (define amb (make-amb throw))
+    (define assert (make-assert amb)))
 (tests
     (simplestCallCC 5
         (call/cc (lambda (c)

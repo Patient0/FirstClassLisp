@@ -140,10 +140,11 @@
      (macro expand-amb))
     amb)
 
-; Here's a general purpose one for test programs
-(define amb (make-amb throw))
+; Given an amb macro, make an appropriate
+; assert function. Once again, this sort of
+; this is only possible with first-class macros.
+(define (make-assert amb)
+    (lambda
+        (#f) (amb)
+        (condition) #t))
 
-(define (assert condition)
-    (if (not condition)
-        (amb)
-        #t))
