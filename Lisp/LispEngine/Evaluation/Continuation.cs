@@ -13,7 +13,12 @@ namespace LispEngine.Evaluation
         private readonly IStack<Datum> results;
         private readonly ErrorHandler errorHandler;
 
-        public static readonly Continuation Empty = new Continuation(Stack<Environment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, null);
+        public static Continuation Unhandled(Continuation c, Exception ex)
+        {
+            throw new EvaluationException(c, ex);
+        }
+
+        public static readonly Continuation Empty = new Continuation(Stack<Environment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
 
         private Continuation(IStack<Environment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
         {

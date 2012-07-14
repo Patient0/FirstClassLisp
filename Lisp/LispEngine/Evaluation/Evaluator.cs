@@ -22,8 +22,6 @@ namespace LispEngine.Evaluation
                 }
                 catch(Exception ex)
                 {
-                    if (c.ErrorHandler == null)
-                        throw new EvaluationException(c, ex);
                     c = c.ErrorHandler(c, ex);
                 }
             }
