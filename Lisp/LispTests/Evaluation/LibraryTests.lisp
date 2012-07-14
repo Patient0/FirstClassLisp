@@ -115,4 +115,8 @@
             (loop y '(1 2 3)
                 (set! x (cons y x)))
             x))
+
+    (cartesian-map
+        ((1 4) (1 8) (2 4) (2 8))
+        (cartesian-map list '(1 2) '(4 8)))
 )

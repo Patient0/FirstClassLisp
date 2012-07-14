@@ -148,3 +148,12 @@
         (#f) (amb)
         (condition) #t))
 
+; Flatten a list of lists
+(define flatten (curry apply append))
+(define (stitch tuples element)
+    (mapcar (curry cons element) tuples))
+(define (cartesian l1 l2)
+    (flatten (map (curry stitch l2) l1)))
+(define cartesian-lists (curry fold-right cartesian '(())))
+(define (cartesian-map f . lists)
+    (map (curry apply f) (cartesian-lists lists)))
