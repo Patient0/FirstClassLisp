@@ -78,6 +78,15 @@
                 (log (* 3 5))
                 (car ex)))
 
+    ; We'll use 'throw' as the builtin
+    ; for raising errors
+    (throw
+        "This is an error message"
+        (try
+            (throw "This is an error message")
+        catch (msg c)
+            msg))
+
     (thunk-simplest
         5
         (force (make-thunk 5)))

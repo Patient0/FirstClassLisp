@@ -64,11 +64,21 @@ namespace LispEngine.Core
             }
         }
 
+        public class Throw : UnaryFunction
+        {
+            protected override Datum eval(Datum arg)
+            {
+                var msg = (String)arg.CastObject();
+                throw DatumHelpers.error(msg);
+            }
+        }
+
         public static Environment AddTo(Environment env)
         {
             return env.Extend("task-descriptions", new TaskDescriptions().ToStack())
                 .Extend("execute-with-error-translator", ExecuteWithErrorTranslator.Instance)
                 .Extend("pending-results", new PendingResults().ToStack())
+                .Extend("throw", new Throw().ToStack())
                 .Extend("get-env", new GetEnv().ToStack());
         }
     }

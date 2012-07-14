@@ -98,7 +98,16 @@
                 (,lambda ,ex-symbols (,c-symbol (,begin ,@error-handler)))
                 (,make-thunk ,@body)))))
 
-(define amb-fail (curry throw "exhausted"))
+
+
+(define throw (lambda() notimplemented))
+
+(define amb-fail (curry error "exhausted"))
+(define (assert condition)
+    (if (not condition)
+        (amb-fail)
+        #t))
+
 ; Based on
 ; http://c2.com/cgi/wiki/?AmbSpecialForm
 (define amb
@@ -119,8 +128,3 @@
         (x . rest)
             `(,amb ,x (,amb ,@rest))))
  (macro expand-amb))
-
-(define (assert condition)
-    (if (not condition)
-        (amb)
-        #t))

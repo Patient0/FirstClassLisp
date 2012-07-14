@@ -20,23 +20,21 @@
                 (set! x 6)
                 c x)))
 
-    ; Now we'll try something more ambitious: implement
-    ; the "amb" operator. Based on
-    ; http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
-    (ambTest (4 3 5)
+    ; Test the 'amb' operator that's been implemented as
+    ; a builtin.
+    ; the "amb" operator.
+    (ambTest-Pythagorean (4 3 5)
         (begin
             ; '404' for no solutions found. Haven't implemented
             ; string literals so can't report anything else!!
-            (define error (lambda () 404))
-            (define env (make-amb-environment error))
-            (with (a (env 'amb '(1 2 3 4 5 6 7))
-                   b (env 'amb '(1 2 3 4 5 6 7))
-                   c (env 'amb '(1 2 3 4 5 6 7)))
+            (with (a (amb 1 2 3 4 5 6 7)
+                   b (amb 1 2 3 4 5 6 7)
+                   c (amb 1 2 3 4 5 6 7))
 
                 (begin
                     ; We only want pythagorean triples
-                    (env 'assert (eq? (* c c) (+ (* a a) (* b b))))
+                    (assert (eq? (* c c) (+ (* a a) (* b b))))
                     ; And only those with the second value less
                     ; than the first.
-                    (env 'assert (<  b a))
-                    (log (list a b c)))))))
+                    (assert (<  b a))
+                    (list a b c))))))

@@ -23,7 +23,7 @@
                                     (,c (,make-thunk ,y))))
                             (make-thunk ,x)))))
             (x . rest)
-                (expand-amb x (apply expand-amb rest))))
+                `(,amb ,x (,amb ,@rest))))
      (macro expand-amb))
 
     ; Search for a pythagorean triple

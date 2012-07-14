@@ -192,8 +192,22 @@
     ; I could think of to test this:
     ; Write an 'object-like' stack
     ; that has implicit state.
+    ; This is a demonstration of 'OO'-style programming.
+    ; Here, 'contents' is our private state,
+    ; and we are exposing 'push and 'pop as methods
+    ; for manipulating the private state.
     (testStack 4
         (begin
+            (define (make-stack)
+                (define contents ())
+                (lambda ('push arg)
+                                (set! contents (cons arg contents))
+                        ('pop)
+                                (let top (car contents)
+                                    (begin
+                                        (set! contents (cdr contents))
+                                        top))))
+
             (define s (make-stack))
             (s 'push 3)
             (s 'push 4)
