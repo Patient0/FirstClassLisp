@@ -108,8 +108,7 @@
                       (if (nil? macro-fn)
                           (cons fexpr args)
                           (apply macro-fn args)))
-            (env other)
-            other))
+            (env other) other))
 
 ; In the common case of only wanting to
 ; dispatch on the pattern of one variable,
