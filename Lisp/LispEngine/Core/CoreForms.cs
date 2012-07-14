@@ -17,7 +17,7 @@ namespace LispEngine.Core
                 .Extend("apply", Apply.Instance)
                 .Extend("eq?", Eq.Instance)
                 .Extend("macro", Macro.Instance)
-                .Extend("expand", Macro.Expand)
+                .Extend("unmacro", Macro.Unmacro)
                 .Extend("quote", Quote.Instance)
                 .Extend("define", Define.Instance)
                 .Extend("set!", Set.Instance)

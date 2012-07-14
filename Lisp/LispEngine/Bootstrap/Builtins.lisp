@@ -97,6 +97,20 @@
 (define-macro let/cc (var . body)
     `(,call/cc (,lambda (,var) (,begin ,@body))))
 
+; Function that can be used to expand a (possibly)
+; macro-ized expression. Useful for debugging
+; macros. The 'trick' part is the "unmacro"
+; builtin which is the inverse function of 'macro'.
+(define expand
+    (lambda (env (fexpr . args))
+                (with (macro-expr (eval fexpr env)
+                       macro-fn (unmacro macro-expr))
+                      (if (nil? macro-fn)
+                          (cons fexpr args)
+                          (apply macro-fn args)))
+            (env other)
+            other))
+
 ; In the common case of only wanting to
 ; dispatch on the pattern of one variable,
 ; define a convenient macro to de-nest
