@@ -1,4 +1,6 @@
-﻿(define board
+﻿; I'll base this on
+; http://norvig.com/sudoku.html
+(define board
     '((2 8 0) (6 0 1) (0 9 3)
       (0 0 0) (0 0 2) (4 0 5)
       (6 9 0) (4 3 0) (0 0 1)
@@ -10,3 +12,5 @@
       (7 0 8) (5 0 3) (0 4 0)
       (0 0 9) (0 2 4) (0 0 6)
       (4 6 0) (7 8 9) (3 0 2)))
+
+(define digits '(1 2 3 4 5 6 7 8 9))
