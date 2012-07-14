@@ -7,26 +7,24 @@
 
     ; Based on
     ; http://c2.com/cgi/wiki/?AmbSpecialForm
-    ; Haven't got it quite working yet
-    (define expand-amb (lambda
-        ()  (list force amb-fail)
-        (x) x
-        (x y)
-            (with (old-fail (gensym)
-                   c (gensym))
-            `(,let ,old-fail amb-fail
-                (,force
-                    (,let/cc ,c
-                        (,set! amb-fail
-                            (,make-thunk
-                                (,set! amb-fail ,old-fail)
-                                (,c (,make-thunk ,y))))
-                        (make-thunk ,x)))))
-        (x . rest)
-            (expand-amb x (apply expand-amb rest))
-        ))
-
-    (define amb (macro expand-amb))
+    (define amb
+        (define expand-amb (lambda
+            ()  (list force amb-fail)
+            (x) x
+            (x y)
+                (with (old-fail (gensym)
+                       c (gensym))
+                `(,let ,old-fail amb-fail
+                    (,force
+                        (,let/cc ,c
+                            (,set! amb-fail
+                                (,make-thunk
+                                    (,set! amb-fail ,old-fail)
+                                    (,c (,make-thunk ,y))))
+                            (make-thunk ,x)))))
+            (x . rest)
+                (expand-amb x (apply expand-amb rest))))
+     (macro expand-amb))
 
     ; Search for a pythagorean triple
     (let solution
