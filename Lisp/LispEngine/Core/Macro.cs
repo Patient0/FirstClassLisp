@@ -15,7 +15,7 @@ namespace LispEngine.Core
     internal class Macro : DatumHelpers, Function
     {
         public static readonly StackFunction Instance = new Macro().ToStack();
-        public static readonly FExpression Expand = new MacroExpand();
+        public static readonly StackFunction Expand = new MacroExpand();
 
         private sealed class EvaluateExpansion : Task
         {
@@ -45,7 +45,7 @@ namespace LispEngine.Core
         }
 
 
-        private class MacroExpand : AbstractFExpression
+        private class MacroExpand : AbstractStackFunction
         {
             private static Func<Continuation, Continuation> expandMacro(Datum original, Datum args)
             {
@@ -62,17 +62,26 @@ namespace LispEngine.Core
                            };
             }
 
-            public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+            private static Continuation Evaluate(Continuation c, Environment env, Datum expr)
             {
-                var expr = UnaryFunction.GetSingle(args);
                 var pair = expr as Pair;
                 if (pair == null)
-                    return c.PushResult(args);
+                    return c.PushResult(expr);
                 var macroExpr = pair.First;
                 var argExpr = pair.Second;
                 c = c.PushTask(expandMacro(pair, argExpr), "MacroExpand");
                 c = c.Evaluate(env, macroExpr);
                 return c;
+            }
+
+            public override Continuation Evaluate(Continuation c, Datum args)
+            {
+                var argArray = args.ToArray();
+                if (argArray.Length != 2)
+                    throw error("Usage: (expand <env> <expression>). {0} arguments not 2 received", argArray.Length);
+                var env = (Environment) argArray[0].CastObject();
+                var expr = argArray[1];
+                return Evaluate(c, env, expr);
             }
         }
 

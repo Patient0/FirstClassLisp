@@ -14,7 +14,7 @@
             (define lambda 'lambda-symbol)
             (define-macro slet (var value body)
                     `((,lambda (,var) ,body) ,value))
-            (expand (slet x 5 (+ x 3)))))
+            (expand (env) '(slet x 5 (+ x 3)))))
 
     ; For a non-macro, we'll have expand just
     ; return the original expression
@@ -23,7 +23,7 @@
         (begin
             (define (square x)
                 (* x x))
-            (expand (square 3))))
+            (expand (env) '(square 3))))
         
     ; We ought to support the traditional scheme
     ; "define function" syntax
