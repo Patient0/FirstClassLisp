@@ -31,11 +31,13 @@
                 (assert (eq? a 6))
                 a)))
 
-    ; I can't think of a better test for this yet.
-    ; But here, we demonstrate that if you make
+    ; Here, we demonstrate that if you make
     ; multiple 'amb' operators then they do not
     ; interact with each other, which is desirable
-    ; if only for performance.
+    ; if only for performance. It's also desirable
+    ; in that we usually only want small
+    ; parts of the program to execute non-deterministically
+    ; rather than the entire program.
     (multiple-amb
         "exhausted"
         (try

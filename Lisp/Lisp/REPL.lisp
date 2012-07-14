@@ -69,19 +69,21 @@
 
 (define (read-file filename)
     (let/cc return 
-        (with (file-stream (System.IO.File.OpenRead filename)
-               text-reader (new System.IO.StreamReader file-stream)
-               input (open-input-stream text-reader))
-            (begin
-                (define (loop so-far)
-                    (let next (read input)
-                        (if (eof-object? next)
-                            (begin
-                                ; TODO Need to dispose on error exit also
-                                (.Dispose file-stream)
-                                (return (reverse so-far)))
-                        (loop (cons next so-far)))))
-                (loop nil)))))
+        (let file-stream (System.IO.File.OpenRead filename)
+            (try
+                (with (text-reader (new System.IO.StreamReader file-stream)
+                       input (open-input-stream text-reader))
+                    (define (loop so-far)
+                        (let next (read input)
+                            (if (eof-object? next)
+                                (begin
+                                    (.Dispose file-stream)
+                                    (return (reverse so-far)))
+                            (loop (cons next so-far)))))
+                    (loop nil))
+             catch (msg c)
+                (.Dispose file-stream)
+                throw msg))))
 
 (define pwd System.IO.Directory.GetCurrentDirectory)
 (define global-env (env))
