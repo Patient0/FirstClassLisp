@@ -30,14 +30,12 @@
             (with (a (amb 1 2 3 4 5 6 7)
                    b (amb 1 2 3 4 5 6 7)
                    c (amb 1 2 3 4 5 6 7))
-
-                (begin
                     ; We only want pythagorean triples
                     (assert (eq? (* c c) (+ (* a a) (* b b))))
                     ; And only those with the second value less
                     ; than the first.
                     (assert (<  b a))
-                    (list a b c)))))
+                    (list a b c))))
 
     ; Inspired by
     ; http://mitpress.mit.edu/sicp/full-text/sicp/book/node89.html

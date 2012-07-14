@@ -90,8 +90,8 @@
 (define with (macro
     (lambda (() body)
                 body
-            ((var . (expr . bindings)) body)
-                `(,let ,var ,expr (,with ,bindings ,body)))))
+            ((var . (expr . bindings)) . body)
+                `(,let ,var ,expr (,with ,bindings (,begin ,@body))))))
 
 ; let/cc provides "escape" functionality
 (define-macro let/cc (var . body)

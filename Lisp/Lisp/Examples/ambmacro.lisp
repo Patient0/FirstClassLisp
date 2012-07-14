@@ -32,10 +32,9 @@
                a (amb 1 2 3 4 5 6 7)
                b (amb 1 2 3 4 5 6 7)
                c (amb 1 2 3 4 5 6 7))
-            (begin
                 (write-line "Trying a: {0} b: {1} c: {2}" a b c)
                 (assert (eq? (square c) (+ (square b) (square a))))
-            (list a b c)))
+            (list a b c))
         (write-line "Solution: {0}" solution))
 
     (repl "amb> " (env))

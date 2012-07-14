@@ -97,6 +97,14 @@
         (let x 5
              6 7 8))
 
+    (test-with-has-implicit-begin
+        (10 3)
+        (with (x 5
+               y 2)
+            (define z nil)
+            (set! z (* x y))
+            (list z (- x y))))
+
     ; Example modified from
     ; http://matt.might.net/articles/metacircular-evaluation-and-first-class-run-time-macros/
     (lambda-hygiene
@@ -196,7 +204,7 @@
     ; Here, 'contents' is our private state,
     ; and we are exposing 'push and 'pop as methods
     ; for manipulating the private state.
-    (testStack 4
+    (test-set-mutation 4
         (begin
             (define (make-stack)
                 (define contents ())
