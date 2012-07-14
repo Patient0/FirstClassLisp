@@ -98,27 +98,50 @@
                 (,lambda ,ex-symbols (,c-symbol (,begin ,@error-handler)))
                 (,make-thunk ,@body)))))
 
-(define amb-fail (curry throw "exhausted"))
-; Based on
-; http://c2.com/cgi/wiki/?AmbSpecialForm
-(define amb
-    (define expand-amb (lambda
-        ()  (list force amb-fail)
-        (x) x
-        (x y)
-            (with (old-fail (gensym)
-                   c (gensym))
-            `(,let ,old-fail amb-fail
-                (,force
-                    (,let/cc ,c
-                        (,set! amb-fail
-                            (,make-thunk
-                                (,set! amb-fail ,old-fail)
-                                (,c (,make-thunk ,y))))
-                        (make-thunk ,x)))))
-        (x . rest)
-            `(,amb ,x (,amb ,@rest))))
- (macro expand-amb))
+; A hygienic 'amb' macro.
+;
+; Using a factory function allows us to maintain
+; the hygiene of 'amb-fail'.
+; Use 'make-amb' to make an
+; amb macro that you know won't interfere
+; with anyone else's amb macro.
+
+; The ability to do this - return a hygienically
+; scoped 'amb' macro from a
+; function, is something that is only possible
+; in a Lisp with First Class macros and continuations
+; (i.e. First Class Lisp!)
+(define (make-amb error)
+    (define amb-fail (curry error "exhausted"))
+    (define (set-fail thunk)
+        (set! amb-fail thunk))
+    (define (get-fail)
+        amb-fail)
+
+    ; Based on
+    ; http://c2.com/cgi/wiki/?AmbSpecialForm
+    (define amb
+        (define expand-amb (lambda
+            ()  (list force (get-fail))
+            (x) x
+            (x y)
+                (with (old-fail (gensym)
+                       c (gensym))
+                `(,let ,old-fail (,get-fail)
+                    (,force
+                        (,let/cc ,c
+                            (,set-fail
+                                (,make-thunk
+                                    (,set-fail ,old-fail)
+                                    (,c (,make-thunk ,y))))
+                            (make-thunk ,x)))))
+            (x . rest)
+                `(,amb ,x (,amb ,@rest))))
+     (macro expand-amb))
+    amb)
+
+; Here's a general purpose one for test programs
+(define amb (make-amb throw))
 
 (define (assert condition)
     (if (not condition)
