@@ -200,4 +200,10 @@
     (test-unique
         (4 3 1 2 5 8)
         (unique '(4 3 3 1 5 8 8 2 5 5 8)))
+
+    ; Convenient function for generating a list
+    ; off of an index
+    (test-repeat
+        (() (0 1 2 3 4) (0) (0 1 2))
+        (mapcar (curry repeat identity) '(0 5 1 3)))
 )

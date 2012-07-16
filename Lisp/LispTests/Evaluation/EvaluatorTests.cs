@@ -42,6 +42,7 @@ namespace LispTests.Evaluation
             if (setupDatum != nil)
                 foreach(var f in setupDatum.Enumerate())
                     e.Evaluate(env, f);
+            Console.WriteLine("Steps after setup: {0}", e.Steps);
         }
 
         [Test, TestCaseSource("TestCases")]

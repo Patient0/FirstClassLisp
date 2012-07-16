@@ -1,4 +1,7 @@
 ﻿; Based on http://norvig.com/sudoku.html
+; The performance is currently atrocious:
+; 1.6 million steps to perform the initialization!
+; Yet: All this happens in under 3 seconds on my PC!
 (setup
     (define digits '(1 2 3 4 5 6 7 8 9))
     (define rows '(A B C D E F G H I))
@@ -29,7 +32,20 @@
         (make-dict (loop s squares
                     (cons s (peers-for-square s)))))
                         
-                            
+    (define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
+
+    (ref mscorlib)
+    (define (string->list s)
+        (define (convert char)
+            (let schar (.ToString char)
+                (if (System.Char.IsDigit char)
+                    (System.Convert.ToInt32 schar)
+                    (string->symbol schar))))
+        (with (array (.ToCharArray s)
+               length (.get_Length s))
+            (repeat (lambda (i)
+                        (convert (.GetValue array i))) length)))
+
 )
 (tests
     (squares-length
@@ -50,4 +66,8 @@
     (peers
         20
         (length (lookup peers '(C . 2))))
+
+    (string->list
+        (1 2 3 4 A B C D)
+        (string->list "1234ABCD"))
 )

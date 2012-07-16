@@ -267,3 +267,11 @@
     (curry fold-right join '()))
         
 (define unique (make-unique equal?))
+
+(define (repeat fn count)
+    (define loop
+            (lambda (0 so-far) so-far
+                    (n so-far)
+                        (let next (- n 1)
+                        (loop next (cons (fn next) so-far)))))
+    (loop count '()))
