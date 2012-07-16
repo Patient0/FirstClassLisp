@@ -186,4 +186,18 @@
                                    (,a2 . (1 2 3)))))
             (define d2 (dict-update d a2 '(7 8 9)))
             (map cdr d2)))
+
+    (test-sort
+        (3 5 8)
+        (sort '(5 3 8)))
+
+    (test-sort-bigger
+        (3 4 5 6 7 8)
+        (sort '(7 5 4 3 6 8)))
+
+    ; 'set' is using fold-right so
+    ; precedence is determined right to left.
+    (test-unique
+        (4 3 1 2 5 8)
+        (unique '(4 3 3 1 5 8 8 2 5 5 8)))
 )

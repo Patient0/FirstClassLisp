@@ -21,6 +21,14 @@
     (define units
         (make-dict (loop s squares
                        (cons s (units-for-square s)))))
+
+    (define (peers-for-square s)
+        (remove s (unique (flatten (lookup units s)))))
+
+    (define peers
+        (make-dict (loop s squares
+                    (cons s (peers-for-square s)))))
+                        
                             
 )
 (tests
@@ -32,9 +40,14 @@
         27
         (length unitlist))
 
+    ; we're not currently sorting these guys - the order is
+    ; somewhat arbitrary.
+    ; Therefore, it's only robust to compare the length for now.
     (units
-        (((A . 1) (A . 2) (A . 3) (B . 1) (B . 2) (B . 3) (C . 1) (C . 2) (C . 3))
-         ((A . 2) (B . 2) (C . 2) (D . 2) (E . 2) (F . 2) (G . 2) (H . 2) (I . 2))
-         ((C . 1) (C . 2) (C . 3) (C . 4) (C . 5) (C . 6) (C . 7) (C . 8) (C . 9)))
-        (lookup units '(C . 2)))
+        27
+        (length (flatten (lookup units '(C . 2)))))
+
+    (peers
+        20
+        (length (lookup peers '(C . 2))))
 )

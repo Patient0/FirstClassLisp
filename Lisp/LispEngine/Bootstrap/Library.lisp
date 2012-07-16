@@ -224,7 +224,7 @@
 (define assoc (make-assoc equal?))
 
 ; Remove all instances of 'x' from a list
-(define remove (make-remove eq?))
+(define remove (make-remove equal?))
 
 ; For sudoku solver, we'll define a 'dictionary'
 ; concept - but implement it very inefficiently
@@ -241,3 +241,29 @@
         (if (eq? (car pair) key)
             (cons key new-value)
                          pair)))
+
+; Using quick-sort as the algorithm here.
+; It's not even a stable sort - but it'll work
+; for now.
+(define (make-sorter comparator)
+    (define sort
+        (lambda (()) ()
+                ((pivot . rest))
+                    (append (sort (filter (compose2 not (curry comparator pivot)) rest))
+                            (list pivot)
+                            (sort (filter (curry comparator pivot) rest)))))
+    sort)
+    
+(define sort (make-sorter <))
+
+; For now, our 'set' constructor will just
+; create and compare using equality predicate.
+; i.e. an O(n^2) algorithm.
+(define (make-unique comparator)
+    (define (join x so-far)
+        (if (in x so-far)
+                so-far
+            (cons x so-far)))
+    (curry fold-right join '()))
+        
+(define unique (make-unique equal?))
