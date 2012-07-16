@@ -178,3 +178,22 @@
 ;  (b c g) (b d f) (b d g) (b e f) (b e g))
 (define (cartesian-map f . lists)
     (map (curry apply f) (cartesian-lists lists)))
+
+; filter can be thought of as a fold-right
+; in which the 'join' function is either
+; 'cons' or just the right list depending
+; on the current value.
+(define (filter predicate list)
+    (define (join x so-far)
+            (if (predicate x)
+                (cons x so-far)
+                so-far))
+    (fold-right join '() list))
+
+(define (remove x list . comparison)
+    (let comparison
+        (if (nil? comparison)
+            equal?
+            comparison)
+        (filter (compose2 not (curry comparison x)) list)))
+    

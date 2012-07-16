@@ -124,4 +124,18 @@
         ((a c f) (a c g) (a d f) (a d g) (a e f) (a e g)
          (b c f) (b c g) (b d f) (b d g) (b e f) (b e g))
         (cartesian-map list '(a b) '(c d e) '(f g)))
+
+    (filter-test
+        (2 4)
+        (filter
+            (lambda (2) #t
+                    (4) #t
+                    _ #f)
+            '(1 2 3 4 5 6)))
+
+    (remove-test
+        ( (1 2 3 4 5 6 7) (2 3 4 5 6 7) (1 2 4 5 6 7) (1 2 3 4 5 6) )
+        (let elements '(1 2 3 4 5 6 7)
+             (loop x '(8 1 3 7)
+                    (remove x elements))))
 )
