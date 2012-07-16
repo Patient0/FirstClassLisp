@@ -200,6 +200,10 @@
                 (lambda (y) (not (comparator x y)))
             (filter predicate list))))
 
+(define (replace old-value new-value list)
+    (mapcar (lambda (x)
+                (if (eq? old-value x) new-value x)) list))
+
 (define (make-assoc comparator)
     (define (finder key list)
             (match list
@@ -219,8 +223,14 @@
 ; concept - but implement it very inefficiently
 ; as just a list of pairs
 (define make-dict identity)
-; For now, no error handling - if the key
-; doesn't  exist it's an error!
+
+; For now, no error handling: if the key
+; doesn't exist it's an error!
 (define (lookup dict key)
     (cdr (assoc key dict)))
-    
+
+(define (dict-update d key new-value)
+    (loop pair d
+        (if (eq? (car pair) key)
+            (cons key new-value)
+                         pair)))

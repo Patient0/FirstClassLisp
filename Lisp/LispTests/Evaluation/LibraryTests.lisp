@@ -139,6 +139,10 @@
              (loop x '(8 1 3 7)
                     (remove x elements))))
 
+    (replace-test
+        (1 2 20 4 5)
+        (replace 3 20 '(1 2 3 4 5)))
+
     (assoc-test
         ( ((a . 1) 1 2 3)
           ((a . 2) 4 5 6)
@@ -156,6 +160,7 @@
         #f
         (assoc 4 '()))
 
+
     (dict-test
         ((5 4 6) (1 2 3))
         (begin
@@ -166,4 +171,14 @@
             (list
                 (lookup d a1)
                 (lookup d a2))))
+
+    (dict-update
+        ((5 4 6) (7 8 9))
+        (begin
+            (define a1 '(A . 1))
+            (define a2 '(A . 2))
+            (define d (make-dict `((,a1 . (5 4 6))
+                                   (,a2 . (1 2 3)))))
+            (define d2 (dict-update d a2 '(7 8 9)))
+            (map cdr d2)))
 )
