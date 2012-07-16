@@ -66,14 +66,14 @@
 (define caddr (compose2 cadr cdr))
 (define cdddr (compose cdr cdr cdr))
 
-(define (make-finder comparator)
+(define (make-find comparator)
     (define (find item list)
         (if (nil? list) list
         (comparator item (car list)) list
         (find item (cdr list))))
     find)
 
-(define find (make-finder eq?))
+(define find (make-find eq?))
 
 (define (after pivot list)
     (match (find pivot list)
@@ -199,6 +199,13 @@
         (let predicate
                 (lambda (y) (not (comparator x y)))
             (filter predicate list))))
+
+(define (make-in comparator)
+    (define find (make-find comparator))
+    (lambda (x list)
+        (if (nil? (find x list)) #f #t)))
+
+(define in (make-in equal?))
 
 (define (replace old-value new-value list)
     (mapcar (lambda (x)

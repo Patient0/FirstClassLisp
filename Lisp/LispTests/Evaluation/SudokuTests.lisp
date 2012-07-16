@@ -12,6 +12,11 @@
                 '((1 2 3) (4 5 6) (7 8 9)))
             (loop c cols (cross rows (list c)))
             (loop r rows (cross (list r) cols))))
+    (define units
+        (make-dict (loop s squares
+                   (cons s
+                       (filter (lambda (u) (in s u)) unitlist)))))
+                            
 )
 (tests
     (squares-length
