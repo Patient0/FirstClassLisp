@@ -218,5 +218,9 @@
 ; For sudoku solver, we'll define a 'dictionary'
 ; concept - but implement it very inefficiently
 ; as just a list of pairs
-(define make-dict list)
+(define make-dict identity)
+; For now, no error handling - if the key
+; doesn't  exist it's an error!
+(define (lookup dict key)
+    (cdr (assoc key dict)))
     

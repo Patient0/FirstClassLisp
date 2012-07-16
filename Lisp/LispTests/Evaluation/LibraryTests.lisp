@@ -156,13 +156,13 @@
         #f
         (assoc 4 '()))
 
-    '(dict-test
-        ()
+    (dict-test
+        ((5 4 6) (1 2 3))
         (begin
             (define a1 '(A . 1))
             (define a2 '(A . 2))
-            (define d (make-dict (a1 . (5 4 6))
-                                 (a2 . (1 2 3))))
+            (define d (make-dict `((,a1 . (5 4 6))
+                                   (,a2 . (1 2 3)))))
             (list
                 (lookup d a1)
                 (lookup d a2))))
