@@ -138,4 +138,32 @@
         (let elements '(1 2 3 4 5 6 7)
              (loop x '(8 1 3 7)
                     (remove x elements))))
+
+    (assoc-test
+        ( ((a . 1) 1 2 3)
+          ((a . 2) 4 5 6)
+          #f)
+
+        (begin
+            (define a1 '(a . 1))
+            (define a2 '(a . 2))
+            (define a3 '(a . 3))
+            (define pairs `((,a1 . (1 2 3)) (,a2 . (4 5 6))))
+            (loop key (list a1 a2 a3)
+                (assoc key pairs))))
+
+    (assoc-test-simplest
+        #f
+        (assoc 4 '()))
+
+    '(dict-test
+        ()
+        (begin
+            (define a1 '(A . 1))
+            (define a2 '(A . 2))
+            (define d (make-dict (a1 . (5 4 6))
+                                 (a2 . (1 2 3))))
+            (list
+                (lookup d a1)
+                (lookup d a2))))
 )

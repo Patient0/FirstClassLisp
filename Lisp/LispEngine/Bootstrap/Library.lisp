@@ -66,10 +66,14 @@
 (define caddr (compose2 cadr cdr))
 (define cdddr (compose cdr cdr cdr))
 
-(define (find item list)
-    (if (nil? list) list
-        (eq? item (car list)) list
+(define (make-finder comparator)
+    (define (find item list)
+        (if (nil? list) list
+        (comparator item (car list)) list
         (find item (cdr list))))
+    find)
+
+(define find (make-finder eq?))
 
 (define (after pivot list)
     (match (find pivot list)
@@ -190,10 +194,29 @@
                 so-far))
     (fold-right join '() list))
 
-(define (remove x list . comparison)
-    (let comparison
-        (if (nil? comparison)
-            equal?
-            comparison)
-        (filter (compose2 not (curry comparison x)) list)))
+(define (make-remove comparator)
+    (lambda (x list)
+        (let predicate
+                (lambda (y) (not (comparator x y)))
+            (filter predicate list))))
+
+(define (make-assoc comparator)
+    (define (finder key list)
+            (match list
+                () #f
+                (pair . rest)
+                    (if (comparator key (car pair))
+                        pair
+                        (finder key rest))))
+    finder)
+
+(define assoc (make-assoc equal?))
+
+; Remove all instances of 'x' from a list
+(define remove (make-remove eq?))
+
+; For sudoku solver, we'll define a 'dictionary'
+; concept - but implement it very inefficiently
+; as just a list of pairs
+(define make-dict list)
     
