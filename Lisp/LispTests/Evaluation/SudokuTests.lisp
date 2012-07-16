@@ -50,6 +50,7 @@
             (repeat (lambda (i)
                         (convert (.GetValue array i))) length)))
 
+    (define zip (curry map cons))
     (define (grid->values grid)
         (let values (filter
             (lambda (c)
@@ -57,7 +58,8 @@
                     (in c '(0 dot)) #t
                     #f))
             (string->list grid))
-            (if (eq? (length values) 81) values
+            (if (eq? (length values) 81)
+                (zip squares values)
                 (throw "Could not parse grid"))))
 )
 (tests
