@@ -33,19 +33,32 @@
                     (cons s (peers-for-square s)))))
                         
     (define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
+    (define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
+    (define hard  ".....6....59.....82....8....45........3........6..3.54...325..6..................")
 
     (ref mscorlib)
     (define (string->list s)
         (define (convert char)
             (let schar (.ToString char)
                 (if (System.Char.IsDigit char)
-                    (System.Convert.ToInt32 schar)
-                    (string->symbol schar))))
+                        (System.Convert.ToInt32 schar)
+                    (eq? "." schar)
+                        'dot
+                (string->symbol schar))))
         (with (array (.ToCharArray s)
                length (.get_Length s))
             (repeat (lambda (i)
                         (convert (.GetValue array i))) length)))
 
+    (define (grid->values grid)
+        (let values (filter
+            (lambda (c)
+                (if (in c digits) #t
+                    (in c '(0 dot)) #t
+                    #f))
+            (string->list grid))
+            (if (eq? (length values) 81) values
+                (throw "Could not parse grid"))))
 )
 (tests
     (squares-length
@@ -70,4 +83,9 @@
     (string->list
         (1 2 3 4 A B C D)
         (string->list "1234ABCD"))
+
+    (grid->values
+        (81 81 81)
+        (map (compose length grid->values)
+            (list grid1 grid2 hard)))
 )
