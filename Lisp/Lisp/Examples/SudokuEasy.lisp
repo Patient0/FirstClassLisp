@@ -56,10 +56,22 @@
             (zip squares values)
             (throw "Could not parse grid"))))
 
+(define (eliminate-peers values s d)
+    (define (join p values)
+            (eliminate values p d))
+    (fold-right join values (lookup peers s)))
+
 ; Eliminate d from the list of possible values
 ; for square s
 (define (eliminate values s d)
-    (dict-update values s (remove d (lookup values s))))
+    (define current (lookup values s))
+    (if (not (in d current))
+        values
+        (with (possible (remove d current)
+               values (dict-update values s possible))
+              (match possible
+                   (last) (eliminate-peers values s last)
+                   _ values))))
 
 ; Return the 'values' that results from
 ; assigning d to square s

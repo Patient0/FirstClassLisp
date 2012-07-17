@@ -62,23 +62,52 @@
                 (zip squares values)
                 (throw "Could not parse grid"))))
 
-    (define (parse-grid grid)
-        (define values (make-dict (loop s squares
+    (define (eliminate-peers values s d)
+        (define (join p values)
+                (eliminate values p d))
+        (fold-right join values (lookup peers s)))
+
+    ; Eliminate d from the list of possible values
+    ; for square s
+    (define (eliminate values s d)
+        (define current (lookup values s))
+        (if (not (in d current))
+            values
+            (with (possible (remove d current)
+                   values (dict-update values s possible))
+                  (match possible
+                       (last) (eliminate-peers values s last)
+                       _ values))))
+
+    ; Return the 'values' that results from
+    ; assigning d to square s
+    (define (assign s d values)
+        (define others (remove d (lookup values s)))
+        (define (join d values)
+            (eliminate values s d))
+        (fold-right join values others))
+
+    (define empty-grid (make-dict (loop s squares
                                     (cons s digits))))
-        ; For now, just assign - don't try to eliminate
-        (define (assign (s . d) values)
-            (dict-update values s d))
-        (fold-right assign values (grid->values grid)))
+
+    (define (parse-grid grid)
+        (define (join (s . d) values)
+                (if (in d digits)
+                    (assign s d values)
+                    values))
+        (fold-right join empty-grid (grid->values grid)))
+
+    (define (values->list values)
+        (loop r rows
+            (loop c cols
+                (lookup values (cons r c)))))
 
     (define (display-grid values)
-        (define width
-            (+ 1 (max (loop s squares
-                  (length (lookup values s))))))
         (loop r rows
-            (begin
-                (loop c columns)
-                    (write (lookup values (cons r c)))
-                (write-line))))
+            (write-line "{0}"
+                (loop c cols
+                    (lookup values (cons r c)))))
+        nil)
 )
 (tests
     (squares-length
@@ -109,7 +138,15 @@
         (map (compose length grid->values)
             (list grid1 grid2 hard)))
 
-    (display-grid
-        ()
-        (display-grid (parse-grid grid1)))
+    (grid1-easy
+        (((4) (8) (3) (9) (2) (1) (6) (5) (7))
+         ((9) (6) (7) (3) (4) (5) (8) (2) (1))
+         ((2) (5) (1) (8) (7) (6) (4) (9) (3))
+         ((5) (4) (8) (1) (3) (2) (9) (7) (6))
+         ((7) (2) (9) (5) (6) (4) (1) (3) (8))
+         ((1) (3) (6) (7) (9) (8) (2) (4) (5))
+         ((3) (7) (2) (6) (8) (9) (5) (1) (4))
+         ((8) (1) (4) (2) (5) (3) (7) (6) (9))
+         ((6) (9) (5) (4) (1) (7) (3) (8) (2)))
+        (values->list (parse-grid grid1)))
 )
