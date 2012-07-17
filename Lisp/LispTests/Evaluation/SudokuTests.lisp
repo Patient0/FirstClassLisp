@@ -3,6 +3,7 @@
 ; 1.6 million steps to perform the initialization!
 ; Yet: All this happens in under 3 seconds on my PC!
 (setup
+    (ref mscorlib)
     (define digits '(1 2 3 4 5 6 7 8 9))
     (define rows '(A B C D E F G H I))
     (define cols digits)
@@ -36,7 +37,6 @@
     (define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
     (define hard  ".....6....59.....82....8....45........3........6..3.54...325..6..................")
 
-    (ref mscorlib)
     (define (string->list s)
         (define (convert char)
             (let schar (.ToString char)
@@ -61,6 +61,24 @@
             (if (eq? (length values) 81)
                 (zip squares values)
                 (throw "Could not parse grid"))))
+
+    (define (parse-grid grid)
+        (define values (make-dict (loop s squares
+                                    (cons s digits))))
+        ; For now, just assign - don't try to eliminate
+        (define (assign (s . d) values)
+            (dict-update values s d))
+        (fold-right assign values (grid->values grid)))
+
+    (define (display-grid values)
+        (define width
+            (+ 1 (max (loop s squares
+                  (length (lookup values s))))))
+        (loop r rows
+            (begin
+                (loop c columns)
+                    (write (lookup values (cons r c)))
+                (write-line))))
 )
 (tests
     (squares-length
@@ -90,4 +108,8 @@
         (81 81 81)
         (map (compose length grid->values)
             (list grid1 grid2 hard)))
+
+    (display-grid
+        ()
+        (display-grid (parse-grid grid1)))
 )

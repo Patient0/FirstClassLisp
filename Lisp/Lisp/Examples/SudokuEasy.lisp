@@ -1,16 +1,75 @@
-﻿; I'll base this on
-; http://norvig.com/sudoku.html
-(define board
-    '((2 8 0) (6 0 1) (0 9 3)
-      (0 0 0) (0 0 2) (4 0 5)
-      (6 9 0) (4 3 0) (0 0 1)
+﻿(define digits '(1 2 3 4 5 6 7 8 9))
+(define rows '(A B C D E F G H I))
+(define cols digits)
+(define cross cartesian)
+(define squares (cartesian rows cols))
+(define unitlist
+    (append
+        (cartesian-map cross
+            '((A B C) (D E F) (G H I))
+            '((1 2 3) (4 5 6) (7 8 9)))
+        (loop c cols (cross rows (list c)))
+        (loop r rows (cross (list r) cols))))
 
-      (9 0 0) (0 0 0) (0 1 4)
-      (0 4 2) (0 0 0) (0 0 0)
-      (5 0 0) (0 0 0) (9 2 0)
+(define (units-for-square s)
+    (filter (lambda (unit)
+                (in s unit))
+            unitlist))
 
-      (7 0 8) (5 0 3) (0 4 0)
-      (0 0 9) (0 2 4) (0 0 6)
-      (4 6 0) (7 8 9) (3 0 2)))
+(define units
+    (make-dict (loop s squares
+                   (cons s (units-for-square s)))))
 
-(define digits '(1 2 3 4 5 6 7 8 9))
+(define (peers-for-square s)
+    (remove s (unique (flatten (lookup units s)))))
+
+(define peers
+    (make-dict (loop s squares
+                (cons s (peers-for-square s)))))
+                    
+(define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
+(define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
+(define hard  ".....6....59.....82....8....45........3........6..3.54...325..6..................")
+
+(define (string->list s)
+    (define (convert char)
+        (let schar (.ToString char)
+            (if (System.Char.IsDigit char)
+                    (System.Convert.ToInt32 schar)
+                (eq? "." schar)
+                    'dot
+            (string->symbol schar))))
+    (with (array (.ToCharArray s)
+           length (.get_Length s))
+        (repeat (lambda (i)
+                    (convert (.GetValue array i))) length)))
+
+(define zip (curry map cons))
+(define (grid->values grid)
+    (let values (filter
+        (lambda (c)
+            (if (in c digits) #t
+                (in c '(0 dot)) #t
+                #f))
+        (string->list grid))
+        (if (eq? (length values) 81)
+            (zip squares values)
+            (throw "Could not parse grid"))))
+
+(define (parse-grid grid)
+    (define values (make-dict (loop s squares
+                                (cons s digits))))
+    ; For now, just assign - don't try to eliminate
+    (define (assign (s . d) values)
+        (dict-update values s d))
+    (fold-right assign values (grid->values grid)))
+
+(define (display-grid values)
+    (loop r rows
+        (write-line "{0}"
+            (loop c cols
+                (lookup values (cons r c)))))
+    nil)
+
+(define parsed (parse-grid grid1))
+(display-grid parsed)
