@@ -56,22 +56,44 @@
             (zip squares values)
             (throw "Could not parse grid"))))
 
-(define (eliminate-peers values s d)
-    (define (join p values)
-            (eliminate values p d))
-    (fold-right join values (lookup peers s)))
+(define eliminate-peers
+    (lambda
+        (values s (d))
+            (let join (lambda (p values)
+                    (eliminate values p d))
+            (fold-right join values (lookup peers s)))
+    ; More than one remaining - leave unchanged
+        (values . _) values))
+
+; After removing d from s and its peers,
+; does d now only appear in one place for the units
+; of s? If so, "assign" to that place.
+; TODO: We need some more macros to simplify these
+; anonymous lambda expressions!
+(define (check-units values s d)
+    (define (add-unit u values)
+        (with (d-is-in-square
+                (lambda (s) (in d (lookup values s)))
+               dplaces (filter d-is-in-square u))
+              (match dplaces
+                () (throw "contradiction")
+                ; d only appears in 's' in this unit
+                (s) (assign s d values)
+                ; do nothing.
+                _   values)))
+    (fold-right add-unit values (lookup units s)))
 
 ; Eliminate d from the list of possible values
 ; for square s
 (define (eliminate values s d)
     (define current (lookup values s))
-    (if (not (in d current))
-        values
-        (with (possible (remove d current)
-               values (dict-update values s possible))
-              (match possible
-                   (last) (eliminate-peers values s last)
-                   _ values))))
+    (if (in d current)
+            (with (possible (remove d current)
+                   values (dict-update values s possible)
+                   values (eliminate-peers values s possible)
+                   values (check-units values s d))
+                  values)
+        values))
 
 ; Return the 'values' that results from
 ; assigning d to square s
@@ -99,4 +121,6 @@
     nil)
 
 (define parsed (parse-grid grid1))
+(display-grid parsed)
+(define parsed (parse-grid grid2))
 (display-grid parsed)

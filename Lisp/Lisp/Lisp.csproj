@@ -64,7 +64,7 @@
     <EmbeddedResource Include="REPL.lisp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Examples\SudokuEasy.lisp">
+    <None Include="Examples\Sudoku.lisp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
