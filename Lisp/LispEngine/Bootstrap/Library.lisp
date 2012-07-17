@@ -238,7 +238,7 @@
 
 (define (dict-update d key new-value)
     (loop pair d
-        (if (eq? (car pair) key)
+        (if (equal? (car pair) key)
             (cons key new-value)
                          pair)))
 

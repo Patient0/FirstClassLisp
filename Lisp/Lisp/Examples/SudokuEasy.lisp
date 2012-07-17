@@ -56,13 +56,28 @@
             (zip squares values)
             (throw "Could not parse grid"))))
 
-(define (parse-grid grid)
-    (define values (make-dict (loop s squares
+; Eliminate d from the list of possible values
+; for square s
+(define (eliminate values s d)
+    (dict-update values s (remove d (lookup values s))))
+
+; Return the 'values' that results from
+; assigning d to square s
+(define (assign s d values)
+    (define others (remove d (lookup values s)))
+    (define (join d values)
+        (eliminate values s d))
+    (fold-right join values others))
+
+(define empty-grid (make-dict (loop s squares
                                 (cons s digits))))
-    ; For now, just assign - don't try to eliminate
-    (define (assign (s . d) values)
-        (dict-update values s d))
-    (fold-right assign values (grid->values grid)))
+
+(define (parse-grid grid)
+    (define (join (s . d) values)
+            (if (in d digits)
+                (assign s d values)
+                values))
+    (fold-right join empty-grid (grid->values grid)))
 
 (define (display-grid values)
     (loop r rows
