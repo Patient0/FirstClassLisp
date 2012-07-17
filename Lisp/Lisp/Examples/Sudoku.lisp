@@ -65,6 +65,9 @@
     ; More than one remaining - leave unchanged
         (values . _) values))
 
+(define (fail)
+    (throw "contradiction"))
+
 ; After removing d from s and its peers,
 ; does d now only appear in one place for the units
 ; of s? If so, "assign" to that place.
@@ -76,19 +79,24 @@
                 (lambda (s) (in d (lookup values s)))
                dplaces (filter d-is-in-square u))
               (match dplaces
-                () (throw "contradiction")
+                () (fail)
                 ; d only appears in 's' in this unit
                 (s) (assign s d values)
                 ; do nothing.
                 _   values)))
     (fold-right add-unit values (lookup units s)))
 
+(define (remove-digit d digits)
+    (match (remove d digits)
+            () (fail)
+            possible possible))
+
 ; Eliminate d from the list of possible values
 ; for square s
 (define (eliminate values s d)
     (define current (lookup values s))
     (if (in d current)
-            (with (possible (remove d current)
+            (with (possible (remove-digit d current)
                    values (dict-update values s possible)
                    values (eliminate-peers values s possible)
                    values (check-units values s d))
@@ -113,14 +121,19 @@
                 values))
     (fold-right join empty-grid (grid->values grid)))
 
-(define (display-grid values)
+(define (values->list values)
     (loop r rows
-        (write-line "{0}"
-            (loop c cols
-                (lookup values (cons r c)))))
+        (loop c cols
+            (lookup values (cons r c)))))
+
+(define (display-grid values)
+    (loop r (values->list values)
+        (write-line "{0}" r))
     nil)
 
+(write-line "Solving grid1...")
 (define parsed (parse-grid grid1))
 (display-grid parsed)
+(write-line "Solving grid2...")
 (define parsed (parse-grid grid2))
 (display-grid parsed)
