@@ -65,8 +65,15 @@
     ; More than one remaining - leave unchanged
         (values . _) values))
 
+(define amb (make-amb throw))
+
+; apply does not work for macros - so this
+; helper function bridges the gap
+(define (amb-list possible)
+    (eval `(,amb ,@possible) (env)))
+
 (define (fail)
-    (throw "contradiction"))
+    (amb))
 
 ; After removing d from s and its peers,
 ; does d now only appear in one place for the units
@@ -111,6 +118,33 @@
         (eliminate values s d))
     (fold-right join values others))
 
+(define all-but-one (remove 1 digits))
+
+(define (square-to-try values)
+    (let/cc return
+        (loop attempt all-but-one
+            (loop entry values
+                (if (eq? (length (cdr entry)) attempt)
+                    (return entry)
+                    nil)))))
+           
+(define (solved? values)
+    (let/cc return
+        (loop (s . possible) values
+            (match possible
+                (d) nil
+                (d . x) (return #f)
+                _ (fail)))
+        #t))
+
+(define (solve values)
+    (if (solved? values)
+        values
+        (with ((s . possible) (square-to-try values)
+               d (amb-list possible))
+                (write-line "Assigning {0} -> {1}" s d)
+                (solve (assign s d values)))))
+
 (define empty-grid (make-dict (loop s squares
                                 (cons s digits))))
 
@@ -132,8 +166,13 @@
     nil)
 
 (write-line "Solving grid1...")
-(define parsed (parse-grid grid1))
-(display-grid parsed)
+(define parsed1 (parse-grid grid1))
+(display-grid parsed1)
 (write-line "Solving grid2...")
-(define parsed (parse-grid grid2))
-(display-grid parsed)
+(define parsed2 (parse-grid grid2))
+(write-line "With wrote deduction we only get to:")
+(display-grid parsed2)
+(write-line "Solving using non-deterministic search...")
+(define solution2 (solve parsed2))
+(writeline "Solution:")
+(display-grid solution2)
