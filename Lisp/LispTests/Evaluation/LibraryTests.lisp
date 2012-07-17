@@ -206,4 +206,8 @@
     (test-repeat
         (() (0 1 2 3 4) (0) (0 1 2))
         (mapcar (curry repeat identity) '(0 5 1 3)))
+
+    (test-max
+        6
+        (max '(4 6 2 1)))
 )

@@ -275,3 +275,9 @@
                         (let next (- n 1)
                         (loop next (cons (fn next) so-far)))))
     (loop count '()))
+
+(define (max (first . rest) . less)
+    (define less (if (nil? less) <))
+    (define (join x so-far)
+        (if (less so-far x) x so-far))
+    (fold-right join first rest))
