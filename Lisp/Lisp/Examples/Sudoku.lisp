@@ -142,7 +142,7 @@
         values
         (with ((s . possible) (square-to-try values)
                d (amb-list possible))
-                (write-line "Assigning {0} -> {1}" s d)
+                (write-line "Assigning {0} to square {1}" d s)
                 (solve (assign s d values)))))
 
 (define empty-grid (make-dict (loop s squares
@@ -174,5 +174,5 @@
 (display-grid parsed2)
 (write-line "Solving using non-deterministic search...")
 (define solution2 (solve parsed2))
-(writeline "Solution:")
+(write-line "Solution:")
 (display-grid solution2)
