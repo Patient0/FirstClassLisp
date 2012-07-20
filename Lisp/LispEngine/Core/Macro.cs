@@ -74,6 +74,7 @@ namespace LispEngine.Core
                 c = c.PushEnv(env).PushTask(new EvaluateExpansion(p));
                 if(p != null && p.Cache != null)
                     return c.PushResult(p.Cache);
+                c.Statistics.Expansions++;
                 return argFunction.Evaluate(c, args);
             }
 

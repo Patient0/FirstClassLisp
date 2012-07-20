@@ -35,17 +35,17 @@ namespace LispEngine.Util
 
         public static void ExecuteResource(Environment env, string resourceFile)
         {
-            ExecuteResource(Assembly.GetCallingAssembly(), env, resourceFile);
+            ExecuteResource(new Statistics(), Assembly.GetCallingAssembly(), env, resourceFile);
         }
 
         /**
          * Used for bootstrapping various .lisp files into the environment.
          */
-        public static void ExecuteResource(Assembly assembly, Environment env, string resourceFile)
+        public static void ExecuteResource(Statistics statistics, Assembly assembly, Environment env, string resourceFile)
         {
             var evaluator = new Evaluator();
             foreach (var d in ReadDatums(assembly, resourceFile))
-                evaluator.Evaluate(env, d);
+                evaluator.Evaluate(statistics, env, d);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Reflection;
 using LispEngine.Bootstrap;
 using LispEngine.Datums;
+using LispEngine.Evaluation;
 using LispEngine.Util;
 
 namespace Lisp
@@ -14,7 +15,9 @@ namespace Lisp
             {
                 var env = StandardEnvironment.Create();
                 env = env.Extend("args", DatumHelpers.atomList(args));
-                ResourceLoader.ExecuteResource(Assembly.GetCallingAssembly(), env, "Lisp.REPL.lisp");
+                var statistics = new Statistics();
+                env = statistics.AddTo(env);
+                ResourceLoader.ExecuteResource(statistics, Assembly.GetExecutingAssembly(), env, "Lisp.REPL.lisp");
             }
             catch (Exception ex)
             {

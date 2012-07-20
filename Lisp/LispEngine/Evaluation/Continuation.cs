@@ -8,6 +8,7 @@ namespace LispEngine.Evaluation
 
     public class Continuation
     {
+        private readonly Statistics statistics;
         private readonly IStack<Environment> envs;
         private readonly IStack<Task> tasks;
         private readonly IStack<Datum> results;
@@ -18,19 +19,30 @@ namespace LispEngine.Evaluation
             throw new EvaluationException(c, ex);
         }
 
-        public static readonly Continuation Empty = new Continuation(Stack<Environment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
+        public static readonly Continuation Empty = Create(new Statistics());
 
-        private Continuation(IStack<Environment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
+        public static Continuation Create(Statistics s)
         {
+            return new Continuation(s, Stack<Environment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
+        }
+
+        private Continuation(Statistics statistics, IStack<Environment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
+        {
+            this.statistics = statistics;
             this.envs = envs;
             this.tasks = tasks;
             this.results = results;
             this.errorHandler = errorHandler;
         }
 
+        public Statistics Statistics
+        {
+            get { return statistics; }
+        }
+
         private Continuation create(IStack<Environment> newEnvs, IStack<Task> newTasks, IStack<Datum> newResults)
         {
-            return new Continuation(newEnvs, newTasks, newResults, errorHandler);
+            return new Continuation(statistics, newEnvs, newTasks, newResults, errorHandler);
         }
 
         private Continuation SetTasks(IStack<Task> newTasks)
@@ -50,7 +62,7 @@ namespace LispEngine.Evaluation
 
         public Continuation SetErrorHandler(ErrorHandler newHandler)
         {
-            return new Continuation(envs, tasks, results, newHandler);
+            return new Continuation(statistics, envs, tasks, results, newHandler);
         }
 
         public Continuation PushEnv(Environment env)

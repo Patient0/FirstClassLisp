@@ -5,14 +5,12 @@
 (define write System.Console.Write)
 (define write-line System.Console.WriteLine)
 
-(define get-steps (curry get-counter "steps"))
-
-(define last-steps (get-steps))
+(define prev-stats (!get-statistics))
 (define (log-steps)
-    (with (total (get-steps)
-           elapsed (- total last-steps))
-        (set! last-steps total)
-        (write-line "Steps: {0}" elapsed)))
+    (with (stats (!get-statistics)
+           delta (!get-statistics-delta prev-stats))
+        (set! prev-stats stats)
+        (write-line "{0}" delta)))
            
 (define (display-error msg c)
     (define (indent-list continuation-fn)

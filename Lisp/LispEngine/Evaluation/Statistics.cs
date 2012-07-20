@@ -19,52 +19,32 @@ namespace LispEngine.Evaluation
 
     public class Statistics
     {
-        public class Statistic<T>
+        public int Steps { get; set; }
+        public int Expansions { get; set; }
+
+        public override string ToString()
         {
-            public T Value { get; set; }
+            return string.Format("Steps: {0} Expansions: {1}", Steps, Expansions);
         }
 
-        // Does this class exist as a concept somewhere in .Net?
-        private class DefaultDictionary<T>
+        public Statistics()
         {
-            private readonly IDictionary<string, Statistic<T>> dictionary = new Dictionary<string, Statistic<T>>();
-
-            public Statistic<T> Get(string name)
-            {
-                Statistic<T> s;
-                if (!dictionary.TryGetValue(name, out s))
-                {
-                    s = new Statistic<T>();
-                    dictionary[name] = s;
-                }
-                return s;
-            }
         }
 
-        private readonly DefaultDictionary<int> counters = new DefaultDictionary<int>();
-    
-        public Statistic<int> GetCounter(string name)
+        public Statistics(Statistics s)
         {
-            return counters.Get(name);
+            this.Steps = s.Steps;
+            this.Expansions = s.Expansions;
         }
 
-        private class GetStatistic<T> : UnaryFunction
+        public Statistics Delta(Statistics prev)
         {
-            private readonly Func<string, Statistic<T> > accessor;
-            public GetStatistic(Func<string, Statistic<T> > accessor)
-            {
-                this.accessor = accessor;
-            }
-
-            protected override Datum eval(Datum name)
-            {
-                return accessor(name.CastString()).Value.ToAtom();
-            }
+            return new Statistics {Steps = Steps - prev.Steps, Expansions = Expansions - prev.Expansions};
         }
 
-        private static UnaryFunction makeStatisticFunction<T>(Func<String, Statistic<T>> func)
+        public Statistics Clone()
         {
-            return new GetStatistic<T>(func);
+            return new Statistics(this);
         }
 
         // This is a bit hacky - can't figure out a better way to "supply" the statistics
@@ -72,22 +52,9 @@ namespace LispEngine.Evaluation
         // itself... I guess.
         public Environment AddTo(Environment env)
         {
-            env = env.Extend("get-counter", makeStatisticFunction(GetCounter).ToStack());
-            env = env.Extend("statistics", this.ToAtom());
+            env = env.Extend("!get-statistics", DatumHelpers.MakeFunction(Clone, "!get-statistics"));
+            env = env.Extend("!get-statistics-delta", DatumHelpers.MakeFunction<Statistics, Statistics>(Delta, "!get-statistics-delta"));
             return env;
-        }
-
-        public static Statistics Get(Environment env)
-        {
-            Datum d;
-            Statistics statistics = null;
-            if (env.TryLookup("statistics", out d))
-            {
-                var a = d as Atom;
-                if (a != null)
-                    statistics = a.Value as Statistics;
-            }
-            return statistics ?? new Statistics();
         }
     }
 }

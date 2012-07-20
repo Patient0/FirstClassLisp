@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LispEngine.Evaluation;
 
 namespace LispEngine.Datums
 {
@@ -134,5 +135,17 @@ namespace LispEngine.Datums
         {
             return atoms(list).Select(v => (int) v);
         }
+
+
+        public static Datum MakeFunction<TResult>(Func<TResult> func, string name)
+        {
+            return new AccessorFunction<TResult>(name, func).ToStack();
+        }
+
+        public static Datum MakeFunction<T, TResult>(Func<T, TResult> func, string name)
+        {
+            return new UnaryDelegateFunction<T, TResult>(name, func).ToStack();
+        }
+
     }
 }

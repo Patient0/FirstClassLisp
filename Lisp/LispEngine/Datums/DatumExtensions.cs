@@ -12,22 +12,20 @@ namespace LispEngine.Datums
         {
             return DatumHelpers.enumerate(list);
         }
+
         public static Datum[] ToArray(this Datum list)
         {
             return list.Enumerate().ToArray();
         }
+
         public static Datum ToList(this IEnumerable<Datum> datums)
         {
             return DatumHelpers.compound(datums.ToArray());
         }
+
         public static Datum ToAtom(this object o)
         {
             return DatumHelpers.atom(o);
-        }
-
-        public static Datum ToFunction<T, TResult>(Func<T, TResult> func, string name)
-        {
-            return new UnaryDelegateFunction<T, TResult>(name, func).ToStack();
         }
 
         public static string CastIdentifier(this Datum d)

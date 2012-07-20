@@ -6,16 +6,16 @@ namespace LispEngine.Evaluation
 {
     public class Evaluator
     {
-        private static Datum Evaluate(Statistics.Statistic<int> steps, Continuation c)
+        private static Datum Evaluate(Continuation c)
         {
             while (c.Task != null)
             {
                 try
                 {
                     c = c.Task.Perform(c.PopTask());
-                    ++steps.Value;
+                    c.Statistics.Steps++;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     c = c.ErrorHandler(c, ex);
                 }
@@ -25,12 +25,16 @@ namespace LispEngine.Evaluation
 
         public Datum Evaluate(Environment env, Datum datum)
         {
+            return Evaluate(new Statistics(), env, datum);
+        }
 
-            var c = Continuation.Empty
+        public Datum Evaluate(Statistics statistics, Environment env, Datum datum)
+        {
+            var c = Continuation.Create(statistics)
                 .PushTask(null)
                 .PushResult(null)
                 .Evaluate(env, datum);
-            return Evaluate(Statistics.Get(env).GetCounter("steps"), c);
+            return Evaluate(c);
         }
     }
 }
