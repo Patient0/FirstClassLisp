@@ -24,6 +24,7 @@ namespace LispEngine.Bootstrap
         public static Environment CreateSandbox()
         {
             var env = new Environment(EmptyEnvironment.Instance);
+            env = new Statistics().AddTo(env);
             env = CoreForms.AddTo(env);
             env = Builtins.AddTo(env);
             return env;

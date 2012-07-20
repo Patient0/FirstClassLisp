@@ -71,6 +71,11 @@ namespace LispEngine.Core
                 var msg = (String)arg.CastObject();
                 throw DatumHelpers.error(msg);
             }
+
+            public override string ToString()
+            {
+                return ",throw";
+            }
         }
 
         public static Environment AddTo(Environment env)

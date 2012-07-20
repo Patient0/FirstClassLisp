@@ -5,6 +5,15 @@
 (define write System.Console.Write)
 (define write-line System.Console.WriteLine)
 
+(define get-steps (curry get-counter "steps"))
+
+(define last-steps (get-steps))
+(define (log-steps)
+    (with (total (get-steps)
+           elapsed (- total last-steps))
+        (set! last-steps total)
+        (write-line "Steps: {0}" elapsed)))
+           
 (define (display-error msg c)
     (define (indent-list continuation-fn)
         (loop f (continuation-fn c)
@@ -59,7 +68,8 @@
                 (prompt)
                 (with (expr (check-read)
                        result (repl-eval expr))
-                  (display result))
+                  (display result)
+                  (log-steps))
              catch error
                 (set! last-error error)
                 (writeerr "ERROR: {0}" (car error))

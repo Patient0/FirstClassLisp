@@ -88,6 +88,8 @@
     <Compile Include="Evaluation\Stack.cs" />
     <Compile Include="Evaluation\StackFunction.cs" />
     <Compile Include="Evaluation\StackFunctionAdapter.cs" />
+    <Compile Include="Evaluation\Statistics.cs" />
+    <Compile Include="Evaluation\UnaryDelegateFunction.cs" />
     <Compile Include="Lexing\Token.cs" />
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\Scanner.cs" />
