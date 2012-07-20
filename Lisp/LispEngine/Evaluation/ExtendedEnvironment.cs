@@ -60,6 +60,22 @@ namespace LispEngine.Evaluation
             else
                 e.value = newValue;
         }
+
+        public string ReverseLookup(Datum value)
+        {
+            // For debugging: attempt to find the nearest name mapped to the
+            // given datum.
+            IEnvironment e = this;
+            var ee = e as ExtendedEnvironment;
+            while (ee != null)
+            {
+                if (ee.value.Equals(value))
+                    return ee.name;
+                e = ee.parent;
+                ee = e as ExtendedEnvironment;
+            }
+            return e.ReverseLookup(value);
+        }
     }
 
     public static class EnvironmentExtensions

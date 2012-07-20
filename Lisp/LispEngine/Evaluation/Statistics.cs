@@ -42,7 +42,7 @@ namespace LispEngine.Evaluation
             return new Statistics {Steps = Steps - prev.Steps, Expansions = Expansions - prev.Expansions};
         }
 
-        public Statistics Clone()
+        public Statistics Snapshot()
         {
             return new Statistics(this);
         }
@@ -52,7 +52,7 @@ namespace LispEngine.Evaluation
         // itself... I guess.
         public Environment AddTo(Environment env)
         {
-            env = env.Extend("!get-statistics", DatumHelpers.MakeFunction(Clone, "!get-statistics"));
+            env = env.Extend("!get-statistics", DatumHelpers.MakeFunction(Snapshot, "!get-statistics"));
             env = env.Extend("!get-statistics-delta", DatumHelpers.MakeFunction<Statistics, Statistics>(Delta, "!get-statistics-delta"));
             return env;
         }

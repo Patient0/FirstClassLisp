@@ -19,6 +19,11 @@ namespace LispEngine.Evaluation
             throw new Exception(String.Format("Symbol '{0}' not defined. Cannot be set.", name));
         }
 
+        public string ReverseLookup(Datum value)
+        {
+            return null;
+        }
+
         private EmptyEnvironment()
         {
         }

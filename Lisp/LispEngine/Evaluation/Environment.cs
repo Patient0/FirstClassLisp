@@ -45,5 +45,11 @@ namespace LispEngine.Evaluation
         {
             return new Environment(env.Extend(name, value));
         }
+
+        // For debugging - attempt to find the name that has this value
+        public string ReverseLookup(Datum value)
+        {
+            return env.ReverseLookup(value);
+        }
     }
 }

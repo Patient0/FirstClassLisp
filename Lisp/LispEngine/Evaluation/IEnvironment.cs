@@ -13,5 +13,6 @@ namespace LispEngine.Evaluation
     {
         bool TryLookup(string name, out Datum datum);
         void Set(string name, Datum newValue);
+        string ReverseLookup(Datum value);
     }
 }
