@@ -82,7 +82,7 @@
 ; anonymous lambda expressions!
 (define (check-units values s d)
     (define (add-unit u values)
-        (with (d-is-in-square
+        (with* (d-is-in-square
                 (lambda (s) (in d (lookup values s)))
                dplaces (filter d-is-in-square u))
               (match dplaces
@@ -103,7 +103,7 @@
 (define (eliminate values s d)
     (define current (lookup values s))
     (if (in d current)
-            (with (possible (remove-digit d current)
+            (with* (possible (remove-digit d current)
                    values (dict-update values s possible)
                    values (eliminate-peers values s possible)
                    values (check-units values s d))
@@ -140,7 +140,7 @@
 (define (solve values)
     (if (solved? values)
         values
-        (with ((s . possible) (square-to-try values)
+        (with* ((s . possible) (square-to-try values)
                d (amb-list possible))
                 (write-line "Assigning {0} to square {1}" d s)
                 (solve (assign s d values)))))

@@ -64,8 +64,8 @@
         (define (loop)
             (try
                 (prompt)
-                (with (expr (check-read)
-                       result (repl-eval expr))
+                (with* (expr (check-read)
+                        result (repl-eval expr))
                   (display result)
                   (log-steps))
              catch error
@@ -79,8 +79,8 @@
     (let/cc return 
         (let file-stream (System.IO.File.OpenRead filename)
             (try
-                (with (text-reader (new System.IO.StreamReader file-stream)
-                       input (open-input-stream text-reader))
+                (with* (text-reader (new System.IO.StreamReader file-stream)
+                        input (open-input-stream text-reader))
                     (define (loop so-far)
                         (let next (read input)
                             (if (eof-object? next)

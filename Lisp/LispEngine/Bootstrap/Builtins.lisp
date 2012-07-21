@@ -7,7 +7,7 @@
 (define display log)
 
 ; Now, let's implement simple non-nested quasiquote in terms of Lisp itself
-; We need it quite early because writing macros without quasiquote
+; We need it quite early because writing macros with*out quasiquote
 ; is extremely painful!
 ; Using the builtin pattern matching of our lambda primitive makes
 ; this significantly simpler to implement.
@@ -36,7 +36,7 @@
 ; Our let macro is like the one in arc - just
 ; a single variable, single expression, and no
 ; nesting.
-; We can define "with" later as a macro that
+; We can define "with*" later as a macro that
 ; expands into individual sublets.
 (define-macro let (var value . body)
     `((,lambda (,var) (,begin ,@body)) ,value))
@@ -66,7 +66,7 @@
 ; (define name (lambda arg1 arg2) (begin expr1 expr2))
 ; This is the traditional syntax used in SICP et al.
 ; However, we can't support multiple bodies in our
-; lambdas without screwing up our nice 'case lambda'
+; lambdas with*out screwing up our nice 'case lambda'
 ; syntax which I find more useful than being able to
 ; define multiple bodies in a lambda. You can aways
 ; use 'begin' explicitly if need be.
@@ -84,14 +84,31 @@
                 (symbol . exprs)
                     `(,raw-define ,symbol (,begin ,@exprs))))))
 
+(define (let-bindings bindings)
+    (define splice
+        (lambda (bindings      ())
+                    bindings
+                ((vars values) (var value . rest))
+                    (splice (list (cons var vars) (cons value values)) rest)))
+    (let (vars values) (splice '(() ()) bindings)
+        (list vars (cons list values))))
 
+; 'with' macro allows multiple bindings - but the bindings
+; cannot see each other. i.e.
+; (with (x 5 y x) ... ) won't work.
+; However, this version is probably more efficient than with* below.
+(define-macro with (bindings . body)
+    `(let ,@(let-bindings bindings) ,@body))
 
-; 'with' macro decomposes recursively into nested 'let' statements
-(define with (macro
+; 'with*' macro decomposes recursively into nested 'let' statements
+; So 'later' definitions can see earlier definitions.
+; i.e.
+; (with* (x 5 y x) ... ) will work.
+(define with* (macro
     (lambda (() body)
                 body
             ((var . (expr . bindings)) . body)
-                `(,let ,var ,expr (,with ,bindings (,begin ,@body))))))
+                `(,let ,var ,expr (,with* ,bindings (,begin ,@body))))))
 
 ; let/cc provides "escape" functionality
 (define-macro let/cc (var . body)
@@ -103,7 +120,7 @@
 ; builtin which is the inverse function of 'macro'.
 (define expand
     (lambda (env (fexpr . args))
-                (with (macro-expr (eval fexpr env)
+                (with* (macro-expr (eval fexpr env)
                        macro-fn (unmacro macro-expr))
                       (if (nil? macro-fn)
                           (cons fexpr args)

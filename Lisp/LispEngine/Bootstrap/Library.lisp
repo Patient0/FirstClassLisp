@@ -94,7 +94,7 @@
     (thunk))
 
 (define-macro try clauses
-    (with (body (before 'catch clauses)
+    (with* (body (before 'catch clauses)
            (ex-symbols . error-handler) (after 'catch clauses)
            c-symbol (gensym))
         `(,let/cc ,c-symbol
@@ -129,7 +129,7 @@
             ()  (list force (get-fail))
             (x) x
             (x y)
-                (with (old-fail (gensym)
+                (with* (old-fail (gensym)
                        c (gensym))
                 `(,let ,old-fail (,get-fail)
                     (,force
