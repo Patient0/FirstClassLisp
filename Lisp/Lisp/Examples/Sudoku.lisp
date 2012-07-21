@@ -115,19 +115,28 @@
                     (return entry)
                     nil)))))
            
-(define (solved? values)
-    (let/cc return
-        (loop (s . possible) values
-            (match possible
-                (d) nil
-                (d . x) (return #f)
-                _ (fail)))
-        #t))
+; True if each square in values has one value
+(define solved?
+    ; Match against the inputs.
+    ; If there's a square with 1 value, then it's
+    ; solved so long as the rest also satisfy this
+    (lambda (((s . (x)) . rest))
+                (solved? rest)
+    ; We've found a square with more than one value.
+    ; It's not solved.
+            (((s . _) . rest))
+                #f
+    ; No more squares to check. Must be solved
+            (())
+                #t))
 
 (define (solve values)
     (if (solved? values)
         values
         (with* ((s . possible) (square-to-try values)
+                ; We have several possible values for square 's'.
+                ; Tell 'amb' to magically pick the "right one" for
+                ; us and assign it to s.
                 d (amb possible))
                 (write-line "Assigning {0} to square {1}" d s)
                 (solve (assign s d values)))))

@@ -312,6 +312,10 @@
     
 (define sort (make-sorter <))
 
+; Macro for constructing a fold operation.
+(define-macro fold-loop (var values so-far initial . body)
+    `(,fold-right (,lambda (,var ,so-far) (,begin ,@body)) ,initial ,values))
+
 ; For now, our 'set' constructor will just
 ; create and compare using equality predicate.
 ; i.e. an O(n^2) algorithm.
@@ -333,18 +337,16 @@
     (loop count '()))
 
 (define (max (first . rest) . less)
-    (define less (if (nil? less) <))
-    (define (join x so-far)
-        (if (less so-far x) x so-far))
-    (fold-right join first rest))
+    (let less (if (nil? less) < less)
+        (fold-loop x rest
+                   max-so-far first
+                   (if (less max-so-far x)
+                            x
+                        max-so-far))))
 
 ; Macro for looping subject to some condition
 (define-macro filter-loop (var list predicate)
     `(,filter (,lambda (,var) ,predicate) ,list))
-
-; Macro for constructing a fold operation.
-(define-macro fold-loop (var values so-far initial . body)
-    `(,fold-right (,lambda (,var ,so-far) (,begin ,@body)) ,initial ,values))
 
 (define or (macro
         (lambda
