@@ -118,8 +118,8 @@
 ; function, is something that is only possible
 ; in a Lisp with First Class macros and continuations
 ; (i.e. First Class Lisp!)
-(define (make-amb-macro error)
-    (define amb-fail (curry error "exhausted"))
+(define (make-amb-macro exhausted)
+    (define amb-fail exhausted)
     (define (set-fail thunk)
         (set! amb-fail thunk))
     (define (get-fail)
@@ -150,7 +150,7 @@
 ; Given an amb macro, make an appropriate
 ; assert function. Once again, this sort of
 ; thing is only possible with first-class macros.
-(define (make-assert amb)
+(define (make-assert-from-amb-macro amb)
     (lambda
         (#f) (amb)
         (condition) #t))
