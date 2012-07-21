@@ -67,12 +67,7 @@
     ; More than one remaining - leave unchanged
         (values . _) values))
 
-(define amb (make-amb-macro (curry throw "No solutions found")))
-
-; apply does not work for macros - so this
-; helper function bridges the gap
-(define (amb-list possible)
-    (eval `(,amb ,@possible) (env)))
+(define amb (make-amb-function (curry throw "No solutions found")))
 
 (define (fail)
     (amb))
@@ -143,7 +138,7 @@
     (if (solved? values)
         values
         (with* ((s . possible) (square-to-try values)
-               d (amb-list possible))
+               d (amb possible))
                 (write-line "Assigning {0} to square {1}" d s)
                 (solve (assign s d values)))))
 
