@@ -228,4 +228,24 @@
     (test-or-multiple
         3
         (or #f #f 3 4))
+
+    (test-and-simple
+        6
+        (and 5 6))
+
+    (test-and-single
+        5
+        (and 5))
+
+    (test-and-short-circuit
+        #f
+        (and #f undefined))
+
+    (test-and-only-evaluates-once
+        (2 3)
+        (begin
+            (define x 1)
+            (define y (and (set! x (+ x 1))
+                 3))
+            (list x y)))
 )

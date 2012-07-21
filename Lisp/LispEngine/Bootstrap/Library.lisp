@@ -345,7 +345,15 @@
 (define or (macro
         (lambda
             () #f
-            (cond . others)
+            (first . rest)
                 (let temp (gensym)
-                    `(,let ,temp ,cond
-                        (,if ,temp ,temp (,or ,@others)))))))
+                    `(,let ,temp ,first
+                        (,if ,temp ,temp (,or ,@rest)))))))
+
+(define and (macro
+        (lambda
+            () #t
+            (condition)
+                condition
+            (first . rest)
+                `(,if ,first (,and ,@rest) #f))))
