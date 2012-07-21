@@ -147,10 +147,43 @@
      (macro expand-amb))
     amb)
 
+
+; This 'amb' is adapted from
+; http://matt.might.net/articles/programming-with-continuations--exceptions-backtracking-search-threads-generators-coroutines/
+; It's most useful when you have an already evaluated list
+; of possibilities
+(define (make-amb-function exhausted)
+    (define (current-continuation) 
+      (call/cc
+       (lambda (cc)
+         (cc cc))))
+    (define fail-stack ())
+    (define (fail)
+        (match fail-stack
+            (back-track-point . rest)
+                (begin
+                    (set! fail-stack rest)
+                    (back-track-point back-track-point))
+            _
+                (exhausted)))
+    (lambda
+        ; So that 'assert' can be the same for both forms
+        ()
+            (fail)
+        (choices)
+            (let cc (current-continuation)
+                (match choices
+                    () (fail)
+                    (choice . remaining-choices)
+                        (begin
+                            (set! choices remaining-choices)
+                            (set! fail-stack (cons cc fail-stack))
+                            choice)))))
+
 ; Given an amb macro, make an appropriate
 ; assert function. Once again, this sort of
 ; thing is only possible with first-class macros.
-(define (make-assert-from-amb-macro amb)
+(define (make-assert amb)
     (lambda
         (#f) (amb)
         (condition) #t))

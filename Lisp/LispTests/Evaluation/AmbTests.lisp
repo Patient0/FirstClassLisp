@@ -1,6 +1,6 @@
 ﻿(setup
     (define amb (make-amb-macro throw))
-    (define assert (make-assert-from-amb-macro amb)))
+    (define assert (make-assert amb)))
 (tests
 
     ; This example came from
@@ -43,9 +43,9 @@
         (try
             (with* (exhausted (curry throw "exhausted")
                     amb1 (make-amb-macro exhausted)
-                    assert1 (make-assert-from-amb-macro amb1)
+                    assert1 (make-assert amb1)
                     amb2 (make-amb-macro exhausted)
-                    assert2 (make-assert-from-amb-macro amb2))
+                    assert2 (make-assert amb2))
                 (define a (amb1 1 2))
                 (define b (amb2 4 8))
                 (assert1 (eq? 9 (+ a b)))
@@ -54,4 +54,17 @@
             msg))
 
 
+    (ambFunctionTest-Pythagorean (4 3 5)
+        (begin
+            (define amb (make-amb-function (curry throw "exhausted")))
+            (define assert (make-assert amb))
+            (with (a (amb '(1 2 3 4 5 6 7))
+                   b (amb '(1 2 3 4 5 6 7))
+                   c (amb '(1 2 3 4 5 6 7)))
+                    ; We only want pythagorean triples
+                    (assert (eq? (* c c) (+ (* a a) (* b b))))
+                    ; And only those with the second value less
+                    ; than the first.
+                    (assert (<  b a))
+                    (list a b c))))
 )
