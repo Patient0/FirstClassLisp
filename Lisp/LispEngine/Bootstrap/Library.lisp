@@ -27,12 +27,15 @@
                 (so-far (x . y)) (fold-right-tail (op x so-far) y)))
     (fold-right-tail initial (reverse xs)))
 
+; Macro for constructing a fold operation.
+(define-macro fold-loop (var values so-far initial . body)
+    `(,fold-right (,lambda (,var ,so-far) (,begin ,@body)) ,initial ,values))
+
 ; mapcar can be defined in terms of fold
 (define (mapcar f list)
-    (let combiner
-        (lambda (x list)
-            (cons (f x) list))
-        (fold-right combiner () list)))
+    (fold-loop x list
+               l ()
+            (cons (f x) l)))
 
 (define (map f . ll)
     (define map-tail
@@ -311,10 +314,6 @@
     sort)
     
 (define sort (make-sorter <))
-
-; Macro for constructing a fold operation.
-(define-macro fold-loop (var values so-far initial . body)
-    `(,fold-right (,lambda (,var ,so-far) (,begin ,@body)) ,initial ,values))
 
 ; For now, our 'set' constructor will just
 ; create and compare using equality predicate.
