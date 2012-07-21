@@ -229,6 +229,21 @@
 ; Remove all instances of 'x' from a list
 (define remove (make-remove equal?))
 
+; Optimized for just removing one element
+; from a list which is a set (so we don't
+; care about ordering)... and this is only
+; an optimization in that 'append'
+; is a builtin. Was it worth it?
+(define (remove-one x list)
+    (define remove-one-tail
+        (lambda (so-far ())
+                    so-far
+                (so-far (head . tail))
+                    (if (equal? x head)
+                        (append so-far tail)
+                        (remove-one-tail (cons head so-far) tail))))
+    (remove-one-tail '() list))
+
 ; For sudoku solver, we'll define a 'dictionary'
 ; concept - but implement it very inefficiently
 ; as just a list of pairs

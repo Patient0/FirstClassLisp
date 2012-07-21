@@ -144,6 +144,10 @@
              (loop x '(8 1 3 7)
                     (remove x elements))))
 
+    (remove-one-test
+        (1 3 6)
+        (sort (remove-one 6 '(1 6 3 6))))
+
     (replace-test
         (1 2 20 4 5)
         (replace 3 20 '(1 2 3 4 5)))

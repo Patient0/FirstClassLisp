@@ -21,7 +21,7 @@
                    (cons s (units-for-square s)))))
 
 (define (peers-for-square s)
-    (remove s (unique (flatten (lookup units s)))))
+    (remove-one s (unique (flatten (lookup units s)))))
 
 (define peers
     (make-dict (loop s squares
@@ -94,7 +94,7 @@
     (fold-right add-unit values (lookup units s)))
 
 (define (remove-digit d digits)
-    (match (remove d digits)
+    (match (remove-one d digits)
             () (fail)
             possible possible))
 
@@ -113,7 +113,7 @@
 ; Return the 'values' that results from
 ; assigning d to square s
 (define (assign s d values)
-    (define others (remove d (lookup values s)))
+    (define others (remove-one d (lookup values s)))
     (define (join d values)
         (eliminate values s d))
     (fold-right join values others))
