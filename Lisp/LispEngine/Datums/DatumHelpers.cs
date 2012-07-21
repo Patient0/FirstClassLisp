@@ -113,6 +113,14 @@ namespace LispEngine.Datums
             return pair;
         }
 
+        public static Vector castVector(Datum d)
+        {
+            var v = d as Vector;
+            if (v == null)
+                throw error("Expected '{0}' to be a vector", d);
+            return v;
+        }
+
         public static Datum car(Datum d)
         {
             return castPair(d).First;

@@ -36,6 +36,32 @@ namespace LispEngine.Evaluation
             }
         }
 
+
+        class TernaryDatumDelegateFunction : Function
+        {
+            private readonly string name;
+            private readonly Func<Datum, Datum, Datum, Datum> funcDelegate;
+            public TernaryDatumDelegateFunction(string name, Func<Datum, Datum, Datum, Datum> funcDelegate)
+            {
+                this.name = name;
+                this.funcDelegate = funcDelegate;
+            }
+
+
+            public override string ToString()
+            {
+                return name;
+            }
+
+            public Datum Evaluate(Datum args)
+            {
+                var argArray = args.ToArray();
+                if (argArray.Length != 3)
+                    throw DatumHelpers.error("{0}: 3 arguments expected, got {1}", name, argArray.Length);
+                return funcDelegate(argArray[0], argArray[1], argArray[2]);
+            }
+        }
+
         class BinaryDatumDelegateFunction : BinaryFunction
         {
             private readonly string name;
@@ -51,6 +77,26 @@ namespace LispEngine.Evaluation
                 return funcDelegate(arg1, arg2);
             }
 
+            public override string ToString()
+            {
+                return name;
+            }
+        }
+
+        class UnaryDatumDelegateFunction : UnaryFunction
+        {
+            private readonly string name;
+            private readonly Func<Datum, Datum> funcDelegate;
+            public UnaryDatumDelegateFunction(string name, Func<Datum, Datum> funcDelegate)
+            {
+                this.name = name;
+                this.funcDelegate = funcDelegate;
+            }
+
+            protected override Datum eval(Datum arg)
+            {
+                return funcDelegate(arg);
+            }
             public override string ToString()
             {
                 return name;
@@ -79,10 +125,21 @@ namespace LispEngine.Evaluation
             }
         }
 
+        public static Datum MakeDatumFunction(Func<Datum, Datum> func, string name)
+        {
+            return new UnaryDatumDelegateFunction(name, func).ToStack();
+        }
+
         public static Datum MakeDatumFunction(Func<Datum, Datum, Datum> func, string name)
         {
             return new BinaryDatumDelegateFunction(name, func).ToStack();
         }
+
+        public static Datum MakeDatumFunction(Func<Datum, Datum, Datum, Datum> func, string name)
+        {
+            return new TernaryDatumDelegateFunction(name, func).ToStack();
+        }
+
 
         public static Datum MakeFunction<TResult>(Func<TResult> func, string name)
         {
