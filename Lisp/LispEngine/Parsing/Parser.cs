@@ -10,18 +10,36 @@ namespace LispEngine.Parsing
     public sealed class Parser : DatumHelpers
     {
         private readonly Scanner s;
-        private readonly IEnumerator<Token> tokens;
+        private IEnumerator<Token> tokens;
         private Token next;
         public Parser(Scanner s)
         {
             this.s = s;
+            initTokens(s.Scan());
+        }
+
+        private void initTokens(IEnumerable<Token> tokenStream)
+        {
             // Skip whitespace and comments
-            tokens = s.Scan().Where(token => token.Type != TokenType.Space && token.Type != TokenType.Comment).GetEnumerator();
+            tokens = tokenStream.Where(token => token.Type != TokenType.Space && token.Type != TokenType.Comment).GetEnumerator();            
         }
 
         private void readNext()
         {
-            next = tokens.MoveNext() ? tokens.Current : null;
+            try
+            {
+                next = tokens.MoveNext() ? tokens.Current : null;                
+            }
+            catch (Exception)
+            {
+                // If an exception is encountered scanning,
+                // re-initialize the enumerator (as soon as MoveNext
+                // throws an exception the previous enumerator
+                // appears to switch to 'EOF').
+                // This is to support recovery from typos in the REPL.
+                initTokens(s.Recover());
+                throw;
+            }
         }
 
         private ParseException fail(String fmt, params object[] args)

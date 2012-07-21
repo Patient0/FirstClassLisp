@@ -15,4 +15,15 @@
         (map (compose eof-object? read open-input-string)
                  '("" "(* 5 3)")))
 
+    ; The REPL would switch to "EOF" as soon as an unrecognized
+    ; token was read, which is not very useful behaviour in
+    ; a REPL.
+    (unrecognized-token
+        5
+        (let s (open-input-string "@5")
+            (try
+                (read s)
+             catch msg
+                (read s))))
+
 )

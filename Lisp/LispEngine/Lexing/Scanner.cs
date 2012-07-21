@@ -307,6 +307,16 @@ namespace LispEngine.Lexing
                 yield return next;
         }
 
+        public IEnumerable<Token> Recover()
+        {
+            // Called after a previous enumeration has failed due
+            // to an unrecognized token.
+            // Skip the offending character that we don't recognize
+            // and assume that after this the tokens make sense again.
+            readChar();
+            return Scan();
+        }
+
         public string LineSoFar
         {
             get

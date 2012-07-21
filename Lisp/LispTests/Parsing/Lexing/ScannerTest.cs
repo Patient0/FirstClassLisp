@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using LispEngine.Datums;
 using LispEngine.Lexing;
@@ -49,6 +51,25 @@ namespace LispTests.Lexing
                 ++c;
             }
             Assert.AreEqual(expected.Length, c);
+        }
+
+        [Test]
+        public void testRecoveryAfterUnrecognizedToken()
+        {
+            var s = Scanner.Create("@5");
+            var tokens1 = s.Scan().GetEnumerator();
+            Token t2 = null;
+            try
+            {
+                tokens1.MoveNext();
+            }
+            catch(Exception)
+            {
+                var tokens2 = s.Recover().GetEnumerator();
+                tokens2.MoveNext();
+                t2 = tokens2.Current;
+            }
+            Assert.AreEqual(new Token(TokenType.Integer, "5"), t2);
         }
 
         [Test]
