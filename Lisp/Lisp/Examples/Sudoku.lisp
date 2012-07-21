@@ -55,9 +55,9 @@
 (define eliminate-peers
     (lambda
         (values s (d))
-            (let join (lambda (p values)
-                    (eliminate values p d))
-            (fold-right join values (lookup peers s)))
+            (fold-loop peer (lookup peers s)
+                       v values
+                        (eliminate v peer d))
     ; More than one remaining - leave unchanged
         (values . _) values))
 
@@ -69,18 +69,17 @@
 ; After removing d from s and its peers,
 ; does d now only appear in one place for the units
 ; of s? If so, "assign" to that place.
-; TODO: We need some more macros to simplify these
-; anonymous lambda expressions!
 (define (check-units values s d)
-    (define (add-unit u values)
-        (let dplaces (filter-loop s u (in d (lookup values s)))
+    (fold-loop u (lookup units s)
+               v values
+        (let dplaces (filter-loop s u (in d (lookup v s)))
              (match dplaces
                 () (fail)
                 ; d only appears in 's' in this unit
-                (s) (assign s d values)
+                ; So assign d so square s in values
+                (s) (assign s d v)
                 ; do nothing.
-                _   values)))
-    (fold-right add-unit values (lookup units s)))
+                _   v))))
 
 (define (remove-digit d digits)
     (match (remove-one d digits)
@@ -102,10 +101,9 @@
 ; Return the 'values' that results from
 ; assigning d to square s
 (define (assign s d values)
-    (define others (remove-one d (lookup values s)))
-    (define (join d values)
-        (eliminate values s d))
-    (fold-right join values others))
+    (fold-loop eliminated (remove-one d (lookup values s))
+               v values
+        (eliminate v s eliminated)))
 
 (define all-but-one (remove 1 digits))
 
@@ -130,7 +128,7 @@
     (if (solved? values)
         values
         (with* ((s . possible) (square-to-try values)
-               d (amb possible))
+                d (amb possible))
                 (write-line "Assigning {0} to square {1}" d s)
                 (solve (assign s d values)))))
 
@@ -138,11 +136,11 @@
                                 (cons s digits))))
 
 (define (parse-grid grid)
-    (define (join (s . d) values)
+    (fold-loop (s . d) (grid->values grid)
+               values empty-grid
             (if (in d digits)
                 (assign s d values)
-                values))
-    (fold-right join empty-grid (grid->values grid)))
+                values)))
 
 (define (values->list values)
     (loop r rows
