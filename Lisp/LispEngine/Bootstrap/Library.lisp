@@ -255,10 +255,15 @@
     (cdr (assoc key dict)))
 
 (define (dict-update d key new-value)
-    (loop pair d
-        (if (equal? (car pair) key)
-            (cons key new-value)
-                         pair)))
+    (define new-pair (cons key new-value))
+    (define dict-tail
+            (lambda (so-far ())
+                        so-far
+                    (so-far (pair . tail))
+                        (if (equal? (car pair) key); found it!
+                                (append so-far (cons new-pair tail))
+                            (dict-tail (cons pair so-far) tail))))
+    (dict-tail () d))
 
 ; Using quick-sort as the algorithm here.
 ; It's not even a stable sort - but it'll work
