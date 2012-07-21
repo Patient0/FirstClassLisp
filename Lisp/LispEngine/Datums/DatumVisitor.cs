@@ -20,5 +20,6 @@ namespace LispEngine.Datums
         T visit(StackFunction s);
         T visit(FExpression s);
         T visit(Null n);
+        T visit(Vector v);
     }
 }

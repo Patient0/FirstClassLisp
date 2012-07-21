@@ -223,5 +223,11 @@ namespace LispTests.Parsing
         {
             test("\"A newline and a tab character: \\n\\t\"", atom("A newline and a tab character: \n\t"));
         }
+
+        [Test]
+        public void testVector()
+        {
+            test("#(1 (4) 3)", vector(atom(1), atomList(4), atom(3)));
+        }
     }
 }

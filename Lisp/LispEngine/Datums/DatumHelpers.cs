@@ -95,6 +95,11 @@ namespace LispEngine.Datums
             return list.Aggregate(nil, (current, l) => cons(l, current));
         }
 
+        public static Vector vector(params Datum[] elements)
+        {
+            return new Vector(elements);
+        }
+
         public static Atom atom<T>(T value)
         {
             return new Atom(value);

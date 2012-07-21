@@ -13,6 +13,7 @@ namespace LispEngine.Lexing
         Integer,
         String,
         Open,
+        VectorOpen,
         Close,
         Dot,
         Boolean,

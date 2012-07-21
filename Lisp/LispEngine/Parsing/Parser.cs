@@ -75,6 +75,20 @@ namespace LispEngine.Parsing
             return cdr;
         }
 
+        private Datum vectorExpr()
+        {
+            if (next.Type != TokenType.VectorOpen)
+                return null;
+            readNext();
+            var elements = new List<Datum>();
+            while (next.Type != TokenType.Close)
+            {
+                elements.Add(expression());
+                expectNext(")");
+            }
+            return vector(elements.ToArray());
+        }
+
         private Datum compound()
         {
             if (next.Type != TokenType.Open)
@@ -145,6 +159,8 @@ namespace LispEngine.Parsing
             if ((d = symbol()) != null)
                 return d;
             if ((d = atom()) != null)
+                return d;
+            if ((d = vectorExpr()) != null)
                 return d;
             if ((d = compound()) != null)
                 return d;

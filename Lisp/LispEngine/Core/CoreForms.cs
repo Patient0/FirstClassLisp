@@ -29,6 +29,7 @@ namespace LispEngine.Core
                 .Extend("env", Env.Instance);
             env = DebugFunctions.AddTo(env);
             env = Macro.AddTo(env);
+            env = VectorFunctions.AddTo(env);
             return env;
         }
     }

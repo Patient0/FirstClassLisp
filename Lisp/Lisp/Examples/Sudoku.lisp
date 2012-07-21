@@ -1,6 +1,5 @@
 ﻿(define digits '(1 2 3 4 5 6 7 8 9))
-; (define rows '(A B C D E F G H I))
-; Use digits for rows too
+; Use digits for rows and the columns
 (define rows digits)
 (define cols digits)
 (define cross cartesian)
@@ -12,6 +11,11 @@
             '((1 2 3) (4 5 6) (7 8 9)))
         (loop c cols (cross rows (list c)))
         (loop r rows (cross (list r) cols))))
+
+(define (values->list values)
+    (loop r rows
+        (loop c cols
+            (lookup values (cons r c)))))
 
 (define (units-for-square s)
     (filter-loop unit unitlist (in s unit)))
@@ -151,24 +155,19 @@
                 (assign s d values)
                 values)))
 
-(define (values->list values)
-    (loop r rows
-        (loop c cols
-            (lookup values (cons r c)))))
-
 (define (display-grid values)
     (loop r (values->list values)
         (write-line "{0}" r))
     nil)
 
-;(write-line "Solving grid1...")
-;(define parsed1 (parse-grid grid1))
-;(display-grid parsed1)
-;(write-line "Solving grid2...")
-;(define parsed2 (parse-grid grid2))
-;(write-line "With wrote deduction we only get to:")
-;(display-grid parsed2)
-;(write-line "Solving using non-deterministic search...")
-;(define solution2 (solve parsed2))
-;(write-line "Solution:")
-;(display-grid solution2)
+(write-line "Solving grid1...")
+(define parsed1 (parse-grid grid1))
+(display-grid parsed1)
+(write-line "Solving grid2...")
+(define parsed2 (parse-grid grid2))
+(write-line "With wrote deduction we only get to:")
+(display-grid parsed2)
+(write-line "Solving using non-deterministic search...")
+(define solution2 (solve parsed2))
+(write-line "Solution:")
+(display-grid solution2)

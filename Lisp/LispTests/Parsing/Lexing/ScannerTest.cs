@@ -166,5 +166,12 @@ namespace LispTests.Lexing
         {
             test("\"Hello world\"", str("\"Hello world\""));
         }
+
+        private static readonly Token vectorOpen = token(TokenType.VectorOpen, "#(");
+        [Test]
+        public void testVectorLiteral()
+        {
+            test("#(1)", vectorOpen, integer("1"), close);
+        }
     }
 }

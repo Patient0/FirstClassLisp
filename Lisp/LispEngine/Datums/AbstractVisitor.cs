@@ -39,5 +39,10 @@ namespace LispEngine.Datums
         {
             return defaultCase(n);
         }
+
+        public virtual T visit(Vector v)
+        {
+            return defaultCase(v);
+        }
     }
 }

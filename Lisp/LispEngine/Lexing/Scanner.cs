@@ -105,6 +105,26 @@ namespace LispEngine.Lexing
             return s.sb.Length > 1 ? TokenType.DotSymbol : TokenType.Dot;
         }
 
+        // TODO:
+        // WE should implement actual reader macros for this part of things.
+        private static TokenType? matchHash(Scanner s)
+        {
+            if (s.peek() != '#')
+                return null;
+            s.readChar();
+            if(s.peek() == '(')
+            {
+                s.readChar();
+                return TokenType.VectorOpen;
+            }
+            if(s.isOneOf("tfTF"))
+            {
+                s.readChar();
+                return TokenType.Boolean;
+            }
+            throw s.fail("Unrecognized token");
+        }
+
         private static Matcher match(TokenType tokenType, Action<Scanner> matchDelegate)
         {
             return s =>
@@ -185,19 +205,7 @@ namespace LispEngine.Lexing
                         s => s.isDigit()),
                     matchSingle(TokenType.Open, '('),
                     matchSingle(TokenType.Close, ')'),
-                    match(TokenType.Boolean,
-                        s =>
-                            {
-                                if (s.peek() != '#')
-                                    return;
-                                s.readChar();
-                                if(s.isOneOf("tfTF"))
-                                {
-                                    s.readChar();
-                                    return;
-                                }
-                                throw s.fail("Unrecognized token");
-                            })
+                    matchHash
                     };
         private StringBuilder sb;
 
