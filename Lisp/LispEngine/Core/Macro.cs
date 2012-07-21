@@ -17,6 +17,13 @@ namespace LispEngine.Core
         public static readonly StackFunction Instance = new Macro().ToStack();
         public static readonly StackFunction Unmacro = new UnMacro().ToStack();
 
+        public static Environment AddTo(Environment env)
+        {
+            env = env.Extend("unmacro", Unmacro);
+            env = env.Extend("macro", Instance);
+            return env;
+        }
+
         private sealed class UnMacro : UnaryFunction
         {
             protected override Datum eval(Datum arg)
@@ -27,6 +34,7 @@ namespace LispEngine.Core
                 return macro.Function;
             }
         }
+
         private sealed class EvaluateExpansion : Task
         {
             private readonly Pair macroDatum;

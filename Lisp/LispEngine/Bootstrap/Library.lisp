@@ -54,6 +54,9 @@
     (lambda x
         (apply fn (append args x))))
 
+(define (macro? f)
+    (not (nil? (unmacro f))))
+
 (define (identity x) x)
 
 (define (compose2 f g)

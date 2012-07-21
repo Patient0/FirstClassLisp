@@ -289,4 +289,8 @@
             (define x nil)
             (define (fetch a b c) x)
             (fetch (set! x 1) (set! x 2) (set! x 3))))
+
+    (is-macro
+        (#t #f)
+        (mapcar macro? (list let car)))
 )

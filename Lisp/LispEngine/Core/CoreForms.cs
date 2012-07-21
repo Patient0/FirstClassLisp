@@ -18,8 +18,6 @@ namespace LispEngine.Core
                 .Extend("apply", Apply.Instance)
                 .Extend("eq?", EqualFunctions.Eq)
                 .Extend("equal?", EqualFunctions.Equal)
-                .Extend("macro", Macro.Instance)
-                .Extend("unmacro", Macro.Unmacro)
                 .Extend("quote", Quote.Instance)
                 .Extend("define", Define.Instance)
                 .Extend("set!", Set.Instance)
@@ -28,6 +26,7 @@ namespace LispEngine.Core
                 .Extend("eval", Eval.Instance)
                 .Extend("env", Env.Instance);
             env = DebugFunctions.AddTo(env);
+            env = Macro.AddTo(env);
             return env;
         }
     }
