@@ -1,4 +1,35 @@
 ﻿(define digits '(1 2 3 4 5 6 7 8 9))
+
+; For efficiency, we'll use a single integer
+; 'bit field' to represent which digits are
+; available. 0 means a contradiction.
+; We do this rather than implement
+; lots of builtin string primitives, which
+; would have been the thing to do if we'd
+; followed Peter Norvig's Python program
+; exactly.
+(define (digit-bit digit)
+        (bit-shift 1 (- digit 1)))
+
+(define (digit-set . digits)
+    (fold-right bit-or 0 (mapcar digit-bit digits)))
+
+(define all (apply digit-set digits))
+(define empty (digit-set))
+
+(define zero? (curry eq? 0))
+
+(define (remove-digit ds d)
+    (bit-and ds (- all (digit-bit d))))
+
+(define (has-digit ds d)
+    (not (zero? (bit-and (digit-bit d) ds))))
+
+; Inverse function of digit-set constructor
+(define (digit-set->digits ds)
+    (filter-loop d digits
+        (has-digit ds d)))
+
 ; Use digits for rows and the columns
 (define rows digits)
 (define cols digits)
