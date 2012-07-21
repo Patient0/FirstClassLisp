@@ -82,7 +82,6 @@
     <None Include="Examples\Sudoku.lisp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Examples\With2Macro.lisp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Examples\mattmightamb.lisp">

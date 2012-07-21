@@ -115,7 +115,7 @@
 ; function, is something that is only possible
 ; in a Lisp with First Class macros and continuations
 ; (i.e. First Class Lisp!)
-(define (make-amb error)
+(define (make-amb-macro error)
     (define amb-fail (curry error "exhausted"))
     (define (set-fail thunk)
         (set! amb-fail thunk))
@@ -130,7 +130,7 @@
             (x) x
             (x y)
                 (with* (old-fail (gensym)
-                       c (gensym))
+                        c (gensym))
                 `(,let ,old-fail (,get-fail)
                     (,force
                         (,let/cc ,c

@@ -1,5 +1,5 @@
 ﻿(setup
-    (define amb (make-amb throw))
+    (define amb (make-amb-macro throw))
     (define assert (make-assert amb)))
 (tests
 
@@ -41,9 +41,9 @@
     (multiple-amb
         "exhausted"
         (try
-            (with* (amb1 (make-amb throw)
+            (with* (amb1 (make-amb-macro throw)
                     assert1 (make-assert amb1)
-                    amb2 (make-amb throw)
+                    amb2 (make-amb-macro throw)
                     assert2 (make-assert amb2))
                 (define a (amb1 1 2))
                 (define b (amb2 4 8))

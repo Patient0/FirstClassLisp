@@ -65,7 +65,7 @@
     ; More than one remaining - leave unchanged
         (values . _) values))
 
-(define amb (make-amb throw))
+(define amb (make-amb-macro throw))
 
 ; apply does not work for macros - so this
 ; helper function bridges the gap
