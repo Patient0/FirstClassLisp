@@ -24,6 +24,20 @@
     (dotArgList 4 ((lambda (x . y) x) 4))
     (carList 4 (car (list 4 5)))
     (cdrList (5) (cdr (list 4 5)))
+
+    (set-car!
+        (1 . 2)
+        (begin
+            (define x '(2 . 2))
+            (set-car! x 1)
+            x))
+
+    (set-cdr!
+        (1 . 2)
+        (begin
+            (define x '(1 . 1))
+            (set-cdr! x 2)))
+
     (eqTrue? #t
             (eq? 4 4))
     (eqFalse? #f

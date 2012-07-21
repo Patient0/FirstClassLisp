@@ -49,7 +49,6 @@
     <Compile Include="Core\BinaryFunction.cs" />
     <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\CallCC.cs" />
-    <Compile Include="Core\Cons.cs" />
     <Compile Include="Core\Define.cs" />
     <Compile Include="Core\Env.cs" />
     <Compile Include="Core\EqualFunctions.cs" />
@@ -64,7 +63,7 @@
     <Compile Include="Datums\DatumVisitor.cs" />
     <Compile Include="Evaluation\AbstractFExpression.cs" />
     <Compile Include="Evaluation\AbstractStackFunction.cs" />
-    <Compile Include="Evaluation\AccessorFunction.cs" />
+    <Compile Include="Evaluation\DelegateFunctions.cs" />
     <Compile Include="Evaluation\DelegateTask.cs" />
     <Compile Include="Evaluation\EvaluationException.cs" />
     <Compile Include="Evaluation\FunctionExpression.cs" />
@@ -90,7 +89,6 @@
     <Compile Include="Evaluation\StackFunction.cs" />
     <Compile Include="Evaluation\StackFunctionAdapter.cs" />
     <Compile Include="Evaluation\Statistics.cs" />
-    <Compile Include="Evaluation\UnaryDelegateFunction.cs" />
     <Compile Include="Lexing\Token.cs" />
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\Scanner.cs" />

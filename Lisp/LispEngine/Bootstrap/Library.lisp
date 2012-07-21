@@ -81,6 +81,17 @@
 
 (define find (make-find eq?))
 
+; Find the first element which matches
+; a given predicate
+(define (search predicate list)
+    (define loop
+            (lambda ((head . tail))
+                        (if (predicate head)
+                            head
+                            (loop tail))
+                    _ ()))
+    (loop list))
+
 (define (after pivot list)
     (match (find pivot list)
            () ()

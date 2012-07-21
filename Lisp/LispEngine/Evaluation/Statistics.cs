@@ -52,8 +52,8 @@ namespace LispEngine.Evaluation
         // itself... I guess.
         public Environment AddTo(Environment env)
         {
-            env = env.Extend("!get-statistics", DatumHelpers.MakeFunction(Snapshot, "!get-statistics"));
-            env = env.Extend("!get-statistics-delta", DatumHelpers.MakeFunction<Statistics, Statistics>(Delta, "!get-statistics-delta"));
+            env = env.Extend("!get-statistics", DelegateFunctions.MakeFunction(Snapshot, "!get-statistics"));
+            env = env.Extend("!get-statistics-delta", DelegateFunctions.MakeFunction<Statistics, Statistics>(Delta, "!get-statistics-delta"));
             return env;
         }
     }

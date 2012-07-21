@@ -14,7 +14,9 @@ namespace LispEngine.Core
             env = env
                 .Extend("log", Log.Instance)
                 .Extend("lambda", Lambda.Instance)
-                .Extend("cons", Cons.Instance)
+                .Extend("cons", DelegateFunctions.MakeDatumFunction(DatumHelpers.cons, ",cons"))
+                .Extend("set-car!", DelegateFunctions.MakeDatumFunction(DatumHelpers.setCar, ",set-car!"))
+                .Extend("set-cdr!", DelegateFunctions.MakeDatumFunction(DatumHelpers.setCdr, ",set-cdr!"))
                 .Extend("apply", Apply.Instance)
                 .Extend("eq?", EqualFunctions.Eq)
                 .Extend("equal?", EqualFunctions.Equal)

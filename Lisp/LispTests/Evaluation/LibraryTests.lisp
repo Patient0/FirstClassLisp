@@ -215,6 +215,11 @@
         6
         (max '(4 6 2 1)))
 
+    (test-search
+        (1 2)
+        (search (lambda ((a b)) (eq? a 1))
+                '((2 3) (1 2) (4 5))))
+
     (test-filter-loop
         (2 4 6)
         (filter-loop x '(1 2 3 4 5 6 7 8) (in x '(2 4 6))))

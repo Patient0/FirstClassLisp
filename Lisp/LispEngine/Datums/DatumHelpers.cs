@@ -69,6 +69,20 @@ namespace LispEngine.Datums
             return new Pair(first, second);
         }
 
+        public static Pair setCar(Datum first, Datum val)
+        {
+            var p = castPair(first);
+            p.First = val;
+            return p;
+        }
+
+        public static Pair setCdr(Datum first, Datum val)
+        {
+            var p = castPair(first);
+            p.Second = val;
+            return p;
+        }
+
         public static Datum atomList<T>(params T[] e) 
         {
             return compound(e.AsEnumerable().Select(atom).ToArray<Datum>());
@@ -86,12 +100,17 @@ namespace LispEngine.Datums
             return new Atom(value);
         }
 
-        public static Datum car(Datum d)
+        private static Pair castPair(Datum d)
         {
             var pair = d as Pair;
             if (pair == null)
                 throw error("'{0}' is not a pair", d);
-            return pair.First;
+            return pair;
+        }
+
+        public static Datum car(Datum d)
+        {
+            return castPair(d).First;
         }
 
         public static IEnumerable<Datum> enumerate(Datum list)
@@ -134,17 +153,6 @@ namespace LispEngine.Datums
         public static IEnumerable<int> enumerateInts(Datum list)
         {
             return atoms(list).Select(v => (int) v);
-        }
-
-
-        public static Datum MakeFunction<TResult>(Func<TResult> func, string name)
-        {
-            return new AccessorFunction<TResult>(name, func).ToStack();
-        }
-
-        public static Datum MakeFunction<T, TResult>(Func<T, TResult> func, string name)
-        {
-            return new UnaryDelegateFunction<T, TResult>(name, func).ToStack();
         }
 
     }

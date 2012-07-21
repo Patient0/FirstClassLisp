@@ -7,13 +7,13 @@ namespace LispEngine.Datums
 {
     public sealed class Pair : Datum
     {
-        private readonly Datum first;
-        private readonly Datum second;
+        public Datum First { get; set; }
+        public Datum Second { get; set; }
 
         public Pair(Datum first, Datum second)
         {
-            this.first = first;
-            this.second = second;
+            this.First = first;
+            this.Second = second;
         }
 
         public Datum Cache { get; set; }
@@ -23,16 +23,6 @@ namespace LispEngine.Datums
          * a file
          */
         public object Location { get; set; }
-
-        public Datum Second
-        {
-            get { return second; }
-        }
-
-        public Datum First
-        {
-            get { return first; }
-        }
 
         private static Pair asPair(Datum d)
         {
@@ -88,11 +78,16 @@ namespace LispEngine.Datums
             return writer.GetString();
         }
 
+        public T accept<T>(DatumVisitor<T> visitor)
+        {
+            return visitor.visit(this);
+        }
+
         public bool Equals(Pair other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.first, first) && Equals(other.second, second);
+            return Equals(other.First, First) && Equals(other.Second, Second);
         }
 
         public override bool Equals(object obj)
@@ -107,16 +102,11 @@ namespace LispEngine.Datums
         {
             unchecked
             {
-                return (first.GetHashCode()*397) ^ second.GetHashCode();
+                return ((First != null ? First.GetHashCode() : 0)*397) ^ (Second != null ? Second.GetHashCode() : 0);
             }
         }
 
-        public T accept<T>(DatumVisitor<T> visitor)
-        {
-            return visitor.visit(this);
-        }
-
-        public static bool operator==(Pair left, Pair right)
+        public static bool operator ==(Pair left, Pair right)
         {
             return Equals(left, right);
         }
