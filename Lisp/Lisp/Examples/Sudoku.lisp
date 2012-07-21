@@ -14,9 +14,7 @@
         (loop r rows (cross (list r) cols))))
 
 (define (units-for-square s)
-    (filter (lambda (unit)
-                (in s unit))
-            unitlist))
+    (filter-loop unit (in s unit) unitlist))
 
 (define units
     (make-dict (loop s squares

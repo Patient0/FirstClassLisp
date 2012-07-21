@@ -214,4 +214,18 @@
     (test-max
         6
         (max '(4 6 2 1)))
+
+    (test-or-simple
+        5
+        (or 5 undefined))
+
+    (test-or-only-evaluates-once
+        2
+        (begin
+            (define x 1)
+            (or (set! x (+ x 1)) undefined)))
+
+    (test-or-multiple
+        3
+        (or #f #f 3 4))
 )

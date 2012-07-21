@@ -337,3 +337,15 @@
     (define (join x so-far)
         (if (less so-far x) x so-far))
     (fold-right join first rest))
+
+; Macro for looping subject to some condition
+(define-macro filter-loop (var predicate list)
+    `(,filter (,lambda (,var) ,predicate) ,list))
+
+(define or (macro
+        (lambda
+            () #f
+            (cond . others)
+                (let temp (gensym)
+                    `(,let ,temp ,cond
+                        (,if ,temp ,temp (,or ,@others)))))))
