@@ -14,7 +14,7 @@
         (loop r rows (cross (list r) cols))))
 
 (define (units-for-square s)
-    (filter-loop unit (in s unit) unitlist))
+    (filter-loop unit unitlist (in s unit)))
 
 (define units
     (make-dict (loop s squares
@@ -46,12 +46,8 @@
 
 (define zip (curry map cons))
 (define (grid->values grid)
-    (let values (filter
-        (lambda (c)
-            (if (in c digits) #t
-                (in c '(0 dot)) #t
-                #f))
-        (string->list grid))
+    (let values (filter-loop c (string->list grid)
+                    (or (in c digits) (in c '(0 dot))))
         (if (eq? (length values) 81)
             (zip squares values)
             (throw "Could not parse grid"))))
@@ -77,10 +73,8 @@
 ; anonymous lambda expressions!
 (define (check-units values s d)
     (define (add-unit u values)
-        (with* (d-is-in-square
-                (lambda (s) (in d (lookup values s)))
-               dplaces (filter d-is-in-square u))
-              (match dplaces
+        (let dplaces (filter-loop s u (in d (lookup values s)))
+             (match dplaces
                 () (fail)
                 ; d only appears in 's' in this unit
                 (s) (assign s d values)

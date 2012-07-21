@@ -339,7 +339,7 @@
     (fold-right join first rest))
 
 ; Macro for looping subject to some condition
-(define-macro filter-loop (var predicate list)
+(define-macro filter-loop (var list predicate)
     `(,filter (,lambda (,var) ,predicate) ,list))
 
 (define or (macro

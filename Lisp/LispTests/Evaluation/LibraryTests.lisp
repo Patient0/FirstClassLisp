@@ -215,6 +215,10 @@
         6
         (max '(4 6 2 1)))
 
+    (test-filter-loop
+        (2 4 6)
+        (filter-loop x '(1 2 3 4 5 6 7 8) (in x '(2 4 6))))
+
     (test-or-simple
         5
         (or 5 undefined))
