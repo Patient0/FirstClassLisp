@@ -342,6 +342,10 @@
 (define-macro filter-loop (var list predicate)
     `(,filter (,lambda (,var) ,predicate) ,list))
 
+; Macro for constructing a fold operation.
+(define-macro fold-loop (var values so-far initial . body)
+    `(,fold-right (,lambda (,var ,so-far) (,begin ,@body)) ,initial ,values))
+
 (define or (macro
         (lambda
             () #f

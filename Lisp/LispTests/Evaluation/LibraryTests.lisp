@@ -219,6 +219,11 @@
         (2 4 6)
         (filter-loop x '(1 2 3 4 5 6 7 8) (in x '(2 4 6))))
 
+    (test-fold-loop
+        (3 4 5 6)
+        (fold-loop x '(3 4 5 6) l nil
+            (cons x l)))
+
     (test-or-simple
         5
         (or 5 undefined))
