@@ -44,7 +44,10 @@ namespace LispEngine.Bootstrap
                 .Extend("*", makeOperation("*", (x, y) => x*y))
                 .Extend("/", makeOperation("/", (x, y) => x/y))
                 .Extend("<", makeOperation("<", (x, y) => x < y))
-                .Extend(">", makeOperation(">", (x, y) => x > y));
+                .Extend(">", makeOperation(">", (x, y) => x > y))
+                .Extend("bit-and", makeOperation("bit-and", (x , y) => x & y))
+                .Extend("bit-or", makeOperation("bit-or", (x, y) => x | y))
+                .Extend("bit-shift", makeOperation("bit-shift", (x, y) => x << y));
         }
     }
 }
