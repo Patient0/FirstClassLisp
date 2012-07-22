@@ -8,63 +8,107 @@
 ; would have been the thing to do if we'd
 ; followed Peter Norvig's Python program
 ; exactly.
+(define (sub1 x)
+        (- x 1))
+
 (define (digit-bit digit)
-        (bit-shift 1 (- digit 1)))
+        (bit-shift 1 (sub1 digit)))
+
+(define (add-digit ds d)
+    (bit-or ds (digit-bit d)))
+
+(define solved-digit?
+    (lambda (1) 1
+            (2) 2
+            (4) 3
+            (8) 4
+            (16) 5
+            (32) 6
+            (64) 7
+            (128) 8
+            (256) 9
+            (_) #f))
 
 (define (digit-set . digits)
-    (fold-right bit-or 0 (mapcar digit-bit digits)))
+    (fold-loop d digits
+               ds 0
+               (add-digit ds d)))
 
-(define all (apply digit-set digits))
-(define empty (digit-set))
+(define all-digits (apply digit-set digits))
+(define none (digit-set))
 
 (define zero? (curry eq? 0))
+(define none? zero?)
+(define not-zero? (compose2 not zero?))
 
 (define (remove-digit ds d)
-    (bit-and ds (- all (digit-bit d))))
+    (bit-and ds (- all-digits (digit-bit d))))
 
-(define (has-digit ds d)
-    (not (zero? (bit-and (digit-bit d) ds))))
+(define (has-digit? ds d)
+    (not-zero? (bit-and (digit-bit d) ds)))
 
 ; Inverse function of digit-set constructor
-(define (digit-set->digits ds)
+(define (show-digits ds)
     (filter-loop d digits
-        (has-digit ds d)))
+        (has-digit? ds d)))
+
+(define num-squares 81)
+
+(define (index (row . column))
+        (+ (sub1 column) (* (sub1 row) 9)))
+
+; Grid representation. Use a vector
+; and row/column arithmetic.
+(define empty-grid
+    (make-vector num-squares all-digits))
+
+(define get-square vector-ref)
+
+(define set-square! vector-set!)
+
+(define (get-digits grid s)
+        (show-digits (get-square grid s)))
+
+(define copy-grid vector-copy)
+(define (new-grid)
+    (copy-grid empty-grid))
 
 ; Use digits for rows and the columns
 (define rows digits)
 (define cols digits)
 (define cross cartesian)
-(define squares (cartesian rows cols))
+(define squares (mapcar index (cross rows cols)))
+(define divisions '((1 2 3) (4 5 6) (7 8 9)))
 (define unitlist
-    (append
-        (cartesian-map cross
-            '((1 2 3) (4 5 6) (7 8 9))
-            '((1 2 3) (4 5 6) (7 8 9)))
-        (loop c cols (cross rows (list c)))
-        (loop r rows (cross (list r) cols))))
-
-(define (values->list values)
-    (loop r rows
-        (loop c cols
-            (lookup values (cons r c)))))
+    (loop cons-unit 
+        (append
+            (cartesian-map cross divisions divisions)
+            (loop c cols (cross rows (list c)))
+            (loop r rows (cross (list r) cols)))
+        (mapcar index cons-unit)))
 
 (define (units-for-square s)
     (filter-loop unit unitlist (in s unit)))
 
-(define units
-    (make-dict (loop s squares
-                   (cons s (units-for-square s)))))
-
 (define (peers-for-square s)
-    (remove-one s (unique (flatten (lookup units s)))))
+    (remove s (flatten (get-square units s))))
 
-(define peers
-    (make-dict (loop s squares
-                (cons s (peers-for-square s)))))
-                    
+(define (make-grid square-function)
+    (let g (make-vector num-squares)
+        (loop s squares
+            (set-square! g s (square-function s)))
+     g))
+
+(define units (make-grid units-for-square))
+(define peers (make-grid peers-for-square))
+
+(define (grid->lists grid)
+    (loop r digits
+        (loop c digits
+            (show-digits (get-square grid (index (cons r c)))))))
+
 (define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
 (define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
-(define hard  ".....6....59.....82....8....45........3........6..3.54...325..6..................")
 
 (define (string->list s)
     (define (convert char)
@@ -83,112 +127,100 @@
 (define (grid->values grid)
     (let values (filter-loop c (string->list grid)
                     (or (in c digits) (in c '(0 dot))))
-        (if (eq? (length values) 81)
+        (if (eq? (length values) num-squares)
             (zip squares values)
             (throw "Could not parse grid"))))
 
-(define eliminate-peers
-    (lambda
-        (values s (d))
-            (fold-loop peer (lookup peers s)
-                       v values
-                        (eliminate v peer d))
-    ; More than one remaining - leave unchanged
-        (values . _) values))
-
-(define amb (make-amb-function (curry throw "No solutions found")))
-
-(define (fail)
-    (amb))
+(define amb (make-amb-function (curry throw "No solution")))
+(define fail amb)
 
 ; After removing d from s and its peers,
 ; does d now only appear in one place for the units
 ; of s? If so, "assign" to that place.
-(define (check-units values s d)
-    (fold-loop u (lookup units s)
-               v values
-        (let dplaces (filter-loop s u (in d (lookup v s)))
+(define (check-units! grid s d)
+    (fold-loop u (get-square units s)
+               g grid
+        (let dplaces (filter-loop s u (has-digit? (get-square g s) d))
              (match dplaces
-                () (fail)
+                () (fail) ; d cannot appear anywhere in this unit => contradiction
                 ; d only appears in 's' in this unit
-                ; So assign d so square s in values
-                (s) (assign s d v)
-                ; do nothing.
-                _   v))))
+                ; So assign d to square s in values
+                (s) (assign! g s d )
+                ; No inference possible: do nothing.
+                _   g))))
 
-(define (remove-digit d digits)
-    (match (remove-one d digits)
-            () (fail)
-            possible possible))
+(define (eliminate-peers! grid s remaining)
+    (match (solved-digit? remaining)
+        #f grid
+        d (fold-loop peer (get-square peers s)
+                     g grid
+                     (eliminate! g peer d))))
 
-; Eliminate d from the list of possible values
-; for square s
-(define (eliminate values s d)
-    (define current (lookup values s))
-    (if (in d current)
-            (with* (possible (remove-digit d current)
-                   values (dict-update values s possible)
-                   values (eliminate-peers values s possible)
-                   values (check-units values s d))
-                  values)
-        values))
+(define (apply-rules grid s d remaining)
+    (if (none? remaining)
+        (fail)
+        (begin
+            (set-square! grid s remaining)
+            (eliminate-peers! grid s remaining)
+            (check-units! grid s d))))
+
+(define (eliminate! grid s d)
+    (define current (get-square grid s))
+    ; This test required to terminate recursion from
+    ; eliminate-peers!
+    (if (has-digit? current d)
+        (apply-rules grid s d (remove-digit current d))
+        grid))
 
 ; Return the 'values' that results from
 ; assigning d to square s
-(define (assign s d values)
-    (fold-loop eliminated (remove-one d (lookup values s))
-               v values
-        (eliminate v s eliminated)))
+(define (assign! grid s d)
+    (define others (remove-digit (get-square grid s) d))
+    (fold-loop d (show-digits others)
+               g grid
+               (eliminate! g s d)))
 
-(define all-but-one (remove 1 digits))
+(define (digit? d)
+        (in d digits))
 
-(define (square-to-try values)
+(define (parse-grid grid-string)
+    (fold-loop (s . d) (grid->values grid-string)
+               g (new-grid)
+            (if (digit? d)
+                (assign! g s d)
+                g)))
+
+(define (solved? grid)
     (let/cc return
-        (loop attempt all-but-one
-            (loop entry values
-                (if (eq? (length (cdr entry)) attempt)
-                    (return entry)
-                    nil)))))
-           
-; True if each square in values has one value
-(define solved?
-    ; Match against the inputs.
-    ; If there's a square with 1 value, then it's
-    ; solved so long as the rest also satisfy this
-    (lambda (((s . (x)) . rest))
-                (solved? rest)
-    ; We've found a square with more than one value.
-    ; It's not solved.
-            (((s . _) . rest))
-                #f
-    ; No more squares to check. Must be solved
-            (())
-                #t))
+        (index-loop i num-squares 
+            (if (solved-digit? (vector-ref grid i))
+                #t
+                (return #f)))
+        #t))
 
-(define (solve values)
-    (if (solved? values)
-        values
-        (with* ((s . possible) (square-to-try values)
-                ; We have several possible values for square 's'.
-                ; Tell 'amb' to magically pick the "right one" for
-                ; us and assign it to s.
-                d (amb possible))
-                (write-line "Assigning {0} to square {1}" d s)
-                (solve (assign s d values)))))
+(define two-through-9 (cdr digits))
 
-(define empty-grid (make-dict (loop s squares
-                                (cons s digits))))
+(define (square-to-try grid)
+    (let/cc return
+        (loop num-missing two-through-9
+            (loop s squares
+                (let possible (show-digits (get-square grid s))
+                     (if (eq? (length possible) num-missing)
+                         (return (cons s possible))
+                         #f))))
+        return "None missing"))
 
-(define (parse-grid grid)
-    (fold-loop (s . d) (grid->values grid)
-               values empty-grid
-            (if (in d digits)
-                (assign s d values)
-                values)))
+(define (solve grid)
+    (if (solved? grid)
+        grid
+        (with* ((s . digits) (square-to-try grid)
+                d (amb digits))
+               (write-line "Assiging {0} to {1}" d s)
+               (solve (assign! (copy-grid grid) s d)))))
 
-(define (display-grid values)
-    (loop r (values->list values)
-        (write-line "{0}" r))
+(define (display-grid grid)
+    (loop row (grid->lists grid)
+        (write-line "{0}" row))
     nil)
 
 (write-line "Solving grid1...")
@@ -196,7 +228,7 @@
 (display-grid parsed1)
 (write-line "Solving grid2...")
 (define parsed2 (parse-grid grid2))
-(write-line "With wrote deduction we only get to:")
+(write-line "With rote deduction we only get to:")
 (display-grid parsed2)
 (write-line "Solving using non-deterministic search...")
 (define solution2 (solve parsed2))

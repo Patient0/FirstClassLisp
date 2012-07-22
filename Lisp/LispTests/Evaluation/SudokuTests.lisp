@@ -1,5 +1,4 @@
 ﻿(setup
-    ; TODO Need to make this ref unnecessary
     (ref mscorlib)
     (define digits '(1 2 3 4 5 6 7 8 9))
 
@@ -57,21 +56,17 @@
 
     (define num-squares 81)
 
+    (define (index (row . column))
+            (+ (sub1 column) (* (sub1 row) 9)))
+
     ; Grid representation. Use a vector
     ; and row/column arithmetic.
     (define empty-grid
         (make-vector num-squares all-digits))
 
-    (define (index (row . column))
-            (+ (sub1 column) (* (sub1 row) 9)))
+    (define get-square vector-ref)
 
-    (define square cons)
-
-    (define (get-square grid s)
-            (vector-ref grid (index s)))
-
-    (define (set-square! grid s ds)
-            (vector-set! grid (index s) ds))
+    (define set-square! vector-set!)
 
     (define (get-digits grid s)
             (show-digits (get-square grid s)))
@@ -84,14 +79,15 @@
     (define rows digits)
     (define cols digits)
     (define cross cartesian)
-    (define squares (cartesian rows cols))
+    (define squares (mapcar index (cross rows cols)))
+    (define divisions '((1 2 3) (4 5 6) (7 8 9)))
     (define unitlist
-        (append
-            (cartesian-map cross
-                '((1 2 3) (4 5 6) (7 8 9))
-                '((1 2 3) (4 5 6) (7 8 9)))
-            (loop c cols (cross rows (list c)))
-            (loop r rows (cross (list r) cols))))
+        (loop cons-unit 
+            (append
+                (cartesian-map cross divisions divisions)
+                (loop c cols (cross rows (list c)))
+                (loop r rows (cross (list r) cols)))
+            (mapcar index cons-unit)))
 
     (define (units-for-square s)
         (filter-loop unit unitlist (in s unit)))
@@ -111,7 +107,7 @@
     (define (grid->lists grid)
         (loop r digits
             (loop c digits
-                (show-digits (get-square grid (cons r c))))))
+                (show-digits (get-square grid (index (cons r c)))))))
 
     (define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
     (define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
@@ -216,14 +212,18 @@
                              #f))))
             return "None missing"))
 
-    (define write-line System.Console.WriteLine)
     (define (solve grid)
         (if (solved? grid)
             grid
             (with* ((s . digits) (square-to-try grid)
                     d (amb digits))
-                   (write-line "Assiging {0} to {1}" d s)
+                   (System.Console.WriteLine "Assiging {0} to {1}" d s)
                    (solve (assign! (copy-grid grid) s d)))))
+
+    (define (display-grid grid)
+        (loop row (grid->lists grid)
+            (write-line "{0}" row))
+        nil)
 )
 (tests
     (show-digits
@@ -250,8 +250,8 @@
         23
         (begin
             (define g (new-grid))
-            (set-square! g '(1 . 2) 23)
-            (get-square g '(1 . 2))))
+            (set-square! g 45 23)
+            (get-square g 45)))
 
     (solved-true?
         #t
