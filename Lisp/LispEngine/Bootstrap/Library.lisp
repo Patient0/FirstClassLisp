@@ -346,6 +346,9 @@
                         (loop next (cons (fn next) so-far)))))
     (loop count '()))
 
+(define-macro index-loop (var count . body)
+    `(,repeat (,lambda (,var) (,begin ,@body)) ,count))
+
 (define (max (first . rest) . less)
     (let less (if (nil? less) < less)
         (fold-loop x rest

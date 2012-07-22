@@ -20,6 +20,18 @@
     (define (add-digit ds d)
         (bit-or ds (digit-bit d)))
 
+    (define solved-digit?
+        (lambda (1) 1
+                (2) 2
+                (4) 3
+                (8) 4
+                (16) 5
+                (32) 6
+                (64) 7
+                (128) 8
+                (256) 9
+                (_) #f))
+
     (define (digit-set . digits)
         (fold-loop d digits
                    ds 0
@@ -29,23 +41,26 @@
     (define none (digit-set))
 
     (define zero? (curry eq? 0))
+    (define none? zero?)
     (define not-zero? (compose2 not zero?))
 
     (define (remove-digit ds d)
         (bit-and ds (- all-digits (digit-bit d))))
 
-    (define (has-digit ds d)
+    (define (has-digit? ds d)
         (not-zero? (bit-and (digit-bit d) ds)))
 
     ; Inverse function of digit-set constructor
     (define (show-digits ds)
         (filter-loop d digits
-            (has-digit ds d)))
+            (has-digit? ds d)))
+
+    (define num-squares 81)
 
     ; Grid representation. Use a vector
     ; and row/column arithmetic.
     (define empty-grid
-        (make-vector 81 all-digits))
+        (make-vector num-squares all-digits))
 
     (define (index (row . column))
             (+ (sub1 column) (* (sub1 row) 9)))
@@ -85,7 +100,7 @@
         (remove s (flatten (get-square units s))))
 
     (define (make-grid square-function)
-        (let g (make-vector 81)
+        (let g (make-vector num-squares)
             (loop s squares
                 (set-square! g s (square-function s)))
          g))
@@ -99,6 +114,7 @@
                 (show-digits (get-square grid (cons r c))))))
 
     (define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
+    (define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
 
     (define (string->list s)
         (define (convert char)
@@ -117,9 +133,27 @@
     (define (grid->values grid)
         (let values (filter-loop c (string->list grid)
                         (or (in c digits) (in c '(0 dot))))
-            (if (eq? (length values) 81)
+            (if (eq? (length values) num-squares)
                 (zip squares values)
                 (throw "Could not parse grid"))))
+
+    (define amb (make-amb-function (curry throw "No solution")))
+    (define fail amb)
+
+    ; After removing d from s and its peers,
+    ; does d now only appear in one place for the units
+    ; of s? If so, "assign" to that place.
+    (define (check-units grid s d)
+        (fold-loop u (get-square units s)
+                   g grid
+            (let dplaces (filter-loop s u (has-digit? (get-square g s) d))
+                 (match dplaces
+                    () (fail) ; d cannot appear anywhere in this unit => contradiction
+                    ; d only appears in 's' in this unit
+                    ; So assign d to square s in values
+                    (s) (assign! g s d )
+                    ; No inference possible: do nothing.
+                    _   g))))
 
     (define eliminate-peers!
         (lambda
@@ -130,15 +164,19 @@
         ; More than one remaining - leave unchanged
             (grid . _) grid))
 
+    (define (apply-rules grid s left)
+        (if (none? left)
+            (fail)
+            (begin
+                (set-square! grid s left)
+                (eliminate-peers! grid s (show-digits left)))))
+
     (define (eliminate! grid s d)
         (define current (get-square grid s))
         ; This test required to terminate recursion from
         ; eliminate-peers!
-        (if (has-digit current d)
-            (begin
-                (define left (remove-digit current d))
-                (set-square! grid s left)
-                (eliminate-peers! grid s (show-digits left)))
+        (if (has-digit? current d)
+            (apply-rules grid s (remove-digit current d))
             grid))
 
     ; Return the 'values' that results from
@@ -152,12 +190,41 @@
     (define (digit? d)
             (in d digits))
 
-    (define (parse-grid grid)
-        (fold-loop (s . d) (grid->values grid)
+    (define (parse-grid grid-string)
+        (fold-loop (s . d) (grid->values grid-string)
                    g (new-grid)
                 (if (digit? d)
                     (assign! g s d)
                     g)))
+
+    (define (solved? grid)
+        (let/cc return
+            (index-loop i num-squares 
+                (if (solved-digit? (vector-ref grid i))
+                    #t
+                    (return #f)))
+            #t))
+
+    (define two-through-9 (cdr digits))
+
+    (define (square-to-try grid)
+        (let/cc return
+            (loop num-missing two-through-9
+                (loop s squares
+                    (let possible (show-digits (get-square grid s))
+                         (if (eq? (length possible) num-missing)
+                             (return (cons s possible))
+                             #f))))
+            return "None missing"))
+
+    (define write-line System.Console.WriteLine)
+    (define (solve grid)
+        (if (solved? grid)
+            grid
+            (with* ((s . digits) (square-to-try grid)
+                    d (amb digits))
+                   (write-line "Assiging {0} to {1}" d s)
+                   (solve (assign! (copy-grid grid) s d)))))
 )
 (tests
     (show-digits
@@ -176,12 +243,24 @@
         (1 3 4)
         (show-digits (add-digit (digit-set 1 4) 3)))
 
+    (solved-digit?
+        (#f 6)
+        (mapcar solved-digit? (list (digit-set 2 4) (digit-set 6))))
+
     (grid-get-set
         23
         (begin
             (define g (new-grid))
             (set-square! g '(1 . 2) 23)
             (get-square g '(1 . 2))))
+
+    (solved-true?
+        #t
+        (solved? (parse-grid grid1)))
+
+    (solved-false?
+        #f
+        (solved? (parse-grid grid2)))
 
     ; We can solving using only technique 1 - 
     ; eliminate peers.
@@ -196,5 +275,18 @@
          ((8) (1) (4) (2) (5) (3) (7) (6) (9))
          ((6) (9) (5) (4) (1) (7) (3) (8) (2)))
         (grid->lists (parse-grid grid1)))
+
+    ; Grid2 requires recursive search
+    (solve-grid2
+        (((4) (1) (7) (3) (6) (9) (8) (2) (5))
+         ((6) (3) (2) (1) (5) (8) (9) (4) (7))
+         ((9) (5) (8) (7) (2) (4) (3) (1) (6))
+         ((8) (2) (5) (4) (3) (7) (1) (6) (9))
+         ((7) (9) (1) (5) (8) (6) (4) (3) (2))
+         ((3) (4) (6) (9) (1) (2) (7) (5) (8))
+         ((2) (8) (9) (6) (4) (3) (5) (7) (1))
+         ((5) (7) (3) (2) (9) (1) (6) (8) (4))
+         ((1) (6) (4) (8) (7) (5) (2) (9) (3)))
+        (grid->lists (solve (parse-grid grid2))))
 
 )
