@@ -155,21 +155,19 @@
                     ; No inference possible: do nothing.
                     _   g))))
 
-    (define eliminate-peers!
-        (lambda
-            (grid s (d))
-                (fold-loop peer (get-square peers s)
-                           g grid
-                            (eliminate! g peer d))
-        ; More than one remaining - leave unchanged
-            (grid . _) grid))
+    (define (eliminate-peers! grid s remaining)
+        (match (solved-digit? remaining)
+            #f grid
+            d (fold-loop peer (get-square peers s)
+                         g grid
+                         (eliminate! g peer d))))
 
-    (define (apply-rules grid s d left)
-        (if (none? left)
+    (define (apply-rules grid s d remaining)
+        (if (none? remaining)
             (fail)
             (begin
-                (set-square! grid s left)
-                (eliminate-peers! grid s (show-digits left))
+                (set-square! grid s remaining)
+                (eliminate-peers! grid s remaining)
                 (check-units! grid s d))))
 
     (define (eliminate! grid s d)
