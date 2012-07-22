@@ -142,14 +142,14 @@
     (define (check-units! grid s d)
         (fold-loop u (get-square units s)
                    g grid
-            (let dplaces (filter-loop s u (has-digit? (get-square g s) d))
-                 (match dplaces
-                    () (fail) ; d cannot appear anywhere in this unit => contradiction
-                    ; d only appears in 's' in this unit
-                    ; So assign d to square s in values
-                    (s) (assign! g s d )
-                    ; No inference possible: do nothing.
-                    _   g))))
+            ; Find squares in this unit which have this digit
+            (match (filter-loop s u (has-digit? (get-square g s) d))
+                () (fail) ; d cannot appear anywhere in some unit => contradiction
+                ; d only appears in one square =>
+                ; assign d to square s in values
+                (s) (assign! g s d )
+                ; No inference possible: do nothing.
+                _   g)))
 
     (define (eliminate-peers! grid s remaining)
         (match (solved-digit? remaining)
@@ -166,10 +166,11 @@
                 (eliminate-peers! grid s remaining)
                 (check-units! grid s d))))
 
+    ; Eliminate digit d from square s
     (define (eliminate! grid s d)
         (define current (get-square grid s))
-        ; This test required to terminate recursion from
-        ; eliminate-peers!
+        ; This test required to terminate the
+        ; recursion 
         (if (has-digit? current d)
             (apply-rules grid s d (remove-digit current d))
             grid))
@@ -224,6 +225,9 @@
         (loop row (grid->lists grid)
             (write-line "{0}" row))
         nil)
+
+    (define parsed1 (parse-grid grid1))
+    (define parsed2 (parse-grid grid2))
 )
 (tests
     (show-digits
@@ -255,13 +259,13 @@
 
     (solved-true?
         #t
-        (solved? (parse-grid grid1)))
+        (solved? parsed1))
 
     (solved-false?
         #f
-        (solved? (parse-grid grid2)))
+        (solved? parsed2))
 
-    ; We can solving using only technique 1 - 
+    ; We can solve grid1 using only technique 1:
     ; eliminate peers.
     (parse-grid
         (((4) (8) (3) (9) (2) (1) (6) (5) (7))
@@ -273,9 +277,9 @@
          ((3) (7) (2) (6) (8) (9) (5) (1) (4))
          ((8) (1) (4) (2) (5) (3) (7) (6) (9))
          ((6) (9) (5) (4) (1) (7) (3) (8) (2)))
-        (grid->lists (parse-grid grid1)))
+        (grid->lists parsed1))
 
-    ; Grid2 requires recursive search
+    ; Grid2 requires search
     (solve-grid2
         (((4) (1) (7) (3) (6) (9) (8) (2) (5))
          ((6) (3) (2) (1) (5) (8) (9) (4) (7))
@@ -286,6 +290,6 @@
          ((2) (8) (9) (6) (4) (3) (5) (7) (1))
          ((5) (7) (3) (2) (9) (1) (6) (8) (4))
          ((1) (6) (4) (8) (7) (5) (2) (9) (3)))
-        (grid->lists (solve (parse-grid grid2))))
+        (grid->lists (solve parsed2)))
 
 )
