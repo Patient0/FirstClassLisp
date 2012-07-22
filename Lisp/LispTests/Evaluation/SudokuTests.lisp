@@ -81,6 +81,9 @@
     (define (units-for-square s)
         (filter-loop unit unitlist (in s unit)))
 
+    (define (peers-for-square s)
+        (remove s (flatten (get-square units s))))
+
     (define (make-grid square-function)
         (let g (make-vector 81)
             (loop s squares
@@ -88,6 +91,7 @@
          g))
 
     (define units (make-grid units-for-square))
+    (define peers (make-grid peers-for-square))
 
     (define (grid->lists grid)
         (loop r digits
@@ -117,13 +121,33 @@
                 (zip squares values)
                 (throw "Could not parse grid"))))
 
+    (define eliminate-peers!
+        (lambda
+            (grid s (d))
+                (fold-loop peer (get-square peers s)
+                           g grid
+                            (eliminate! g peer d))
+        ; More than one remaining - leave unchanged
+            (grid . _) grid))
+
+    (define (eliminate! grid s d)
+        (define current (get-square grid s))
+        ; This test required to terminate recursion from
+        ; eliminate-peers!
+        (if (has-digit current d)
+            (begin
+                (define left (remove-digit current d))
+                (set-square! grid s left)
+                (eliminate-peers! grid s (show-digits left)))
+            grid))
+
     ; Return the 'values' that results from
     ; assigning d to square s
     (define (assign! grid s d)
-        (begin
-            (let ds (get-square grid s)
-                (set-square! grid s (digit-bit d)))
-            grid))
+        (define others (remove-digit (get-square grid s) d))
+        (fold-loop d (show-digits others)
+                   g grid
+                   (eliminate! g s d)))
 
     (define (digit? d)
             (in d digits))
@@ -159,8 +183,18 @@
             (set-square! g '(1 . 2) 23)
             (get-square g '(1 . 2))))
 
-    '(parse-grid
-        ()
+    ; We can solving using only technique 1 - 
+    ; eliminate peers.
+    (parse-grid
+        (((4) (8) (3) (9) (2) (1) (6) (5) (7))
+         ((9) (6) (7) (3) (4) (5) (8) (2) (1))
+         ((2) (5) (1) (8) (7) (6) (4) (9) (3))
+         ((5) (4) (8) (1) (3) (2) (9) (7) (6))
+         ((7) (2) (9) (5) (6) (4) (1) (3) (8))
+         ((1) (3) (6) (7) (9) (8) (2) (4) (5))
+         ((3) (7) (2) (6) (8) (9) (5) (1) (4))
+         ((8) (1) (4) (2) (5) (3) (7) (6) (9))
+         ((6) (9) (5) (4) (1) (7) (3) (8) (2)))
         (grid->lists (parse-grid grid1)))
 
 )
