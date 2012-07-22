@@ -143,7 +143,7 @@
     ; After removing d from s and its peers,
     ; does d now only appear in one place for the units
     ; of s? If so, "assign" to that place.
-    (define (check-units grid s d)
+    (define (check-units! grid s d)
         (fold-loop u (get-square units s)
                    g grid
             (let dplaces (filter-loop s u (has-digit? (get-square g s) d))
@@ -164,19 +164,20 @@
         ; More than one remaining - leave unchanged
             (grid . _) grid))
 
-    (define (apply-rules grid s left)
+    (define (apply-rules grid s d left)
         (if (none? left)
             (fail)
             (begin
                 (set-square! grid s left)
-                (eliminate-peers! grid s (show-digits left)))))
+                (eliminate-peers! grid s (show-digits left))
+                (check-units! grid s d))))
 
     (define (eliminate! grid s d)
         (define current (get-square grid s))
         ; This test required to terminate recursion from
         ; eliminate-peers!
         (if (has-digit? current d)
-            (apply-rules grid s (remove-digit current d))
+            (apply-rules grid s d (remove-digit current d))
             grid))
 
     ; Return the 'values' that results from
