@@ -140,14 +140,14 @@
 (define (check-units! grid s d)
     (fold-loop u (get-square units s)
                g grid
-        (let dplaces (filter-loop s u (has-digit? (get-square g s) d))
-             (match dplaces
-                () (fail) ; d cannot appear anywhere in this unit => contradiction
-                ; d only appears in 's' in this unit
-                ; So assign d to square s in values
-                (s) (assign! g s d )
-                ; No inference possible: do nothing.
-                _   g))))
+        ; Find squares in this unit which have this digit
+        (match (filter-loop s u (has-digit? (get-square g s) d))
+            () (fail) ; d cannot appear anywhere in some unit => contradiction
+            ; d only appears in one square =>
+            ; assign d to square s in values
+            (s) (assign! g s d )
+            ; No inference possible: do nothing.
+            _   g)))
 
 (define (eliminate-peers! grid s remaining)
     (match (solved-digit? remaining)
@@ -164,10 +164,11 @@
             (eliminate-peers! grid s remaining)
             (check-units! grid s d))))
 
+; Eliminate digit d from square s
 (define (eliminate! grid s d)
     (define current (get-square grid s))
-    ; This test required to terminate recursion from
-    ; eliminate-peers!
+    ; This test required to terminate the
+    ; recursion 
     (if (has-digit? current d)
         (apply-rules grid s d (remove-digit current d))
         grid))
@@ -215,7 +216,7 @@
         grid
         (with* ((s . digits) (square-to-try grid)
                 d (amb digits))
-               (write-line "Assiging {0} to {1}" d s)
+               (System.Console.WriteLine "Assiging {0} to {1}" d s)
                (solve (assign! (copy-grid grid) s d)))))
 
 (define (display-grid grid)

@@ -1,4 +1,33 @@
 ﻿(ref mscorlib)
+
+(define (read-file filename)
+    (let/cc return 
+        (let file-stream (System.IO.File.OpenRead filename)
+            (try
+                (with* (text-reader (new System.IO.StreamReader file-stream)
+                        input (open-input-stream text-reader))
+                    (define (loop so-far)
+                        (let next (read input)
+                            (if (eof-object? next)
+                                (begin
+                                    (.Dispose file-stream)
+                                    (return (reverse so-far)))
+                            (loop (cons next so-far)))))
+                    (loop nil))
+             catch (msg c)
+                ; Not quite ideal. Ideally we'd "throw" the
+                ; original continuation along with this.
+                (.Dispose file-stream)
+                throw msg))))
+
+(define pwd System.IO.Directory.GetCurrentDirectory)
+(define global-env (env))
+
+(define (run filename)
+    (define last-result nil)
+    (loop expr (read-file filename)
+        (set! last-result (eval expr global-env)))
+    last-result)
 (define console (open-input-stream (System.Console.get_In)))
 (define display (curry System.Console.WriteLine "-> {0}"))
 (define writeerr (curry .WriteLine (System.Console.get_Error)))
@@ -74,34 +103,5 @@
                 (writeerr "(debug) to enter debug repl"))
             (loop))
         (loop)))
-
-(define (read-file filename)
-    (let/cc return 
-        (let file-stream (System.IO.File.OpenRead filename)
-            (try
-                (with* (text-reader (new System.IO.StreamReader file-stream)
-                        input (open-input-stream text-reader))
-                    (define (loop so-far)
-                        (let next (read input)
-                            (if (eof-object? next)
-                                (begin
-                                    (.Dispose file-stream)
-                                    (return (reverse so-far)))
-                            (loop (cons next so-far)))))
-                    (loop nil))
-             catch (msg c)
-                ; Not quite ideal. Ideally we'd "throw" the
-                ; original continuation along with this.
-                (.Dispose file-stream)
-                throw msg))))
-
-(define pwd System.IO.Directory.GetCurrentDirectory)
-(define global-env (env))
-
-(define (run filename)
-    (define last-result nil)
-    (loop expr (read-file filename)
-        (set! last-result (eval expr global-env)))
-    last-result)
 
 (repl "FCLisp> " global-env)
