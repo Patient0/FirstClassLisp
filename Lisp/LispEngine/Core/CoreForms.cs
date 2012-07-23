@@ -24,7 +24,7 @@ namespace LispEngine.Core
                 .Extend("define", Define.Instance)
                 .Extend("set!", Set.Instance)
                 .Extend("begin", Begin.Instance)
-                .Extend("call/cc", CallCC.Instance)
+                .Extend("call-with-current-continuation", CallCC.Instance)
                 .Extend("eval", Eval.Instance)
                 .Extend("env", Env.Instance);
             env = DebugFunctions.AddTo(env);

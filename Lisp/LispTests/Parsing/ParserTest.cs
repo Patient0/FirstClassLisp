@@ -184,13 +184,41 @@ namespace LispTests.Parsing
             // we are in fact invoking a macro (or function), called "dot"
             // instead. We'll pass in 'nil' as the first argument to
             // indicate that the "dot" was the very beginning of the symbol.
-            test(".house", compound(symbol("dot"), nil, symbol("house")));
+            test(".house", compound(dot, nil, symbol("house")));
         }
 
         [Test]
-        public void testMultipleDotsSymbol()
+        public void testDotsInsideSymbol()
         {
-            //test("System.Console", compound(symbol("dot"), symbol("System"), symbol("Console")));
+            test("System.Console", compound(dot, symbol("System"), symbol("Console")));
+        }
+
+        [Test]
+        public void testSlashAtStartOfSymbol()
+        {
+            test("/YYYY", compound(slash, nil, symbol("YYYY")));
+        }
+
+        [Test]
+        public void testSlashInsideSymbol()
+        {
+            test("XXXX/YYYY", compound(slash, symbol("XXXX"), symbol("YYYY")));
+        }
+
+        [Test]
+        public void testSingleSlashContainsAtLeastOneSymbol()
+        {
+            // Only decompose slash if there is at least one "non-empty" string.
+            // This is so that normal division can still work.
+            test("/", symbol("/"));
+            test("//", symbol("//"));
+            test("///", symbol("///"));
+        }
+
+        [Test]
+        public void testFullStaticMethod()
+        {
+            test("System.Console/WriteLine", compound(slash, compound(dot, symbol("System"), symbol("Console")), symbol("WriteLine")));
         }
 
         [Test]

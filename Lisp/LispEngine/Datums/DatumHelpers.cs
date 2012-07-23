@@ -14,6 +14,8 @@ namespace LispEngine.Datums
         public static readonly Datum quasiquote = symbol("quasiquote");
         public static readonly Datum unquote = symbol("unquote");
         public static readonly Datum unquoteSplicing = symbol("unquote-splicing");
+        public static readonly Datum dot = symbol("dot");
+        public static readonly Datum slash = symbol("slash");
 
         public const string quoteAbbreviation = "'";
         public const string quasiquoteAbbreviation = "`";

@@ -114,7 +114,7 @@
     (with* (body (before 'catch clauses)
            (ex-symbols . error-handler) (after 'catch clauses)
            c-symbol (gensym))
-        `(,let/cc ,c-symbol
+        `(,let-cc ,c-symbol
             (,execute-with-error-translator
                 (,lambda ,ex-symbols (,c-symbol (,begin ,@error-handler)))
                 (,make-thunk ,@body)))))
@@ -150,7 +150,7 @@
                         c (gensym))
                 `(,let ,old-fail (,get-fail)
                     (,force
-                        (,let/cc ,c
+                        (,let-cc ,c
                             (,set-fail
                                 (,make-thunk
                                     (,set-fail ,old-fail)
@@ -168,7 +168,7 @@
 ; of possibilities
 (define (make-amb-function exhausted)
     (define (current-continuation) 
-      (call/cc
+      (call-cc
        (lambda (cc)
          (cc cc))))
     (define fail-stack ())

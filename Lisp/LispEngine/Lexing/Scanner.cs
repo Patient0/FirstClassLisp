@@ -102,7 +102,7 @@ namespace LispEngine.Lexing
                 return null;
             s.readChar();
             matchSymbol(s);
-            return s.sb.Length > 1 ? TokenType.DotSymbol : TokenType.Dot;
+            return s.sb.Length > 1 ? TokenType.Symbol : TokenType.Dot;
         }
 
         // TODO:

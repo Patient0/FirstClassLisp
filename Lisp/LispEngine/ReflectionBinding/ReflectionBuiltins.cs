@@ -106,62 +106,42 @@ namespace LispEngine.ReflectionBinding
             }
         }
 
-        class Ref : AbstractFExpression
-        {
-            public override Continuation Evaluate(Continuation c, Environment env, Datum args)
-            {
-                var datumArgs = args.ToArray();
-                if (datumArgs.Length != 1)
-                    throw c.error("Ref expect 1s arguments. {0} passed", datumArgs.Length);
-
-                var assemblyName = datumArgs[0].CastIdentifier();
-                var assembly = Assembly.Load(assemblyName);
-
-                // Keep a hash set to avoid adding things twice.
-                // Overload resolution is (hopefully) handled by
-                // InvokeMethod.
-                var symbols = new HashSet<object>();
-                // Add all static methods
-                foreach (var t in assembly.GetTypes())
-                {
-                    // Make each type have a symbol in the environment also.
-                    env.Define(t.FullName, t.ToAtom());
-                    foreach (var mi in t.GetMethods())
-                    {
-                        var symbol = string.Format("{0}.{1}", t.FullName, mi.Name);
-                        if (mi.IsStatic && symbols.Add(symbol))
-                            env.Define(symbol, new StaticMethod(t, mi.Name).ToStack());
-                    }
-                }
-                return c.PushResult(DatumHelpers.nil);
-            }
-
-            public override string ToString()
-            {
-                return ",ref";
-            }
-        }
-
-        private static Datum makeInstanceMethod(Datum arg)
+        private static Datum MakeInstanceMethod(Datum arg)
         {
             return new InstanceMethod(arg.CastString()).ToStack();
         }
 
-        private static Datum getType(Datum arg)
+        private static Datum GetStaticMethod(Datum type, Datum method)
         {
-            return Type.GetType(arg.CastString()).ToAtom();
+            return new StaticMethod((Type) type.CastObject(), method.CastString()).ToStack();
+        }
+
+        class GetTypeFunction : Function
+        {
+            public Datum Evaluate(Datum args)
+            {
+                var argArray = args.ToArray();
+                var names = argArray.Select(x => x.CastString()).ToArray();
+                var fullname = string.Join(".", names);
+                return Type.GetType(fullname).ToAtom();
+            }
+
+            public override string ToString()
+            {
+                return ",get-type";
+            }
         }
 
         public static Environment AddTo(Environment env)
         {
             // Invoke a given instance method on an object
-            env = env.Extend("make-instance-method", DelegateFunctions.MakeDatumFunction(makeInstanceMethod, ",make-instance-method"));
-            env = env.Extend("get-type", DelegateFunctions.MakeDatumFunction(getType, ",get-type"));
+            env = env.Extend("make-instance-method", DelegateFunctions.MakeDatumFunction(MakeInstanceMethod, ",make-instance-method"));
+            env = env.Extend("get-static-method", DelegateFunctions.MakeDatumFunction(GetStaticMethod, ",get-static-method"));
+            env = env.Extend("get-type", new GetTypeFunction().ToStack());
             env = env.Extend("new", new New().ToStack());
-            // Bring all static symbols from a particular assembly into the current environment.
-            env = env.Extend("ref", new Ref());
             env = env.Extend("atom", new WrapAtom().ToStack());
-            // Define "." as a macro to invoke a given method
+            // Define "dot" and "slash" as a macros which allow us to use
+            // Clojure-style syntax for invoking and referring to methods.
             ResourceLoader.ExecuteResource(env, "LispEngine.ReflectionBinding.ReflectionBuiltins.lisp");
             return env;
         }

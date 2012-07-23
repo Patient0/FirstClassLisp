@@ -113,8 +113,8 @@
 (define (string->list s)
     (define (convert char)
         (let schar (.ToString char)
-            (if (System.Char.IsDigit char)
-                    (System.Convert.ToInt32 schar)
+            (if (System.Char/IsDigit char)
+                    (System.Convert/ToInt32 schar)
                 (eq? "." schar)
                     'dot
             (string->symbol schar))))
@@ -192,7 +192,7 @@
                 g)))
 
 (define (solved? grid)
-    (let/cc return
+    (let-cc return
         (index-loop i num-squares 
             (if (solved-digit? (vector-ref grid i))
                 #t
@@ -202,7 +202,7 @@
 (define two-through-9 (cdr digits))
 
 (define (square-to-try grid)
-    (let/cc return
+    (let-cc return
         (loop num-missing two-through-9
             (loop s squares
                 (let possible (show-digits (get-square grid s))
@@ -216,7 +216,7 @@
         grid
         (with* ((s . digits) (square-to-try grid)
                 d (amb digits))
-               (System.Console.WriteLine "Assiging {0} to {1}" d s)
+               (System.Console/WriteLine "Assiging {0} to {1}" d s)
                (solve (assign! (copy-grid grid) s d)))))
 
 (define (display-grid grid)

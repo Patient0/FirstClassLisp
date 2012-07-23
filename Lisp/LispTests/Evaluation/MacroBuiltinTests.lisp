@@ -56,8 +56,8 @@
         (with (x 5 y 100 z 7)
             (list x y z)))
 
-    (let/cc 23
-        (let/cc return
+    (let-cc 23
+        (let-cc return
             (+ 5 (return 23))))
 
     (match 3

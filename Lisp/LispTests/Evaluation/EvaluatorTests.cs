@@ -21,7 +21,7 @@ namespace LispTests.Evaluation
     [TestFixture("LibraryTests.lisp")]
     [TestFixture("AmbTests.lisp")]
     [TestFixture("VectorTests.lisp")]
-    //[TestFixture("SudokuTests.lisp")]
+    [TestFixture("SudokuTests.lisp")]
     class EvaluatorTests : DatumHelpers
     {
         private readonly string lispResourceFile;

@@ -47,11 +47,11 @@ namespace LispEngine.Core
         {
             var argArray = args.ToArray();
             if(argArray.Length != 1)
-                throw DatumHelpers.error("call/cc: expect a single function as an argument. Got {0}", argArray.Length);
+                throw DatumHelpers.error("call-cc: expect a single function as an argument. Got {0}", argArray.Length);
             var arg = argArray[0];
             var function = arg as StackFunction;
             if(function == null)
-                throw DatumHelpers.error("call/cc: {0} must be a function", arg);
+                throw DatumHelpers.error("call-cc: {0} must be a function", arg);
             return function.Evaluate(c, DatumHelpers.compound(MakeContinuationFunction(c)));
         }
     }

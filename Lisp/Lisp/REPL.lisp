@@ -1,8 +1,6 @@
-﻿(ref mscorlib)
-
-(define (read-file filename)
-    (let/cc return 
-        (let file-stream (System.IO.File.OpenRead filename)
+﻿(define (read-file filename)
+    (let-cc return 
+        (let file-stream (System.IO.File/OpenRead filename)
             (try
                 (with* (text-reader (new System.IO.StreamReader file-stream)
                         input (open-input-stream text-reader))
@@ -20,7 +18,7 @@
                 (.Dispose file-stream)
                 throw msg))))
 
-(define pwd System.IO.Directory.GetCurrentDirectory)
+(define pwd System.IO.Directory/GetCurrentDirectory)
 (define global-env (env))
 
 (define (run filename)
@@ -28,11 +26,11 @@
     (loop expr (read-file filename)
         (set! last-result (eval expr global-env)))
     last-result)
-(define console (open-input-stream (System.Console.get_In)))
-(define display (curry System.Console.WriteLine "-> {0}"))
-(define writeerr (curry .WriteLine (System.Console.get_Error)))
-(define write System.Console.Write)
-(define write-line System.Console.WriteLine)
+(define console (open-input-stream (System.Console/get_In)))
+(define display (curry System.Console/WriteLine "-> {0}"))
+(define writeerr (curry .WriteLine (System.Console/get_Error)))
+(define write System.Console/Write)
+(define write-line System.Console/WriteLine)
 
 (define prev-stats (!get-statistics))
 (define (log-steps)
@@ -77,7 +75,7 @@
 
 (define (repl prompt repl-env)
     (define prompt (curry write prompt))
-    (let/cc return
+    (let-cc return
         (define env-with-exit-and-debug
             (extend repl-env
                 `(exit ,(curry return nil))

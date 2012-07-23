@@ -255,7 +255,7 @@
     ; where a continuation can be invoked.
     (error-translator
            "ERROR"
-           (let/cc return
+           (let-cc return
                 (execute-with-error-translator
                     (lambda ex (return "ERROR"))
                     (make-thunk undefined-symbol))))
@@ -279,7 +279,7 @@
 
     (error-translator-with-error-in-the-translator
             "ERROR"
-            (let/cc return
+            (let-cc return
                 (execute-with-error-translator
                     (lambda ex ( return "ERROR"))
                     (lambda()

@@ -1,6 +1,5 @@
 (setup
     ; Bring in all static methods in the mscorlib assembly
-    (ref mscorlib)
     (define (invoke-instance method . args)
         (apply (make-instance-method method) args)))
 (tests
@@ -22,11 +21,11 @@
     ; Call a static method returning a value type (Boolean)
     (static-method
         #t
-        (System.Convert.ToBoolean "true"))
+        (System.Convert/ToBoolean "true"))
     ; Call a static method returning void
     (static-method-void
         ()
-        (System.Console.WriteLine "hello"))
+        (System.Console/WriteLine "hello"))
     ; Call an instance method (Equals) on a reference type (String)
     (instance-method-reftype
         #t
@@ -48,17 +47,17 @@
     ; of the continuation.
     (args-obey-continuations
         "failed"
-        (let/cc error
+        (let-cc error
             (.Equals "failed" (error "failed"))))
 
     (static-method-continuations
         "failed"
-        (let/cc error
-            (System.Console.WriteLine (error "failed"))))
+        (let-cc error
+            (System.Console/WriteLine (error "failed"))))
 
     (static-method-is-function
         (#t #f)
-        (map System.Convert.ToBoolean '("true" "false")))
+        (map System.Convert/ToBoolean '("true" "false")))
 
     (instance-method-as-function
         ("23" "34")
@@ -79,7 +78,7 @@
 
     (params
         "4 * 5 is 20"
-        (System.String.Format "{0} * {1} is {2}" 4 5 (* 4 5)))
+        (System.String/Format "{0} * {1} is {2}" 4 5 (* 4 5)))
 
     ; We have a quandary: What to do if the input parameter
     ; is *not* an atom and it's passed as a parameter to a reflection
@@ -90,7 +89,7 @@
     ; If this doesn't do what's desired, we will also expose
     ; a "atom" function explicitly for wrapping a Datum so that
     ; it looks like an atom.
-    (datum-types-static "(1 2 3)" (System.String.Format "{0}" '(1 2 3)))
+    (datum-types-static "(1 2 3)" (System.String/Format "{0}" '(1 2 3)))
     (datum-types-instance "(1 2 3)" (.ToString '(1 2 3)))
 
     ; If we want to treat an atom explicitly as an atom (no implicit unwrapping),
@@ -102,6 +101,10 @@
 
     (get-type
         "System.Console"
-        (.get_FullName (get-type "System.Console")))
+        (.get_FullName (get-type "System" "Console")))
+
+    (get-type-macro
+        "System.Console"
+        (.get_FullName System.Console))
 
 )

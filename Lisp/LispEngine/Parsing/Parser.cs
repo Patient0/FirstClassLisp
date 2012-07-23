@@ -54,14 +54,45 @@ namespace LispEngine.Parsing
                 throw fail("Expected '{0}'", what);
         }
 
+        // Create a "special form" for a symbol that has either "." or "/" inside it.
+        private static Datum buildSymbolForm(Datum name, IEnumerable<string> contents)
+        {
+            // "prefix" with a 'dot' so that higher level macros can interpret it.
+            // This means you can't have normal symbols containing dots, which is a 
+            // small price to pay IMO.
+            var args = compound(contents.Select(c => c == "" ? nil : parseSymbol(c)).ToArray());
+            return cons(name, args);
+        }
+
+        // Maybe this splitting should go in the Lexer but
+        // it's easier to handle it here. We interpret
+        // "." and "/" especially. This is used to support
+        // convenient .Net method syntax.
+        private static Datum parseSymbol(string identifier)
+        {
+            // "." has "higher" precedence than "/"
+            // so
+            // a.b/c is parsed into
+            // (slash (dot a b))
+            // rather than
+            // (dot (a (slash b c)))
+            // We only expand slash if it's actually separating
+            // something else. Standalone slash stays as is.
+            var slashSplit = identifier.Split('/');
+            if(slashSplit.Length > 1 && slashSplit.Any(c => c.Length > 0))
+                return buildSymbolForm(slash, slashSplit);
+            var split = identifier.Split('.');
+            if (split.Length > 1)
+                return buildSymbolForm(dot, split);
+            return symbol(identifier);
+        }
+
         private Datum symbol()
         {
             if (next.Type == TokenType.Symbol)
-                return symbol(next.Contents);
-            // read ".Equals" as "(dot Equals)" so that it can be macro
-            // expanded if desired.
-            if (next.Type == TokenType.DotSymbol)
-                return compound(symbol("dot"), nil, symbol(next.Contents.Substring(1)));
+            {
+                return parseSymbol(next.Contents);
+            }
             return null;
         }
 

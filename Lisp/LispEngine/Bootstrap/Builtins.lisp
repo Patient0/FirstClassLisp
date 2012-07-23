@@ -110,9 +110,13 @@
             ((var . (expr . bindings)) . body)
                 `(,let ,var ,expr (,with* ,bindings (,begin ,@body))))))
 
-; let/cc provides "escape" functionality
-(define-macro let/cc (var . body)
-    `(,call/cc (,lambda (,var) (,begin ,@body))))
+; We cannot use "/" as this is overloaded to allow static method
+; access ala Clojure style.
+(define call-cc call-with-current-continuation)
+
+; let-cc provides "escape" functionality
+(define-macro let-cc (var . body)
+    `(,call-cc (,lambda (,var) (,begin ,@body))))
 
 ; Function that can be used to expand a (possibly)
 ; macro-ized expression. Useful for debugging
