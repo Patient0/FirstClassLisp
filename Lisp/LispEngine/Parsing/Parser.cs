@@ -61,7 +61,7 @@ namespace LispEngine.Parsing
             // read ".Equals" as "(dot Equals)" so that it can be macro
             // expanded if desired.
             if (next.Type == TokenType.DotSymbol)
-                return compound(symbol("dot"), symbol(next.Contents.Substring(1)));
+                return compound(symbol("dot"), nil, symbol(next.Contents.Substring(1)));
             return null;
         }
 

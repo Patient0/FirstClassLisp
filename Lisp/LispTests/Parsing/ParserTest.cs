@@ -182,13 +182,15 @@ namespace LispTests.Parsing
             // .NET method syntax:
             // Anytime a symbol begins with ".", this has a different meaning:
             // we are in fact invoking a macro (or function), called "dot"
-            // instead.
-            test(".house", compound(symbol("dot"), symbol("house")));
+            // instead. We'll pass in 'nil' as the first argument to
+            // indicate that the "dot" was the very beginning of the symbol.
+            test(".house", compound(symbol("dot"), nil, symbol("house")));
         }
 
         [Test]
         public void testMultipleDotsSymbol()
         {
+            //test("System.Console", compound(symbol("dot"), symbol("System"), symbol("Console")));
         }
 
         [Test]
