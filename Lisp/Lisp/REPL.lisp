@@ -1,4 +1,17 @@
-﻿(define prev-stats (!get-statistics))
+﻿(define global-env (env))
+(define repl-run
+    (let standard-run run
+        (lambda
+            (filename run-environment)
+                (standard-run filename run-environment)
+            (filename)
+                (standard-run filename global-env))))
+; Redefine 'run' to a user-friendly version
+; that defaults to the repl-environment for
+; evaluation
+(define run repl-run)
+
+(define prev-stats (!get-statistics))
 (define (log-steps)
     (with (stats (!get-statistics)
            delta (!get-statistics-delta prev-stats))

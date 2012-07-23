@@ -25,13 +25,13 @@
 
 
 (define pwd System.IO.Directory/GetCurrentDirectory)
-(define global-env (env))
 
-; Load an execute a lisp file
-(define (run filename)
+; Load an execute a lisp file using the specified
+; environment
+(define (run filename run-environment)
     (define last-result nil)
     (loop expr (read-file filename)
-        (set! last-result (eval expr global-env)))
+        (set! last-result (eval expr run-environment)))
     last-result)
 
 (define system-console System.Console)
