@@ -53,19 +53,6 @@ namespace LispEngine.ReflectionBinding
             }
         }
 
-        class MakeInstanceMethod : UnaryFunction
-        {
-            public override string  ToString()
-            {
-                return ",make-instance-method";
-            }
-
-            protected override Datum eval(Datum arg)
-            {
-                return new InstanceMethod(arg.CastString()).ToStack();
-            }
-        }
-
         class StaticMethod : Function
         {
             private readonly Type type;
@@ -155,10 +142,21 @@ namespace LispEngine.ReflectionBinding
             }
         }
 
+        private static Datum makeInstanceMethod(Datum arg)
+        {
+            return new InstanceMethod(arg.CastString()).ToStack();
+        }
+
+        private static Datum getType(Datum arg)
+        {
+            return Type.GetType(arg.CastString()).ToAtom();
+        }
+
         public static Environment AddTo(Environment env)
         {
             // Invoke a given instance method on an object
-            env = env.Extend("make-instance-method", new MakeInstanceMethod().ToStack());
+            env = env.Extend("make-instance-method", DelegateFunctions.MakeDatumFunction(makeInstanceMethod, ",make-instance-method"));
+            env = env.Extend("get-type", DelegateFunctions.MakeDatumFunction(getType, ",get-type"));
             env = env.Extend("new", new New().ToStack());
             // Bring all static symbols from a particular assembly into the current environment.
             env = env.Extend("ref", new Ref());

@@ -8,6 +8,7 @@
     (invoke-instance-simple
         "42"
         (invoke-instance "ToString" 42))
+
     (invoke-instance-with-args1
         #t
         (invoke-instance "Equals" "hello world" "hello world"))
@@ -98,4 +99,9 @@
     (atom-wrap
         "LispEngine.Datums.Atom"
         (.ToString (.GetType (atom 1))))
+
+    (get-type
+        "System.Console"
+        (.get_FullName (get-type "System.Console")))
+
 )

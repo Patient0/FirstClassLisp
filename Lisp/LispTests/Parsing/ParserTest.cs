@@ -187,6 +187,11 @@ namespace LispTests.Parsing
         }
 
         [Test]
+        public void testMultipleDotsSymbol()
+        {
+        }
+
+        [Test]
         public void testLoadLispFile()
         {
             foreach(var d in ResourceLoader.ReadDatums("LispTests.Parsing.MultilineFile.lisp"))
