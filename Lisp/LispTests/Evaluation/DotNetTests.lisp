@@ -107,4 +107,18 @@
         "System.Console"
         (.get_FullName System.Console))
 
+    ; A macro reference to a non-existent type should throw
+    ; an error
+    (non-existent-type
+        "ERROR"
+        (try
+            System.XXXX
+        catch ex
+            "ERROR"))
+
+    ; Don't just look in calling assembly - look in all
+    ; loaded assemblies in the current app domain.
+    (uses-assembly-get-type
+        "System.Diagnostics.Stopwatch"
+        (.get_FullName System.Diagnostics.Stopwatch))
 )

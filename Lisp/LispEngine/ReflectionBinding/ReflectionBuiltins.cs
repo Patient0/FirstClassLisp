@@ -116,6 +116,21 @@ namespace LispEngine.ReflectionBinding
             return new StaticMethod((Type) type.CastObject(), method.CastString()).ToStack();
         }
 
+
+        // Thanks to http://stackoverflow.com/questions/2367652/how-type-gettype-works-when-given-partially-qualified-type-name
+        // for this:
+        public static Type GetTypeEx(string fullTypeName)
+        {
+            var type = Type.GetType(fullTypeName);
+            if (type != null)
+                return type;
+            var assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetType(fullTypeName) != null);
+            if(assembly != null)
+                return assembly.GetType(fullTypeName);
+            throw DatumHelpers.error("Could not locate type '{0}' in any of the {1} currently loaded assemblies",
+                                     fullTypeName, AppDomain.CurrentDomain.GetAssemblies().Length);
+        }
+
         class GetTypeFunction : Function
         {
             public Datum Evaluate(Datum args)
@@ -123,7 +138,7 @@ namespace LispEngine.ReflectionBinding
                 var argArray = args.ToArray();
                 var names = argArray.Select(x => x.CastString()).ToArray();
                 var fullname = string.Join(".", names);
-                return Type.GetType(fullname).ToAtom();
+                return GetTypeEx(fullname).ToAtom();
             }
 
             public override string ToString()

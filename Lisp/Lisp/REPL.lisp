@@ -12,11 +12,11 @@
 (define run repl-run)
 
 (define prev-stats (!get-statistics))
-(define (log-steps)
+(define (log-steps elapsed)
     (with (stats (!get-statistics)
            delta (!get-statistics-delta prev-stats))
         (set! prev-stats stats)
-        (write-line "{0}" delta)))
+        (write-line "{0} Elapsed: {1}" delta elapsed)))
            
 (define (display-error msg c)
     (define (indent-list continuation-fn)
@@ -52,6 +52,10 @@
         "Nothing to debug"
         (repl "debug> " (make-debug-env last-error))))
 
+(define Stopwatch System.Diagnostics.Stopwatch)
+
+(define clear System.Console/Clear)
+
 (define (repl prompt repl-env)
     (define prompt (curry write prompt))
     (let-cc return
@@ -71,9 +75,10 @@
             (try
                 (prompt)
                 (with* (expr (check-read)
+                        stop-watch (Stopwatch/StartNew)
                         result (repl-eval expr))
                   (display result)
-                  (log-steps))
+                  (log-steps (.get_Elapsed stop-watch)))
              catch error
                 (set! last-error error)
                 (writeerr "ERROR: {0}" (car error))
