@@ -10,22 +10,16 @@ namespace LispEngine.Evaluation
 {
     /**
      * Used by the interpreter to update statistics about the run time.
-     * We use this to expose performance data to the REPL.
-     * I've probably over-optimized for performance here: Each "statistic"
-     * is a typesafe mutable value so that when a relevant part of the interpreter
-     * has it it can simply "bump" the values as necessary. I didn't
-     * want the act of measuring something to interfere too much with
-     * the runtime performance.
      */
-
     public class Statistics
     {
         public int Steps { get; set; }
         public int Expansions { get; set; }
+        public int Lookups { get; set; }
 
         public override string ToString()
         {
-            return string.Format("Steps: {0} Expansions: {1}", Steps, Expansions);
+            return string.Format("Steps: {0} Expansions: {1} Lookups: {2}", Steps, Expansions, Lookups);
         }
 
         public Statistics()
@@ -36,11 +30,12 @@ namespace LispEngine.Evaluation
         {
             this.Steps = s.Steps;
             this.Expansions = s.Expansions;
+            this.Lookups = s.Lookups;
         }
 
         public Statistics Delta(Statistics prev)
         {
-            return new Statistics {Steps = Steps - prev.Steps, Expansions = Expansions - prev.Expansions};
+            return new Statistics {Steps = Steps - prev.Steps, Expansions = Expansions - prev.Expansions, Lookups = Lookups - prev.Lookups};
         }
 
         public Statistics Snapshot()

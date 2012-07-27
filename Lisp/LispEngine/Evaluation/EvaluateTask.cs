@@ -30,6 +30,7 @@ namespace LispEngine.Evaluation
             }
             public override Continuation visit(Symbol s)
             {
+                c.Statistics.Lookups++;
                 return c.PushResult(env.Lookup(s.Identifier));
             }
             public override Continuation defaultCase(Datum d)
