@@ -56,10 +56,7 @@ namespace LispEngine.Core
                     // same Datum, re-use the expansion.
                     macroDatum.Cache = cons(macro, expansion);
                 }
-                c = c.PopResult();
-                var env = c.Env;
-                c = c.PopEnv();
-                return c.Evaluate(env, expansion);
+                return c.PopResult().PopEnv().Evaluate(c.Env, expansion);
             }
         }
 

@@ -41,8 +41,7 @@ namespace LispEngine.Evaluation
 
         public Continuation Perform(Continuation c)
         {
-            var env = c.Env;
-            return datum.accept(new Visitor(c.PopEnv(), env));
+            return datum.accept(new Visitor(c.PopEnv(), c.Env));
         }
 
         private static object getLocation(Datum d)
