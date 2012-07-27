@@ -68,4 +68,34 @@
                 (3 4) 2
                 (4 z) (- z 2)
                 (5 6) 4)))
+
+    ; Test macro expansion caching
+    ; This example is somewhat contrived - I'd like to know
+    ; of a more natural case.
+
+    ; But the basic idea is: whenever our "code" tree has a graph
+    ; then there's the potential for the macro expansion
+    ; cache to fail, because we cache the macro expansion
+    ; inside each Datum instance.
+
+    ; Here, we've created a macro which creates a graph,
+    ; in which different first-class macros are applied to
+    ; the same Datum.
+    ; So the following _should_ expand in the equivalent of
+    ; (list (and #f #t) (or #f #t))
+    ; but because (#f #t) is the same Datum *instance*,
+    ; the 'and' expansion gets cached and used for both
+    ; cases.
+
+    ; The solution is for the macro to use itself as part
+    ; of the "key" for the cache. But because this is a
+    ; a contrived case we simply have a "check" in the datum.
+    (macro-cache-in-datum
+        (#f #t)
+        (begin
+            (define-macro fapply (f1 f2 arg-list)
+                (list list
+                      (cons f1 arg-list)
+                      (cons f2 arg-list)))
+            (fapply and or (#f #t))))
 )

@@ -37,10 +37,12 @@ namespace LispEngine.Core
 
         private sealed class EvaluateExpansion : Task
         {
+            private readonly MacroClosure macro;
             private readonly Pair macroDatum;
 
-            public EvaluateExpansion(Pair macroDatum)
+            public EvaluateExpansion(MacroClosure macro, Pair macroDatum)
             {
+                this.macro = macro;
                 this.macroDatum = macroDatum;
             }
 
@@ -49,11 +51,10 @@ namespace LispEngine.Core
                 var expansion = c.Result;
                 if(macroDatum != null)
                 {
-                    // Cache macro expansions - only incorrect
-                    // if different macros are used to expand
-                    // the same datum instance (which I'll have to
-                    // write a test and check for...)
-                    macroDatum.Cache = expansion;
+                    // Cache macro expansions. In the extremely
+                    // common case of the same macro being used on the
+                    // same Datum, re-use the expansion.
+                    macroDatum.Cache = cons(macro, expansion);
                 }
                 c = c.PopResult();
                 var env = c.Env;
@@ -79,9 +80,17 @@ namespace LispEngine.Core
             public override Continuation Evaluate(Continuation c, Environment env, Datum args)
             {
                 var p = args as Pair;
-                c = c.PushEnv(env).PushTask(new EvaluateExpansion(p));
-                if(p != null && p.Cache != null)
-                    return c.PushResult(p.Cache);
+                c = c.PushEnv(env).PushTask(new EvaluateExpansion(this, p));
+                // Optimization - if this macro has been expanded on this Datum before,
+                // use the same expansion.
+                // See "macro-cache-in-datum" unit test for a demonstration of why
+                // we need to check against "this" also.
+                if(p != null)
+                {
+                    var cachedPair = p.Cache as Pair;
+                    if(cachedPair != null && ReferenceEquals(cachedPair.First, this))
+                        return c.PushResult(cachedPair.Second);
+                }
                 c.Statistics.Expansions++;
                 return argFunction.Evaluate(c, args);
             }
