@@ -28,12 +28,11 @@ namespace LispEngine.Bootstrap
 
         class GenSym : Function
         {
-            private int counter = 0;
             public Datum Evaluate(Datum args)
             {
                 if (!DatumHelpers.nil.Equals(args))
                     throw DatumHelpers.error("gensym accepts no arguments");
-                return DatumHelpers.symbol(string.Format("generated-{0}", ++counter));
+                return Symbol.GenUnique();
             }
         }
 

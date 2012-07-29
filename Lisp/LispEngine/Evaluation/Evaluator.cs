@@ -30,6 +30,7 @@ namespace LispEngine.Evaluation
 
         public Datum Evaluate(Statistics statistics, LexicalEnvironment env, Datum datum)
         {
+            env.Statistics = statistics;
             var c = Continuation.Create(statistics)
                 .PushTask(null)
                 .PushResult(null)

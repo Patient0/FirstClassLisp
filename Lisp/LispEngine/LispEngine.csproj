@@ -78,8 +78,6 @@
     <Compile Include="Datums\Symbol.cs" />
     <Compile Include="Bootstrap\Builtins.cs" />
     <Compile Include="Core\CoreForms.cs" />
-    <Compile Include="Evaluation\EmptyEnvironment.cs" />
-    <Compile Include="Evaluation\ExtendedEnvironment.cs" />
     <Compile Include="Evaluation\Function.cs" />
     <Compile Include="Core\Lambda.cs" />
     <Compile Include="Evaluation\FExpression.cs" />

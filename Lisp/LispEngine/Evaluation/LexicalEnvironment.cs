@@ -26,10 +26,13 @@ namespace LispEngine.Evaluation
                 get { return symbol; }
             }
         }
+
+        private Statistics statistics;
         private readonly LexicalEnvironment parent;
         private IStack<Binding> bindings;
         private LexicalEnvironment (LexicalEnvironment parent, IStack<Binding> bindings)
         {
+            this.statistics = parent == null ? null : parent.statistics;
             this.parent = parent;
             this.bindings = bindings;
         }
@@ -39,6 +42,11 @@ namespace LispEngine.Evaluation
         private static LexicalEnvironment newFrame(LexicalEnvironment parent, FrameBindings bindings)
         {
             return new LexicalEnvironment(parent, bindings);
+        }
+
+        public Statistics Statistics
+        {
+            set { statistics = value; }
         }
 
         public LexicalEnvironment NewFrame(FrameBindings frameBindings)
@@ -67,9 +75,10 @@ namespace LispEngine.Evaluation
             return Define(Symbol.GetSymbol(name), binding);
         }
 
-        private Binding find(Symbol symbol)
+        public Binding Find(Symbol symbol)
         {
-            // TODO: We will optimize this
+            if (statistics != null)
+                statistics.Lookups++;
             var b = bindings;
             while (b.Peek() != null)
             {
@@ -79,17 +88,17 @@ namespace LispEngine.Evaluation
             }
             if (parent == null)
                 throw DatumHelpers.error("Undefined symbol '{0}'", symbol);
-            return parent.find(symbol);
+            return parent.Find(symbol);
+        }
+
+        public void Set(Symbol symbol, Datum value)
+        {
+            Find(symbol).Value = value;
         }
 
         public Datum Lookup(Symbol symbol)
         {
-            return find(symbol).Value;
-        }
-
-        public void Set(Symbol symbol, Datum result)
-        {
-            find(symbol).Value = result;
+            return Find(symbol).Value;
         }
     }
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LispEngine.Evaluation;
 
 namespace LispEngine.Datums
 {
     public sealed class Symbol : Datum
     {
         private readonly string identifier;
+
         private Symbol(string identifier)
         {
             this.identifier = identifier;
@@ -34,6 +36,7 @@ namespace LispEngine.Datums
          */
         class SymbolFactory
         {
+            private int counter;
             private readonly IDictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
 
             public Symbol Get(string identifier)
@@ -44,6 +47,12 @@ namespace LispEngine.Datums
                 s = new Symbol(identifier);
                 symbols[identifier] = s;
                 return s;
+            }
+
+            public Symbol Unique()
+            {
+                ++counter;
+                return new Symbol(string.Format("!!unique-{0}", counter));
             }
 
             private SymbolFactory()
@@ -61,6 +70,11 @@ namespace LispEngine.Datums
         public static Symbol GetSymbol(string identifier)
         {
             return SymbolFactory.Instance.Get(identifier);
+        }
+
+        public static Symbol GenUnique()
+        {
+            return SymbolFactory.Instance.Unique();
         }
     }
 }
