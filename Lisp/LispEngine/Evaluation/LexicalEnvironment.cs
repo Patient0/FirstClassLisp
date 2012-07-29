@@ -12,20 +12,16 @@ namespace LispEngine.Evaluation
     {
         public class Binding
         {
-            private readonly Symbol symbol;
+            private readonly int symbolId;
 
             public Binding(Symbol symbol, Datum value)
             {
-                this.symbol = symbol;
+                this.symbolId = symbol.ID;
                 this.Value = value;
             }
 
             public Datum Value { get; set; }
-
-            public Symbol Symbol
-            {
-                get { return symbol; }
-            }
+            public int SymbolID { get { return symbolId; } }
         }
 
         private Statistics statistics;
@@ -87,9 +83,10 @@ namespace LispEngine.Evaluation
             if (statistics != null)
                 statistics.Lookups++;
             var b = bindings;
+            var id = symbol.ID;
             while (b.Peek() != null)
             {
-                if (symbol == b.Peek().Symbol)
+                if (id == b.Peek().SymbolID)
                     return b.Peek();
                 b = b.Pop();
             }
@@ -172,9 +169,10 @@ namespace LispEngine.Evaluation
         {
             var index = 0;
             var b = bindings;
+            var id = symbol.ID;
             while (b.Peek() != null)
             {
-                if (symbol == b.Peek().Symbol)
+                if (id == b.Peek().SymbolID)
                     return index;
                 b = b.Pop();
                 ++index;
