@@ -28,9 +28,9 @@ namespace LispEngine.Datums
             return DatumHelpers.atom(o);
         }
 
-        public static string CastIdentifier(this Datum d)
+        public static Symbol CastSymbol(this Datum d)
         {
-            return DatumHelpers.getIdentifier(d);
+            return DatumHelpers.castSymbol(d);
         }
 
         public static string CastString(this Datum d)

@@ -17,7 +17,7 @@ namespace LispEngine.Core
             var argList = args.ToArray();
             if (argList.Length != 2)
                 throw c.error("Expected 2 arguments: (define <symbol> <expression>). Got {0} instead", argList.Length);
-            var name = argList[0].CastIdentifier();
+            var name = argList[0].CastSymbol();
             var expression = argList[1];
             c = c.PushTask(
                 tc => { env.Define(name, tc.Result);

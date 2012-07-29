@@ -8,7 +8,7 @@ namespace LispEngine.Datums
     public sealed class Symbol : Datum
     {
         private readonly string identifier;
-        public Symbol(string identifier)
+        private Symbol(string identifier)
         {
             this.identifier = identifier;
         }
@@ -23,39 +23,44 @@ namespace LispEngine.Datums
             return identifier;
         }
 
-        public bool Equals(Symbol other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(other.identifier, identifier);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (Symbol)) return false;
-            return Equals((Symbol) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return identifier.GetHashCode();
-        }
-
         public T accept<T>(DatumVisitor<T> visitor)
         {
             return visitor.visit(this);
         }
 
-        public static bool operator ==(Symbol left, Symbol right)
+        /*
+         * Optimize symbol comparison by
+         * interning all symbols.
+         */
+        class SymbolFactory
         {
-            return Equals(left, right);
+            private readonly IDictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+
+            public Symbol Get(string identifier)
+            {
+                Symbol s;
+                if (symbols.TryGetValue(identifier, out s))
+                    return s;
+                s = new Symbol(identifier);
+                symbols[identifier] = s;
+                return s;
+            }
+
+            private SymbolFactory()
+            {
+            }
+
+            private static readonly SymbolFactory instance = new SymbolFactory();
+
+            public static SymbolFactory Instance
+            {
+                get { return instance; }
+            }
         }
 
-        public static bool operator !=(Symbol left, Symbol right)
+        public static Symbol GetSymbol(string identifier)
         {
-            return !Equals(left, right);
+            return SymbolFactory.Instance.Get(identifier);
         }
     }
 }

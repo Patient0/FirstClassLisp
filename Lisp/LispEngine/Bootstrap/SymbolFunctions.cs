@@ -15,7 +15,7 @@ namespace LispEngine.Bootstrap
         {
             protected override Datum eval(Datum arg)
             {
-                return DatumHelpers.getIdentifier(arg).ToAtom();
+                return arg.CastSymbol().Identifier.ToAtom();
             }
         }
 

@@ -9,17 +9,17 @@ namespace LispEngine.Evaluation
     internal class ExtendedEnvironment : IEnvironment
     {
         private readonly IEnvironment parent;
-        private readonly string name;
+        private readonly Symbol name;
         private Datum value;
 
-        public ExtendedEnvironment(IEnvironment parent, string name, Datum value)
+        public ExtendedEnvironment(IEnvironment parent, Symbol name, Datum value)
         {
             this.parent = parent;
             this.name = name;
             this.value = value;
         }
 
-        private ExtendedEnvironment find(string name, out IEnvironment e)
+        private ExtendedEnvironment find(Symbol name, out IEnvironment e)
         {
             e = this;
             // To reduce the size of the stack trace when
@@ -38,7 +38,7 @@ namespace LispEngine.Evaluation
             return null;
         }
 
-        public bool TryLookup(string name, out Datum datum)
+        public bool TryLookup(Symbol name, out Datum datum)
         {
             IEnvironment p;
             var e = find(name, out p);
@@ -51,7 +51,7 @@ namespace LispEngine.Evaluation
             }
         }
 
-        public void Set(string name, Datum newValue)
+        public void Set(Symbol name, Datum newValue)
         {
             IEnvironment p;
             var e = find(name, out p);
@@ -61,7 +61,7 @@ namespace LispEngine.Evaluation
                 e.value = newValue;
         }
 
-        public string ReverseLookup(Datum value)
+        public Symbol ReverseLookup(Datum value)
         {
             // For debugging: attempt to find the nearest name mapped to the
             // given datum.
@@ -80,7 +80,7 @@ namespace LispEngine.Evaluation
 
     public static class EnvironmentExtensions
     {
-        public static IEnvironment Extend(this IEnvironment e, string name, Datum value)
+        public static IEnvironment Extend(this IEnvironment e, Symbol name, Datum value)
         {
             return new ExtendedEnvironment(e, name, value);
         }

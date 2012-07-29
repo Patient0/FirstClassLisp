@@ -58,7 +58,7 @@ namespace LispEngine.Core
             {
                 var name = env.ReverseLookup(this);
                 if (name != null)
-                    return name;
+                    return name.Identifier;
                 return string.Format("(lambda {0})", string.Join(" ", argBodies.Select(x => x.ToString()).ToArray()));
             }
 

@@ -19,8 +19,8 @@ namespace LispEngine.Core
 
         public static Environment AddTo(Environment env)
         {
-            env = env.Extend("unmacro", Unmacro);
-            env = env.Extend("macro", Instance);
+            env = env.Extend(Symbol.GetSymbol("unmacro"), Unmacro);
+            env = env.Extend(Symbol.GetSymbol("macro"), Instance);
             return env;
         }
 
@@ -29,9 +29,7 @@ namespace LispEngine.Core
             protected override Datum eval(Datum arg)
             {
                 var macro = arg as MacroClosure;
-                if (macro == null)
-                    return nil;
-                return macro.Function;
+                return macro == null ? nil : macro.Function;
             }
         }
 

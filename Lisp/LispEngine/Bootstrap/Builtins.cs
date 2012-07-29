@@ -22,7 +22,7 @@ namespace LispEngine.Bootstrap
         public static Environment AddTo(Environment env)
         {
             env = Arithmetic.Extend(env).ToMutable();
-            env = env.Extend("append", Append.Instance);
+            env = env.Extend(Symbol.GetSymbol("append"), Append.Instance);
             env = SymbolFunctions.Extend(env);
             ResourceLoader.ExecuteResource(env, "LispEngine.Bootstrap.Builtins.lisp");
             ResourceLoader.ExecuteResource(env, "LispEngine.Bootstrap.Library.lisp");

@@ -53,17 +53,17 @@ namespace LispEngine.Datums
             return new Exception(string.Format(msg, args));
         }
 
-        public static string getIdentifier(Datum dt)
+        public static Symbol castSymbol(Datum dt)
         {
             var symbol = dt as Symbol;
             if (symbol == null)
                 throw new Exception(String.Format("'{0}' is not a symbol", dt));
-            return symbol.Identifier;
+            return symbol;
         }
 
         public static Symbol symbol(string identifier)
         {
-            return new Symbol(identifier);
+            return Symbol.GetSymbol(identifier);
         }
 
         public static Pair cons(Datum first, Datum second)

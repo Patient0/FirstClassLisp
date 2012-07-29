@@ -5,6 +5,7 @@ using System.Text;
 using LispEngine.Core;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
+using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
 {
@@ -36,7 +37,7 @@ namespace LispEngine.Bootstrap
            return new Operation(name, op).ToStack();
         }
 
-        public static IEnvironment Extend(IEnvironment env)
+        public static Environment Extend(Environment env)
         {
             return env
                 .Extend("+", makeOperation("+", (x, y) => x + y))
