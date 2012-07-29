@@ -8,7 +8,6 @@ using LispEngine.Lexing;
 using LispEngine.Parsing;
 using LispEngine.ReflectionBinding;
 using LispEngine.Util;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
 {
@@ -19,10 +18,10 @@ namespace LispEngine.Bootstrap
      */
     public sealed class Builtins
     {
-        public static Environment AddTo(Environment env)
+        public static LexicalEnvironment AddTo(LexicalEnvironment env)
         {
-            env = Arithmetic.Extend(env).ToMutable();
-            env = env.Extend(Symbol.GetSymbol("append"), Append.Instance);
+            env = Arithmetic.Extend(env);
+            env.Define("append", Append.Instance);
             env = SymbolFunctions.Extend(env);
             ResourceLoader.ExecuteResource(env, "LispEngine.Bootstrap.Builtins.lisp");
             ResourceLoader.ExecuteResource(env, "LispEngine.Bootstrap.Library.lisp");

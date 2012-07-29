@@ -9,7 +9,7 @@ namespace LispEngine.Evaluation
     public class Continuation
     {
         private readonly Statistics statistics;
-        private readonly IStack<Environment> envs;
+        private readonly IStack<LexicalEnvironment> envs;
         private readonly IStack<Task> tasks;
         private readonly IStack<Datum> results;
         private readonly ErrorHandler errorHandler;
@@ -23,10 +23,10 @@ namespace LispEngine.Evaluation
 
         public static Continuation Create(Statistics s)
         {
-            return new Continuation(s, Stack<Environment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
+            return new Continuation(s, Stack<LexicalEnvironment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
         }
 
-        private Continuation(Statistics statistics, IStack<Environment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
+        private Continuation(Statistics statistics, IStack<LexicalEnvironment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
         {
             this.statistics = statistics;
             this.envs = envs;
@@ -40,7 +40,7 @@ namespace LispEngine.Evaluation
             get { return statistics; }
         }
 
-        private Continuation create(IStack<Environment> newEnvs, IStack<Task> newTasks, IStack<Datum> newResults)
+        private Continuation create(IStack<LexicalEnvironment> newEnvs, IStack<Task> newTasks, IStack<Datum> newResults)
         {
             return new Continuation(statistics, newEnvs, newTasks, newResults, errorHandler);
         }
@@ -50,7 +50,7 @@ namespace LispEngine.Evaluation
             return create(envs, newTasks, results);
         }
 
-        private Continuation SetEnvs(IStack<Environment> newEnvs)
+        private Continuation SetEnvs(IStack<LexicalEnvironment> newEnvs)
         {
             return create(newEnvs, tasks, results);
         }
@@ -65,7 +65,7 @@ namespace LispEngine.Evaluation
             return new Continuation(statistics, envs, tasks, results, newHandler);
         }
 
-        public Continuation PushEnv(Environment env)
+        public Continuation PushEnv(LexicalEnvironment env)
         {
             return SetEnvs(envs.Push(env));
         }
@@ -110,7 +110,7 @@ namespace LispEngine.Evaluation
             get { return results.Peek(); }
         }
 
-        public Environment Env
+        public LexicalEnvironment Env
         {
             get { return envs.Peek(); }
         }
@@ -130,7 +130,7 @@ namespace LispEngine.Evaluation
             return toStack(f).Evaluate(this, args);
         }
 
-        public Continuation Evaluate(Environment e, Datum expression)
+        public Continuation Evaluate(LexicalEnvironment e, Datum expression)
         {
             return PushEnv(e).PushTask(new EvaluateTask(expression));
         }

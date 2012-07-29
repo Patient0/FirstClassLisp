@@ -47,7 +47,6 @@
     <Compile Include="Core\Apply.cs" />
     <Compile Include="Core\Begin.cs" />
     <Compile Include="Core\BinaryFunction.cs" />
-    <Compile Include="Core\BindingTypes.cs" />
     <Compile Include="Core\CallCC.cs" />
     <Compile Include="Core\Define.cs" />
     <Compile Include="Core\Env.cs" />
@@ -77,11 +76,9 @@
     <Compile Include="Datums\Null.cs" />
     <Compile Include="Datums\Pair.cs" />
     <Compile Include="Datums\Symbol.cs" />
-    <Compile Include="Core\Bindings.cs" />
     <Compile Include="Bootstrap\Builtins.cs" />
     <Compile Include="Core\CoreForms.cs" />
     <Compile Include="Evaluation\EmptyEnvironment.cs" />
-    <Compile Include="Evaluation\Environment.cs" />
     <Compile Include="Evaluation\ExtendedEnvironment.cs" />
     <Compile Include="Evaluation\Function.cs" />
     <Compile Include="Core\Lambda.cs" />

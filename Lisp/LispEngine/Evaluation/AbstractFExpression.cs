@@ -13,6 +13,6 @@ namespace LispEngine.Evaluation
             return visitor.visit(this);
         }
 
-        public abstract Continuation Evaluate(Continuation c, Environment env, Datum args);
+        public abstract Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args);
     }
 }

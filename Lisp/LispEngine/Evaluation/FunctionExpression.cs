@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
@@ -44,7 +43,7 @@ namespace LispEngine.Core
             }
         }
 
-        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args)
         {
             var argArray = DatumHelpers.enumerate(args).ToArray();
             Array.Reverse(argArray);

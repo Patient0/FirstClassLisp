@@ -17,6 +17,6 @@ namespace LispEngine.Evaluation
      */
     public interface FExpression : Datum
     {
-        Continuation Evaluate(Continuation c, Environment env, Datum args);
+        Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args);
     }
 }

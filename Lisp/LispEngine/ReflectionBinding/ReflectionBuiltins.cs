@@ -7,7 +7,6 @@ using LispEngine.Core;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Util;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.ReflectionBinding
 {
@@ -147,14 +146,14 @@ namespace LispEngine.ReflectionBinding
             }
         }
 
-        public static Environment AddTo(Environment env)
+        public static LexicalEnvironment AddTo(LexicalEnvironment env)
         {
             // Invoke a given instance method on an object
-            env = env.Extend("make-instance-method", DelegateFunctions.MakeDatumFunction(MakeInstanceMethod, ",make-instance-method"));
-            env = env.Extend("get-static-method", DelegateFunctions.MakeDatumFunction(GetStaticMethod, ",get-static-method"));
-            env = env.Extend("get-type", new GetTypeFunction().ToStack());
-            env = env.Extend("new", new New().ToStack());
-            env = env.Extend("atom", new WrapAtom().ToStack());
+            env.Define("make-instance-method", DelegateFunctions.MakeDatumFunction(MakeInstanceMethod, ",make-instance-method"));
+            env.Define("get-static-method", DelegateFunctions.MakeDatumFunction(GetStaticMethod, ",get-static-method"));
+            env.Define("get-type", new GetTypeFunction().ToStack());
+            env.Define("new", new New().ToStack());
+            env.Define("atom", new WrapAtom().ToStack());
             // Define "dot" and "slash" as a macros which allow us to use
             // Clojure-style syntax for invoking and referring to methods.
             ResourceLoader.ExecuteResource(env, "LispEngine.ReflectionBinding.ReflectionBuiltins.lisp");

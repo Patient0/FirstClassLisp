@@ -46,10 +46,10 @@ namespace LispEngine.Evaluation
         // This is a bit hacky - can't figure out a better way to "supply" the statistics
         // object yet. Basically, I want to expose "get-counter" to Lisp, but not "statistics"
         // itself... I guess.
-        public Environment AddTo(Environment env)
+        public LexicalEnvironment AddTo(LexicalEnvironment env)
         {
-            env = env.Extend("!get-statistics", DelegateFunctions.MakeFunction(Snapshot, "!get-statistics"));
-            env = env.Extend("!get-statistics-delta", DelegateFunctions.MakeFunction<Statistics, Statistics>(Delta, "!get-statistics-delta"));
+            env.Define("!get-statistics", DelegateFunctions.MakeFunction(Snapshot, "!get-statistics"));
+            env.Define("!get-statistics-delta", DelegateFunctions.MakeFunction<Statistics, Statistics>(Delta, "!get-statistics-delta"));
             return env;
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace LispEngine.Evaluation
 {
-    interface IStack<T>
+    public interface IStack<T>
     {
         T Peek();
         IStack<T> Pop();

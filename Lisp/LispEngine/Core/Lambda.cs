@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
+    using FrameBinder = Func<Datum, IStack<LexicalEnvironment.Binding>>;
+
     internal sealed class Lambda : AbstractFExpression
     {
         public static readonly FExpression Instance = new Lambda();
@@ -19,12 +20,12 @@ namespace LispEngine.Core
         private sealed class ArgBody
         {
             public readonly Datum argDatum;
-            public readonly Bindings binding;
+            public readonly FrameBinder binding;
             public readonly Datum body;
             public ArgBody(Datum argDatum, Datum body)
             {
                 this.argDatum = argDatum;
-                this.binding = BindingTypes.parse(argDatum);
+                this.binding = LexicalBinder.Create(argDatum);
                 this.body = body;
             }
 
@@ -36,9 +37,9 @@ namespace LispEngine.Core
 
         private sealed class Closure : AbstractStackFunction
         {
-            private readonly IEnvironment env;
+            private readonly LexicalEnvironment env;
             private readonly IEnumerable<ArgBody> argBodies;
-            public Closure(IEnvironment env, IEnumerable<ArgBody> argBodies)
+            public Closure(LexicalEnvironment env, IEnumerable<ArgBody> argBodies)
             {
                 this.env = env;
                 this.argBodies = argBodies;
@@ -56,9 +57,6 @@ namespace LispEngine.Core
 
             public override string ToString()
             {
-                var name = env.ReverseLookup(this);
-                if (name != null)
-                    return name.Identifier;
                 return string.Format("(lambda {0})", string.Join(" ", argBodies.Select(x => x.ToString()).ToArray()));
             }
 
@@ -66,15 +64,17 @@ namespace LispEngine.Core
             {
                 foreach (var ab in argBodies)
                 {
-                    var closureEnv = ab.binding(env, args);
-                    if (closureEnv == null) continue;
-                    return c.Evaluate(new Environment(closureEnv), ab.body);
+                    var frameBindings = ab.binding(args);
+                    if (frameBindings == null)
+                        continue;
+                    var closureEnv = env.NewFrame(frameBindings);
+                    return c.Evaluate(closureEnv, ab.body);
                 }
                 throw bindError(args);
             }
         }
 
-        private static Datum evaluate(Continuation c, IEnvironment env, Datum args)
+        private static Datum evaluate(Continuation c, LexicalEnvironment env, Datum args)
         {
             var macroArgs = args.ToArray();
             if (macroArgs.Length % 2 != 0)
@@ -90,7 +90,7 @@ namespace LispEngine.Core
             return new Closure(env, argBodies);            
         }
 
-        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args)
         {
             return c.PushResult(evaluate(c, env, args));
         }

@@ -7,10 +7,10 @@ using LispEngine.Evaluation;
 
 namespace LispEngine.Core
 {
-    using FrameBindings = Tuple<IStack<Symbol>, IStack<Datum>>;
-    using FrameBinder = Func<Datum, Tuple<IStack<Symbol>, IStack<Datum>>>;
+    using FrameBindings = IStack<LexicalEnvironment.Binding>;
+    using FrameBinder = Func<Datum, IStack<LexicalEnvironment.Binding>>;
 
-    using Binder = Func<Datum, Tuple<IStack<Symbol>, IStack<Datum>>, Tuple<IStack<Symbol>, IStack<Datum>>>;
+    using Binder = Func<Datum, IStack<LexicalEnvironment.Binding>, IStack<LexicalEnvironment.Binding>>;
 
     class LexicalBinder : DatumHelpers
     {
@@ -21,7 +21,7 @@ namespace LispEngine.Core
 
         private static FrameBindings bindSymbol(Symbol symbol, Datum value, FrameBindings bindings)
         {
-            return Tuple.Create(bindings.Item1.Push(symbol), bindings.Item2.Push(value));
+            return bindings.Push(new LexicalEnvironment.Binding(symbol, value));
         }
 
         private static Binder combine(Binder first, Binder second)
@@ -80,9 +80,8 @@ namespace LispEngine.Core
         
         public static FrameBinder Create(Datum argPattern)
         {
-            var empty = LexicalEnvironment.EmptyFrame;
             var binder = create(argPattern);
-            return arg => binder(arg, empty);
+            return arg => binder(arg, LexicalEnvironment.EmptyFrame);
         }
     }
 }

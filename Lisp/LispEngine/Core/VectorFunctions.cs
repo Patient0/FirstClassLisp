@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
@@ -80,15 +79,15 @@ namespace LispEngine.Core
             return castVector(d).Elements[index.CastInt()];
         }
 
-        public static Environment AddTo(Environment env)
+        public static LexicalEnvironment AddTo(LexicalEnvironment env)
         {
-            env = env.Extend("make-vector", new MakeVector().ToStack());
-            env = env.Extend("vector", new VectorConstructor().ToStack());
-            env = env.Extend("vector?", DelegateFunctions.MakeDatumFunction(isVector, ",vector?"));
-            env = env.Extend("vector-copy", DelegateFunctions.MakeDatumFunction(vectorCopy, ",vector-copy"));
-            env = env.Extend("vector-set!", DelegateFunctions.MakeDatumFunction(vectorSet, ",vector-set!"));
-            env = env.Extend("vector-length", DelegateFunctions.MakeDatumFunction(vectorLength, ",vector-length"));
-            env = env.Extend("vector-ref", DelegateFunctions.MakeDatumFunction(vectorRef, ",vector-ref"));
+            env.Define("make-vector", new MakeVector().ToStack());
+            env.Define("vector", new VectorConstructor().ToStack());
+            env.Define("vector?", DelegateFunctions.MakeDatumFunction(isVector, ",vector?"));
+            env.Define("vector-copy", DelegateFunctions.MakeDatumFunction(vectorCopy, ",vector-copy"));
+            env.Define("vector-set!", DelegateFunctions.MakeDatumFunction(vectorSet, ",vector-set!"));
+            env.Define("vector-length", DelegateFunctions.MakeDatumFunction(vectorLength, ",vector-length"));
+            env.Define("vector-ref", DelegateFunctions.MakeDatumFunction(vectorRef, ",vector-ref"));
             return env;
         }
     }

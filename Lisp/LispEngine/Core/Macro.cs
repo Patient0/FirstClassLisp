@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
@@ -17,10 +16,10 @@ namespace LispEngine.Core
         public static readonly StackFunction Instance = new Macro().ToStack();
         public static readonly StackFunction Unmacro = new UnMacro().ToStack();
 
-        public static Environment AddTo(Environment env)
+        public static LexicalEnvironment AddTo(LexicalEnvironment env)
         {
-            env = env.Extend(Symbol.GetSymbol("unmacro"), Unmacro);
-            env = env.Extend(Symbol.GetSymbol("macro"), Instance);
+            env.Define("unmacro", Unmacro);
+            env.Define("macro", Instance);
             return env;
         }
 
@@ -72,7 +71,7 @@ namespace LispEngine.Core
                 this.argFunction = argFunction;
             }
 
-            public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+            public override Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args)
             {
                 var p = args as Pair;
                 c = c.PushEnv(env).PushTask(new EvaluateExpansion(this, p));

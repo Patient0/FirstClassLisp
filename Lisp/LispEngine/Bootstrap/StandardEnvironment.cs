@@ -2,13 +2,12 @@
 using LispEngine.Evaluation;
 using LispEngine.ReflectionBinding;
 using LispEngine.Util;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
 {
     public class StandardEnvironment
     {
-        public static Environment Create()
+        public static LexicalEnvironment Create()
         {
             var env = CreateSandbox();
             // Adding reflection builtins enables a lisp engine
@@ -25,9 +24,9 @@ namespace LispEngine.Bootstrap
          * environment don't provide any way for lisp programs to execute
          * arbitrary code.
          */
-        public static Environment CreateSandbox()
+        public static LexicalEnvironment CreateSandbox()
         {
-            var env = new Environment(EmptyEnvironment.Instance);
+            var env = LexicalEnvironment.Create();
             env = CoreForms.AddTo(env);
             env = Builtins.AddTo(env);
             return env;

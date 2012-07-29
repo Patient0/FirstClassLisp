@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
@@ -12,7 +11,7 @@ namespace LispEngine.Core
     {
         public static readonly FExpression Instance = new Define();
 
-        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args)
         {
             var argList = args.ToArray();
             if (argList.Length != 2)

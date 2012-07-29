@@ -6,7 +6,7 @@ namespace LispEngine.Evaluation
     class EvaluateFExpression : Task
     {
         private readonly Datum args;
-        private readonly Environment env;
+        private readonly LexicalEnvironment env;
 
         class FExpressionConverter : AbstractVisitor<FExpression>
         {
@@ -35,7 +35,7 @@ namespace LispEngine.Evaluation
             return c.Result.accept(new FExpressionConverter(c));
         }
 
-        public EvaluateFExpression(Datum args, Environment env)
+        public EvaluateFExpression(Datum args, LexicalEnvironment env)
         {
             this.args = args;
             this.env = env;

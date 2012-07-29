@@ -23,12 +23,12 @@ namespace LispEngine.Evaluation
             return c.Result;
         }
 
-        public Datum Evaluate(Environment env, Datum datum)
+        public Datum Evaluate(LexicalEnvironment env, Datum datum)
         {
             return Evaluate(new Statistics(), env, datum);
         }
 
-        public Datum Evaluate(Statistics statistics, Environment env, Datum datum)
+        public Datum Evaluate(Statistics statistics, LexicalEnvironment env, Datum datum)
         {
             var c = Continuation.Create(statistics)
                 .PushTask(null)

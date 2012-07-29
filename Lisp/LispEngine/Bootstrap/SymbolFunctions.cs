@@ -5,7 +5,6 @@ using System.Text;
 using LispEngine.Core;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
 {
@@ -38,11 +37,11 @@ namespace LispEngine.Bootstrap
             }
         }
 
-        public static Environment Extend(Environment env)
+        public static LexicalEnvironment Extend(LexicalEnvironment env)
         {
-            env = env.Extend("symbol->string", new SymbolToString().ToStack());
-            env = env.Extend("string->symbol", new StringToSymbol().ToStack());
-            env = env.Extend("gensym", new GenSym().ToStack());
+            env.Define("symbol->string", new SymbolToString().ToStack());
+            env.Define("string->symbol", new StringToSymbol().ToStack());
+            env.Define("gensym", new GenSym().ToStack());
             return env;
         }
     }

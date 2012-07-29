@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
@@ -14,7 +13,7 @@ namespace LispEngine.Core
         {
             var argArray = args.ToArray();
             var expression = argArray[0];
-            var environment = (Environment) argArray[1].CastObject();
+            var environment = (LexicalEnvironment) argArray[1].CastObject();
             return c.Evaluate(environment, expression);
         }
 

@@ -6,60 +6,90 @@ using LispEngine.Datums;
 
 namespace LispEngine.Evaluation
 {
-    using FrameBindings = Tuple<IStack<Symbol>, IStack<Datum>>;
+    using FrameBindings = IStack<LexicalEnvironment.Binding>;
 
-    class LexicalEnvironment
+    public class LexicalEnvironment
     {
+        public class Binding
+        {
+            private readonly Symbol symbol;
+            public Binding(Symbol symbol, Datum value)
+            {
+                this.symbol = symbol;
+                this.Value = value;
+            }
+
+            public Datum Value { get; set; }
+
+            public Symbol Symbol
+            {
+                get { return symbol; }
+            }
+        }
         private readonly LexicalEnvironment parent;
-        private IStack<Symbol> symbols;
-        private IStack<Datum> LexicalBindings;
-        private LexicalEnvironment (LexicalEnvironment parent, IStack<Symbol> symbols, IStack<Datum> LexicalBindings)
+        private IStack<Binding> bindings;
+        private LexicalEnvironment (LexicalEnvironment parent, IStack<Binding> bindings)
         {
             this.parent = parent;
-            this.symbols = symbols;
-            this.LexicalBindings = LexicalBindings;
+            this.bindings = bindings;
         }
 
-        private static readonly IStack<Symbol> emptySymbols = Stack<Symbol>.Empty.Push(null);
-        private static readonly IStack<Datum> emptyDatums = Stack<Datum>.Empty;
+        public static FrameBindings EmptyFrame = Stack<Binding>.Empty.Push(null);
 
-        public static FrameBindings EmptyFrame = Tuple.Create(emptySymbols, emptyDatums);
-
-        private static LexicalEnvironment newFrame(LexicalEnvironment parent)
+        private static LexicalEnvironment newFrame(LexicalEnvironment parent, FrameBindings bindings)
         {
-            return new LexicalEnvironment(parent, emptySymbols, emptyDatums);
+            return new LexicalEnvironment(parent, bindings);
+        }
+
+        public LexicalEnvironment NewFrame(FrameBindings frameBindings)
+        {
+            return newFrame(this, frameBindings);
         }
 
         public LexicalEnvironment NewFrame()
         {
-            return newFrame(this);
+            return NewFrame(EmptyFrame);
         }
 
         public static LexicalEnvironment Create()
         {
-            return newFrame(null);
+            return newFrame(null, EmptyFrame);
         }
 
-        public void Define(Symbol name, Datum binding)
+        public LexicalEnvironment Define(Symbol name, Datum value)
         {
-            this.symbols = symbols.Push(name);
-            this.LexicalBindings = LexicalBindings.Push(binding);
+            this.bindings = bindings.Push(new Binding(name, value));
+            return this;
+        }
+
+        public LexicalEnvironment Define(string name, Datum binding)
+        {
+            return Define(Symbol.GetSymbol(name), binding);
+        }
+
+        private Binding find(Symbol symbol)
+        {
+            // TODO: We will optimize this
+            var b = bindings;
+            while (b.Peek() != null)
+            {
+                if (symbol == b.Peek().Symbol)
+                    return b.Peek();
+                b = b.Pop();
+            }
+            if (parent == null)
+                throw DatumHelpers.error("Undefined symbol '{0}'", symbol);
+            return parent.find(symbol);
         }
 
         public Datum Lookup(Symbol symbol)
         {
-            var s = symbols;
-            var b = LexicalBindings;
-            while(s.Peek() != null)
-            {
-                if(symbol == s.Peek())
-                    return b.Peek();
-                b = b.Pop();
-                s = s.Pop();
-            }
-            if (parent != null)
-                return parent.Lookup(symbol);
-            return null;
+            return find(symbol).Value;
+        }
+
+        public void Set(Symbol symbol, Datum result)
+        {
+            find(symbol).Value = result;
         }
     }
 }

@@ -5,7 +5,6 @@ using System.Text;
 using LispEngine.Core;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
 {
@@ -37,18 +36,18 @@ namespace LispEngine.Bootstrap
            return new Operation(name, op).ToStack();
         }
 
-        public static Environment Extend(Environment env)
+        public static LexicalEnvironment Extend(LexicalEnvironment env)
         {
             return env
-                .Extend("+", makeOperation("+", (x, y) => x + y))
-                .Extend("-", makeOperation("-", (x, y) => x - y))
-                .Extend("*", makeOperation("*", (x, y) => x*y))
-                .Extend("/", makeOperation("/", (x, y) => x/y))
-                .Extend("<", makeOperation("<", (x, y) => x < y))
-                .Extend(">", makeOperation(">", (x, y) => x > y))
-                .Extend("bit-and", makeOperation("bit-and", (x , y) => x & y))
-                .Extend("bit-or", makeOperation("bit-or", (x, y) => x | y))
-                .Extend("bit-shift", makeOperation("bit-shift", (x, y) => x << y));
+                .Define("+", makeOperation("+", (x, y) => x + y))
+                .Define("-", makeOperation("-", (x, y) => x - y))
+                .Define("*", makeOperation("*", (x, y) => x*y))
+                .Define("/", makeOperation("/", (x, y) => x/y))
+                .Define("<", makeOperation("<", (x, y) => x < y))
+                .Define(">", makeOperation(">", (x, y) => x > y))
+                .Define("bit-and", makeOperation("bit-and", (x , y) => x & y))
+                .Define("bit-or", makeOperation("bit-or", (x, y) => x | y))
+                .Define("bit-shift", makeOperation("bit-shift", (x, y) => x << y));
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using LispEngine.Datums;
 using LispEngine.Evaluation;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Core
 {
@@ -17,13 +16,13 @@ namespace LispEngine.Core
             return c.PopResult();
         }
 
-        public override Continuation Evaluate(Continuation c, Environment env, Datum args)
+        public override Continuation Evaluate(Continuation c, LexicalEnvironment env, Datum args)
         {
             var argList = args.ToArray();
             if (argList.Length < 1)
                 throw c.error("Expected at least 1 expression for begin. Got none.");
             // Scope any local definitions.
-            var localEnv = new Environment(env);
+            var localEnv = env.NewFrame();
             var remaining = argList.Reverse().ToArray();
             for (var i = 0; i < remaining.Length; ++i)
             {

@@ -8,7 +8,6 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Bootstrap
 {
@@ -85,12 +84,12 @@ namespace LispEngine.Bootstrap
             public static readonly StackFunction Instance = new OpenInputStream().ToStack();
         }
 
-        public static Environment AddTo(Environment env)
+        public static LexicalEnvironment AddTo(LexicalEnvironment env)
         {
-            env = env.Extend("read", Read.Instance);
-            env = env.Extend("open-input-string", OpenInputString.Instance);
-            env = env.Extend("eof-object?", IsEof.Instance);
-            env = env.Extend("open-input-stream", OpenInputStream.Instance);
+            env.Define("read", Read.Instance);
+            env.Define("open-input-string", OpenInputString.Instance);
+            env.Define("eof-object?", IsEof.Instance);
+            env.Define("open-input-stream", OpenInputStream.Instance);
             return env;
         }
     }

@@ -8,7 +8,6 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Lexing;
 using LispEngine.Parsing;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispEngine.Util
 {
@@ -33,7 +32,7 @@ namespace LispEngine.Util
             }
         }
 
-        public static void ExecuteResource(Environment env, string resourceFile)
+        public static void ExecuteResource(LexicalEnvironment env, string resourceFile)
         {
             ExecuteResource(new Statistics(), Assembly.GetCallingAssembly(), env, resourceFile);
         }
@@ -41,7 +40,7 @@ namespace LispEngine.Util
         /**
          * Used for bootstrapping various .lisp files into the environment.
          */
-        public static void ExecuteResource(Statistics statistics, Assembly assembly, Environment env, string resourceFile)
+        public static void ExecuteResource(Statistics statistics, Assembly assembly, LexicalEnvironment env, string resourceFile)
         {
             var evaluator = new Evaluator();
             foreach (var d in ReadDatums(assembly, resourceFile))

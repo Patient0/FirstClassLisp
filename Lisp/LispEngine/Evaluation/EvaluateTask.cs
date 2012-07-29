@@ -15,9 +15,9 @@ namespace LispEngine.Evaluation
 
         class Visitor : AbstractVisitor<Continuation>
         {
-            private readonly Environment env;
+            private readonly LexicalEnvironment env;
             private readonly Continuation c;
-            public Visitor(Continuation c, Environment env)
+            public Visitor(Continuation c, LexicalEnvironment env)
             {
                 this.c = c;
                 this.env = env;

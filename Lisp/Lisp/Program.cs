@@ -14,7 +14,7 @@ namespace Lisp
             try
             {
                 var env = StandardEnvironment.Create();
-                env = env.Extend("args", DatumHelpers.atomList(args));
+                env.Define("args", DatumHelpers.atomList(args));
                 var statistics = new Statistics();
                 env = statistics.AddTo(env);
                 ResourceLoader.ExecuteResource(statistics, Assembly.GetExecutingAssembly(), env, "Lisp.REPL.lisp");

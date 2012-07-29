@@ -84,17 +84,4 @@ namespace LispEngine.Evaluation
             parent.dump(output);
         }
     }
-
-    public static class EnvironmentExtensions
-    {
-        public static IEnvironment Extend(this IEnvironment e, Symbol name, Datum value)
-        {
-            return new ExtendedEnvironment(e, name, value);
-        }
-
-        public static Environment ToMutable(this IEnvironment e)
-        {
-            return new Environment(e);
-        }
-    }
 }

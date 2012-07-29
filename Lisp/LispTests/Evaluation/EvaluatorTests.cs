@@ -6,7 +6,6 @@ using LispEngine.Datums;
 using LispEngine.Evaluation;
 using LispEngine.Util;
 using NUnit.Framework;
-using Environment = LispEngine.Evaluation.Environment;
 
 namespace LispTests.Evaluation
 {
@@ -26,7 +25,7 @@ namespace LispTests.Evaluation
     {
         private readonly string lispResourceFile;
         private Evaluator e;
-        private Environment env;
+        private LexicalEnvironment env;
 
         public EvaluatorTests(string lispResourceFile)
         {
