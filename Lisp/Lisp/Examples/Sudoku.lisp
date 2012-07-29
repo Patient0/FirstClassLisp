@@ -216,7 +216,7 @@
         grid
         (with* ((s . digits) (square-to-try grid)
                 d (amb digits))
-               (System.Console/WriteLine "Assiging {0} to {1}" d s)
+               (write-line "Assiging {0} to {1}" d s)
                (solve (assign! (copy-grid grid) s d)))))
 
 (define (display-grid grid)
