@@ -28,6 +28,11 @@ namespace LispEngine.Datums
             return DatumHelpers.atom(o);
         }
 
+        public static Symbol ToSymbol(this string identifier)
+        {
+            return DatumHelpers.symbol(identifier);
+        }
+
         public static Symbol CastSymbol(this Datum d)
         {
             return DatumHelpers.castSymbol(d);
