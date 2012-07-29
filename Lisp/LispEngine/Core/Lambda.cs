@@ -36,9 +36,9 @@ namespace LispEngine.Core
 
         private sealed class Closure : AbstractStackFunction
         {
-            private readonly Environment env;
+            private readonly IEnvironment env;
             private readonly IEnumerable<ArgBody> argBodies;
-            public Closure(Environment env, IEnumerable<ArgBody> argBodies)
+            public Closure(IEnvironment env, IEnumerable<ArgBody> argBodies)
             {
                 this.env = env;
                 this.argBodies = argBodies;
@@ -68,13 +68,13 @@ namespace LispEngine.Core
                 {
                     var closureEnv = ab.binding(env, args);
                     if (closureEnv == null) continue;
-                    return c.Evaluate(closureEnv, ab.body);
+                    return c.Evaluate(new Environment(closureEnv), ab.body);
                 }
                 throw bindError(args);
             }
         }
 
-        private static Datum evaluate(Continuation c, Environment env, Datum args)
+        private static Datum evaluate(Continuation c, IEnvironment env, Datum args)
         {
             var macroArgs = args.ToArray();
             if (macroArgs.Length % 2 != 0)

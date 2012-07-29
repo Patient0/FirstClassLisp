@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using LispEngine.Datums;
@@ -14,5 +15,6 @@ namespace LispEngine.Evaluation
         bool TryLookup(Symbol identifier, out Datum datum);
         void Set(Symbol identifier, Datum newValue);
         Symbol ReverseLookup(Datum value);
+        void dump(TextWriter output);
     }
 }

@@ -87,6 +87,7 @@
     <Compile Include="Evaluation\FExpression.cs" />
     <Compile Include="Bootstrap\StandardEnvironment.cs" />
     <Compile Include="Evaluation\IEnvironment.cs" />
+    <Compile Include="Evaluation\LexicalEnvironment.cs" />
     <Compile Include="Evaluation\Stack.cs" />
     <Compile Include="Evaluation\StackFunction.cs" />
     <Compile Include="Evaluation\StackFunctionAdapter.cs" />

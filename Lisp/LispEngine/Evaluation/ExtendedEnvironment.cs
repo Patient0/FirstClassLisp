@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using LispEngine.Datums;
@@ -75,6 +76,12 @@ namespace LispEngine.Evaluation
                 ee = e as ExtendedEnvironment;
             }
             return e.ReverseLookup(value);
+        }
+
+        public void dump(TextWriter output)
+        {
+            output.WriteLine("{0}: {1}", name, value);
+            parent.dump(output);
         }
     }
 
