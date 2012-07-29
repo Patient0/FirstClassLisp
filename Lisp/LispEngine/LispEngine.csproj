@@ -53,6 +53,7 @@
     <Compile Include="Core\Env.cs" />
     <Compile Include="Core\EqualFunctions.cs" />
     <Compile Include="Core\Eval.cs" />
+    <Compile Include="Core\LexicalBinder.cs" />
     <Compile Include="Core\Log.cs" />
     <Compile Include="Core\Set.cs" />
     <Compile Include="Core\DebugFunctions.cs" />
