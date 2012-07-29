@@ -37,7 +37,7 @@ namespace LispEngine.Core
             }
             public override Bindings visit(Symbol s)
             {
-                return (env, args) => env.Extend(s.Identifier, args);
+                return (env, args) => env.Extend(s, args);
             }
             public override Bindings visit(Atom a)
             {
