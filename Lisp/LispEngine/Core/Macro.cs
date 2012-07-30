@@ -45,6 +45,8 @@ namespace LispEngine.Core
 
             public Continuation Perform(Continuation c)
             {
+                // The result datum may be a graph. This makes certain
+                // optimizations risky.
                 var expansion = c.Result;
                 if(macroDatum != null)
                 {

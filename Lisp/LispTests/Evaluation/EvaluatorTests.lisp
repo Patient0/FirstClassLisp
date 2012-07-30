@@ -312,6 +312,9 @@
     ; symbol datum as a way to optimize lookups.
     ; This is fine so long as a reference to a symbol
     ; does not end up refered to from more than one place.
+
+    ; This example is somewhat pathological - I'm not sure
+    ; it would ever arise in practise.
     '(symbol-lookup-cache
         (42 42 42)
         (begin

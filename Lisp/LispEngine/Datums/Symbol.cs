@@ -41,6 +41,11 @@ namespace LispEngine.Datums
             return visitor.visit(this);
         }
 
+        public Symbol clone()
+        {
+            return new Symbol(identifier, id);
+        }
+
         /*
          * Optimize symbol comparison by
          * interning all symbols.
