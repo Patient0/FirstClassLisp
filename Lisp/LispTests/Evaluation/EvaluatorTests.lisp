@@ -307,4 +307,27 @@
     (is-macro
         (#t #f)
         (mapcar macro? (list let car)))
+
+    ; We 'cache' lookup information in the actual
+    ; symbol datum as a way to optimize lookups.
+    ; This is fine so long as a reference to a symbol
+    ; does not end up refered to from more than one place.
+    '(symbol-lookup-cache
+        (42 42 42)
+        (begin
+            (define (make-graph sym)
+                `(,begin
+                    (,define ,sym 26)
+                    ,sym
+                    (,let ,sym 42 ,sym)))
+            (define (make-graph-lambda sym)
+                `(,lambda () ,(make-graph sym)))
+            (define graph-macro (macro make-graph))
+            (list
+                (graph-macro x) ; From macro expansion
+                (eval (make-graph 'y) (env)) ; graph evaluated via eval
+                ; Case of a closure created via eval which contains a 'graph'
+                ; as its body
+                (let t (eval (make-graph-lambda 'z) (env)) (t))
+            )))
 )
