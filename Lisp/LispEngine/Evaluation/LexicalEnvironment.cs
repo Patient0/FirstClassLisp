@@ -12,16 +12,20 @@ namespace LispEngine.Evaluation
     {
         public class Binding
         {
+            // Just for debugging
+            private readonly Symbol symbol;
             private readonly int symbolId;
 
             public Binding(Symbol symbol, Datum value)
             {
+                this.symbol = symbol;
                 this.symbolId = symbol.ID;
                 this.Value = value;
             }
 
             public Datum Value { get; set; }
             public int SymbolID { get { return symbolId; } }
+            public Symbol Symbol { get { return symbol; } }
         }
 
         private Statistics statistics;
@@ -78,23 +82,55 @@ namespace LispEngine.Evaluation
             return DatumHelpers.error("Undefined symbol '{0}'", symbol);
         }
 
-        public Binding Find(Symbol symbol)
+        private Binding findInFrame(int id)
         {
-            if (statistics != null)
-                statistics.Lookups++;
             var b = bindings;
-            var id = symbol.ID;
-            while (b.Peek() != null)
+            Binding binding;
+            while( (binding = b.Peek()) != null)
             {
-                if (id == b.Peek().SymbolID)
-                    return b.Peek();
+                if (binding.SymbolID == id)
+                    return binding;
                 b = b.Pop();
             }
-            if (parent == null)
-                throw undefined(symbol);
-            return parent.Find(symbol);
+            return null;
         }
 
+        private static Binding checkCached(LexicalEnvironment e, Symbol symbol)
+        {
+            if (symbol.Env == null)
+                return null;
+            while(e != null)
+            {
+                if (ReferenceEquals(symbol.Env, e))
+                    return symbol.CachedBinding;
+                e = e.parent;
+            }
+            return null;
+        }
+
+        private static Binding findAndCache(LexicalEnvironment e, Symbol symbol)
+        {
+            if (e.statistics != null)
+                e.statistics.Lookups++;
+            var id = symbol.ID;
+            while(e != null)
+            {
+                var b = e.findInFrame(id);
+                if (b != null)
+                {
+                    symbol.Env = e;
+                    return (symbol.CachedBinding = b);
+                }
+                e = e.parent;
+            }
+            throw undefined(symbol);
+        }
+
+        public Binding Find(Symbol symbol)
+        {
+            return checkCached(this, symbol) ?? findAndCache(this, symbol);
+        }
+         
         public void Set(Symbol symbol, Datum value)
         {
             Find(symbol).Value = value;
@@ -103,96 +139,6 @@ namespace LispEngine.Evaluation
         public Datum Lookup(Symbol symbol)
         {
             return Find(symbol).Value;
-        }
-
-        public sealed class Location
-        {
-            private readonly int frame;
-            private readonly int index;
-
-            public Location(int frame, int index)
-            {
-                this.frame = frame;
-                this.index = index;
-            }
-
-            public Binding Find(LexicalEnvironment e)
-            {
-                for (var f = 0; f < frame; ++f)
-                    e = e.parent;
-                var b = e.bindings;
-                for (var i = 0; i < index; ++i)
-                    b = b.Pop();
-                return b.Peek();
-            }
-
-            public override string ToString()
-            {
-                return string.Format("Frame: {0} Index: {1}", frame, index);
-            }
-
-            public bool Equals(Location other)
-            {
-                if (ReferenceEquals(null, other)) return false;
-                if (ReferenceEquals(this, other)) return true;
-                return other.frame == frame && other.index == index;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != typeof (Location)) return false;
-                return Equals((Location) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    return (frame*397) ^ index;
-                }
-            }
-
-            public static bool operator ==(Location left, Location right)
-            {
-                return Equals(left, right);
-            }
-
-            public static bool operator !=(Location left, Location right)
-            {
-                return !Equals(left, right);
-            }
-        }
-
-        private int getIndex(Symbol symbol)
-        {
-            var index = 0;
-            var b = bindings;
-            var id = symbol.ID;
-            while (b.Peek() != null)
-            {
-                if (id == b.Peek().SymbolID)
-                    return index;
-                b = b.Pop();
-                ++index;
-            }
-            return -1;
-        }
-
-        public Location LookupLocation(Symbol symbol)
-        {
-            var e = this;
-            var frame = 0;
-            while(e != null)
-            {
-                var index = e.getIndex(symbol);
-                if(index != -1)
-                    return new Location(frame, index);
-                ++frame;
-                e = e.parent;
-            }
-            throw undefined(symbol);
         }
     }
 }

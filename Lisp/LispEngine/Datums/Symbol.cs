@@ -11,6 +11,10 @@ namespace LispEngine.Datums
         private readonly string identifier;
         private readonly int id;
 
+        // These two used for optimizing lookups
+        public LexicalEnvironment Env { get; set; }
+        public LexicalEnvironment.Binding CachedBinding { get; set; }
+
         private Symbol(string identifier, int id)
         {
             this.identifier = identifier;
