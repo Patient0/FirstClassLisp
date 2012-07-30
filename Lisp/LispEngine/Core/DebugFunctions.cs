@@ -7,7 +7,7 @@ using LispEngine.Evaluation;
 
 namespace LispEngine.Core
 {
-    class DebugFunctions
+    class DebugFunctions : DelegateFunctions
     {
         private static Continuation asContinuation(Datum arg)
         {
@@ -17,73 +17,62 @@ namespace LispEngine.Core
             return cfunction.Continuation;
         }
 
-        public class TaskDescriptions : UnaryFunction
+        private static Datum getEnvironments(Datum arg)
         {
-            protected override Datum eval(Datum arg)
+            var c = asContinuation(arg);
+            var stack = DatumHelpers.nil;
+            while (c.Env != null)
             {
-                var c = asContinuation(arg);
-                var stack = DatumHelpers.nil;
-                while (c.Task != null)
-                {
-                    stack = DatumHelpers.cons(c.Task.ToString().ToAtom(), stack);
-                    c = c.PopTask();
-                }
-                return stack;
+                stack = DatumHelpers.cons(c.Env.ToAtom(), stack);
+                c = c.PopEnv();
             }
-
-            public override string ToString()
-            {
-                return ",task-descriptions";
-            }
+            return stack;
         }
 
-        public class PendingResults : UnaryFunction
+        private static Datum getTaskDescriptions(Datum arg)
         {
-            protected override Datum eval(Datum arg)
+            var c = asContinuation(arg);
+            var stack = DatumHelpers.nil;
+            while (c.Task != null)
             {
-                var c = asContinuation(arg);
-                var stack = DatumHelpers.nil;
-                while(c.Result != null)
-                {
-                    stack = DatumHelpers.cons(c.Result, stack);
-                    c = c.PopResult();
-                }
-                return stack;
+                stack = DatumHelpers.cons(c.Task.ToString().ToAtom(), stack);
+                c = c.PopTask();
             }
+            return stack;            
         }
 
-        // We could probably redo the 'env' f-expression
-        // to use this instead in combination with call/cc.
-        public class GetEnv : UnaryFunction
+        private static Datum getPendingResults(Datum arg)
         {
-            protected override Datum eval(Datum arg)
+            var c = asContinuation(arg);
+            var stack = DatumHelpers.nil;
+            while (c.Result != null)
             {
-                var c = asContinuation(arg);
-                return c.Env.ToAtom();
+                stack = DatumHelpers.cons(c.Result, stack);
+                c = c.PopResult();
             }
+            return stack;
         }
 
-        public class Throw : UnaryFunction
+        private static Datum getEnv(Datum arg)
         {
-            protected override Datum eval(Datum arg)
-            {
-                var msg = (String)arg.CastObject();
-                throw DatumHelpers.error(msg);
-            }
+            var c = asContinuation(arg);
+            return c.Env.ToAtom();            
+        }
 
-            public override string ToString()
-            {
-                return ",throw";
-            }
+        private static Datum throwMsg(Datum arg)
+        {
+            var msg = (String)arg.CastObject();
+            throw DatumHelpers.error(msg);            
         }
 
         public static LexicalEnvironment AddTo(LexicalEnvironment env)
         {
-            return env.Define("task-descriptions", new TaskDescriptions().ToStack())
+            return env.Define("task-descriptions", MakeDatumFunction(getTaskDescriptions, ",task-descriptions"))
                 .Define("execute-with-error-translator", ExecuteWithErrorTranslator.Instance)
-                .Define("pending-results", new PendingResults().ToStack())
-                .Define("throw", new Throw().ToStack())
-                .Define("get-env", new GetEnv().ToStack());
+                .Define("env-stack", MakeDatumFunction(getEnvironments, ",env-stack"))
+                .Define("pending-results", MakeDatumFunction(getPendingResults, ",pending-results"))
+                .Define("throw", MakeDatumFunction(throwMsg, ",throw"))
+                .Define("get-env", MakeDatumFunction(getEnv, ",get-env"));
         }
     }
 }

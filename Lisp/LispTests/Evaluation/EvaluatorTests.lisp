@@ -313,15 +313,26 @@
     ; This is fine so long as a reference to a symbol
     ; does not end up refered to from more than one place.
 
+    ; This test takes advantage of this to generate
+    ; an "incorrect" result: the S-expression generated
+    ; by "make-graph" is not a tree - rather than same symbol
+    ; is referred to from different places in the code.
+
     ; This example is somewhat pathological - I'm not sure
     ; it would ever arise in practise.
+
+    ; I tried making the interpreter automatically convert
+    ; all "possible" graphs into trees to make it robust against this - 
+    ; but doing so removed any performance benefit obtained
+    ; from caching the lookups in the first place.
     '(symbol-lookup-cache
         (42 42 42)
         (begin
             (define (make-graph sym)
                 `(,begin
                     (,define ,sym 26)
-                    ,sym
+                    ,sym ; ;refer' to sym
+                    ; Now refer to symbol in a lower scope
                     (,let ,sym 42 ,sym)))
             (define (make-graph-lambda sym)
                 `(,lambda () ,(make-graph sym)))

@@ -23,7 +23,7 @@ namespace LispEngine.Evaluation
 
         public static Continuation Create(Statistics s)
         {
-            return new Continuation(s, Stack<LexicalEnvironment>.Empty, Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
+            return new Continuation(s, Stack<LexicalEnvironment>.Empty.Push(null), Stack<Task>.Empty, Stack<Datum>.Empty, Unhandled);
         }
 
         private Continuation(Statistics statistics, IStack<LexicalEnvironment> envs, IStack<Task> tasks, IStack<Datum> results, ErrorHandler errorHandler)
