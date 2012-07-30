@@ -107,9 +107,6 @@
         (loop c digits
             (show-digits (get-square grid (index (cons r c)))))))
 
-(define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
-(define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
-
 (define (string->list s)
     (define (convert char)
         (let schar (.ToString char)
@@ -223,6 +220,21 @@
     (loop row (grid->lists grid)
         (write-line "{0}" row))
     nil)
+
+(define grid1 "003020600900305001001806400008102900700000008006708200002609500800203009005010300")
+(define grid2 "4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......")
+; Hardest puzzle from http://www.mirror.co.uk/news/weird-news/worlds-hardest-sudoku-can-you-242294
+(define inkala-hardest
+        (System.String/Concat
+            "..5 3.. ..."
+            "8.. ... .2."
+            ".7. .1. 5.."
+            "4.. ..5 3.."
+            ".1. .7. ..6"
+            "..3 2.. .8."
+            ".6. 5.. ..9"
+            "..4 ... .3."
+            "... ..9 7.."))
 
 (write-line "Solving grid1...")
 (define parsed1 (parse-grid grid1))

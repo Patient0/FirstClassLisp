@@ -60,7 +60,6 @@
     <Compile Include="Core\ExecuteWithErrorTranslator.cs" />
     <Compile Include="Core\VectorFunctions.cs" />
     <Compile Include="Datums\AbstractVisitor.cs" />
-    <Compile Include="Datums\GraphToTree.cs" />
     <Compile Include="Datums\DatumExtensions.cs" />
     <Compile Include="Datums\DatumVisitor.cs" />
     <Compile Include="Datums\Vector.cs" />
