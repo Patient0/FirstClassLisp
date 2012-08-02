@@ -81,13 +81,14 @@ namespace LispEngine.Lexing
 
         private delegate TokenType? Matcher(Scanner s);
 
-        private static void matchSymbol(Scanner s)
+        private static bool matchSymbol(Scanner s)
         {
             if (!s.isInitial())
-                return;
+                return false;
             s.readChar();
             while (s.isSubsequent())
                 s.readChar();
+            return true;
         }
 
         // .Net method support.
@@ -103,6 +104,14 @@ namespace LispEngine.Lexing
             return s.sb.Length > 1 ? TokenType.Symbol : TokenType.Dot;
         }
 
+        private static TokenType? remainingFloat(Scanner s)
+        {
+            s.readChar(); // Skip the '.'
+            while (s.isDigit())
+                s.readChar();
+            return TokenType.Double;
+        }
+
         private static TokenType? positiveNumber(Scanner s)
         {
             if (!s.isDigit())
@@ -111,20 +120,34 @@ namespace LispEngine.Lexing
                 s.readChar();
             if (s.peek() != '.')
                 return TokenType.Integer;
-            s.readChar();
-            while (s.isDigit())
-                s.readChar();
-            return TokenType.Double;
+            return remainingFloat(s);
+        }
+
+        private static TokenType? leadingFloat(Scanner s)
+        {
+            var floatToken = remainingFloat(s);
+            if (s.sb.Length == 1)
+            {
+                matchSymbol(s);
+                return s.sb.Length == 1 ? TokenType.Dot : TokenType.Symbol;
+            }
+            return floatToken;            
         }
 
         private static TokenType? matchNumber(Scanner s)
         {
-            if(s.peek() == '-')
+            if(s.peek() == '.')
+                return leadingFloat(s);
+
+            if(s.isOneOf("+-"))
             {
                 s.readChar();
+                if(s.peek() == '.')
+                    return leadingFloat(s);
                 var num = positiveNumber(s);
                 if (num != null)
                     return num;
+
                 matchSymbol(s);
                 return TokenType.Symbol;
             }
@@ -199,7 +222,7 @@ namespace LispEngine.Lexing
                                     s.readChar();
                             }),
                     matchNumber,
-                    match(TokenType.Symbol, matchSymbol),
+                    match(TokenType.Symbol, scanner => matchSymbol(scanner)),
                     // Match either "." or a ".symbol"
                     matchDot,
                     match(TokenType.String,

@@ -114,6 +114,36 @@ namespace LispTests.Lexing
         }
 
         [Test]
+        public void testFloat()
+        {
+            test("4.5", number("4.5"));
+        }
+
+        [Test]
+        public void testPositiveInteger()
+        {
+            test("+55", integer("+55"));
+        }
+
+        [Test]
+        public void testImplicitZero()
+        {
+            test(".5", number(".5"));
+        }
+
+        [Test]
+        public void testImplicitPositiveZero()
+        {
+            test("+.5", number("+.5"));
+        }
+
+        [Test]
+        public void testImplicitNegativeZero()
+        {
+            test("-.5", number("-.5"));
+        }
+
+        [Test]
         public void testMixedSymbolInteger()
         {
             test("Hello 22 World", symbol("Hello"), sp, integer("22"), sp, symbol("World"));
@@ -183,12 +213,6 @@ namespace LispTests.Lexing
         public void testVectorLiteral()
         {
             test("#(1)", vectorOpen, integer("1"), close);
-        }
-
-        [Test]
-        public void testFloat()
-        {
-            test("4.5", number("4.5"));
         }
     }
 }
