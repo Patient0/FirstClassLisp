@@ -217,9 +217,11 @@ A `Task` is simply an object that knows how to get from one Continuation to the 
 ```
 
 
-### .Net method binding and REPL
+### .Net method bindings and REPL
 
-With the help of my friend [Tim] (http://www.partario.com/blog/) we've also added some basic .Net method bindings. Here are some examples that show how it is used:
+With the help of my friend [Tim] (http://www.partario.com/blog/) we've also added some basic .Net method bindings. Here are some examples that show how it is used inside
+the REPL:
+
 
 ```
 FCLisp> (System.String/Format "{0} * {1} is {2}" 4 5 (* 4 5))
@@ -234,7 +236,12 @@ Steps: 1141 Expansions: 1 Lookups: 175 Elapsed: 00:00:00.0012821
 FCLisp>
 ```
 
-This was done by augmenting the way that the reader reads in symbols that contain a "." or a "/".
+After each statement, the REPL prints out:
+* Steps: The number of Tasks that were performed
+* Expansions: The number of macro expansions that were performed (excluding cached expansions - see below)
+* Elapsed: How long it took
+
+The Clojure/style .NET syntax was achieved by augmenting the way that the reader reads in symbols that contain a "." or a "/".
 "System.String/Format" is read in by the reader as "(slash (dot System String))".
 ".Equals" is read in by the reader as "(dot () Equals)".
 "dot" and "slash" are in turn defined as macros which use reflection to invoke the corresponding .Net method:
@@ -256,7 +263,7 @@ This was done by augmenting the way that the reader reads in symbols that contai
 
 ### REPL
 
-The First Class Lisp "REPL" includes an extremely primitive debugger. The REPL and the debugger are both implemented in Lisp itself.
+The First Class Lisp "REPL" also includes an extremely primitive debugger. The REPL and the debugger are both implemented in Lisp itself.
 The "main" method of Lisp.exe simply creates a standard environment and evaluates "REPL.lisp".
 
 
@@ -291,7 +298,6 @@ debug> (exit) ; exit debug REPL back into main REPL
 -> ()
 Steps: 284 Expansions: 0 Lookups: 18 Elapsed: 00:00:29.7198458
 ```
-
 
 As you will also notice, the debugger is so primitive that it's essentially useless at this stage. You're probably better off sticking in print statements in the code if your
 First Class Lisp program isn't working.
@@ -425,7 +431,7 @@ I decided to add "vectors" (the Scheme/Lisp name for an array) and use those ins
 
 I used a vector of integers to represent a partially solved Sudoku board.
 
-Each square corresponds to an index into the vector using the formula `9 * row + column`:
+Each square corresponds to an index into the vector using the formula `9 * row + column` i.e.
 
 ```
 0  1  2  |3  4  5  |6  7  8  |
@@ -435,6 +441,8 @@ Each square corresponds to an index into the vector using the formula `9 * row +
 27 28 29 |30 31 32 |33 34 35 |
 ... and so on.
 ```
+
+Inside each square a number between 0 and 511 inclusive represents which digits are still possible (one bit for each digit).
 
 ### Performance
 
@@ -447,7 +455,8 @@ I was able to get this time to under 5 seconds, by use of the following optimiza
 Whenever a macro is expanded, the expansion is cached inside the Datum that was expanded. The next time the interpreter is asked to expand the same macro against the same input code instance, it re-uses the previous expansion.
 This eliminated repeated macro expansions in all cases where macros are used in a manner that would also work for 'compile time' macros, which turned out to be almost all of the time.
 
-In the case of a macro being used as a true "first class" macro - e.g. different macros being expanded against the same code instance - it will simply degrade gracefully but correctly.
+In the case of a macro being used as a true "first class" macro - e.g. different macros being expanded against the same code instance because the macro was passed as an argument to a function,
+it will simply degrade gracefully but correctly.
 
 #### Symbol lookup caching
 
