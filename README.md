@@ -14,7 +14,72 @@ I wrote it mainly for fun, and to experiment with the idea of [First Class macro
 
 To try out all of these features and get some idea of performance, I implemented the 'amb' operator as a first-class macro, and re-implemented Peter Norvig's Sudoku algorithm, but using the 'amb' operator to perform the depth-first search.
 
-All of the source code is checked in to GitHub, but if you don't have a .Net development environment and would like to try it out, you can try running 'Lisp.exe' on a Windows machine from the [Dist] (https://github.com/Patient0/FirstClassLisp/tree/master/Dist) directory.
+All of the source code is checked in to GitHub, but if you don't have a .Net development environment and would like to try it out, you can try running 'Lisp.exe' on a Windows machine from the [Dist] (https://github.com/Patient0/FirstClassLisp/tree/master/Dist) directory:
+
+```
+C:\Dist>Lisp
+FCLisp> (run "Examples\\Sudoku.lisp")
+Solving grid1...
+((4) (8) (3) (9) (2) (1) (6) (5) (7))
+((9) (6) (7) (3) (4) (5) (8) (2) (1))
+((2) (5) (1) (8) (7) (6) (4) (9) (3))
+((5) (4) (8) (1) (3) (2) (9) (7) (6))
+((7) (2) (9) (5) (6) (4) (1) (3) (8))
+((1) (3) (6) (7) (9) (8) (2) (4) (5))
+((3) (7) (2) (6) (8) (9) (5) (1) (4))
+((8) (1) (4) (2) (5) (3) (7) (6) (9))
+((6) (9) (5) (4) (1) (7) (3) (8) (2))
+Solving grid2...
+With rote deduction we only get to:
+((4) (1 6 7 9) (1 2 6 7 9) (1 3 9) (2 3 6 9) (2 6 9) (8) (1 2 3 9) (5))
+((2 6 7 8 9) (3) (1 2 5 6 7 8 9) (1 4 5 8 9) (2 4 5 6 9) (2 4 5 6 8 9) (1 2 6 7 9) (1 2 4 9) (1 2 4 6 7 9))
+((2 6 8 9) (1 5 6 8 9) (1 2 5 6 8 9) (7) (2 3 4 5 6 9) (2 4 5 6 8 9) (1 2 3 6 9) (1 2 3 4 9) (1 2 3 4 6 9))
+((3 7 8 9) (2) (1 5 7 8 9) (3 4 5 9) (3 4 5 7 9) (4 5 7 9) (1 3 5 7 9) (6) (1 3 7 8 9))
+((3 6 7 9) (1 5 6 7 9) (1 5 6 7 9) (3 5 9) (8) (2 5 6 7 9) (4) (1 2 3 5 9) (1 2 3 7 9))
+((3 6 7 8 9) (4) (5 6 7 8 9) (3 5 9) (1) (2 5 6 7 9) (2 3 5 7 9) (2 3 5 8 9) (2 3 7 8 9))
+((2 8 9) (8 9) (2 8 9) (6) (4 5 9) (3) (1 2 5 9) (7) (1 2 4 8 9))
+((5) (6 7 8 9) (3) (2) (4 7 9) (1) (6 9) (4 8 9) (4 6 8 9))
+((1) (6 7 8 9) (4) (5 8 9) (5 7 9) (5 7 8 9) (2 3 5 6 9) (2 3 5 8 9) (2 3 6 8 9))
+Solving using non-deterministic search...
+Assiging 8 to 55
+Assiging 2 to 54
+Assiging 4 to 58
+Assiging 6 to 64
+Assiging 1 to 1
+Assiging 3 to 3
+Assiging 2 to 7
+Assiging 6 to 4
+Assiging 9 to 4
+Assiging 9 to 7
+Assiging 2 to 4
+Assiging 6 to 4
+Assiging 9 to 3
+Assiging 2 to 5
+Assiging 6 to 5
+Assiging 9 to 1
+Assiging 1 to 3
+Assiging 2 to 5
+Assiging 6 to 5
+Assiging 3 to 3
+Assiging 2 to 4
+Assiging 6 to 4
+Assiging 7 to 64
+Assiging 1 to 1
+Assiging 3 to 3
+Solution:
+((4) (1) (7) (3) (6) (9) (8) (2) (5))
+((6) (3) (2) (1) (5) (8) (9) (4) (7))
+((9) (5) (8) (7) (2) (4) (3) (1) (6))
+((8) (2) (5) (4) (3) (7) (1) (6) (9))
+((7) (9) (1) (5) (8) (6) (4) (3) (2))
+((3) (4) (6) (9) (1) (2) (7) (5) (8))
+((2) (8) (9) (6) (4) (3) (5) (7) (1))
+((5) (7) (3) (2) (9) (1) (6) (8) (4))
+((1) (6) (4) (8) (7) (5) (2) (9) (3))
+-> ()
+Steps: 11141444 Expansions: 219 Lookups: 1400200 Elapsed: 00:00:04.3050062
+FCLisp>
+```
 
 ### Pattern-matching lambda
 
