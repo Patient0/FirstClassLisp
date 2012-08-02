@@ -116,7 +116,7 @@ namespace LispTests.Lexing
         [Test]
         public void testFloat()
         {
-            test("4.5", number("4.5"));
+            numberTest("4.5");
         }
 
         [Test]
@@ -128,19 +128,51 @@ namespace LispTests.Lexing
         [Test]
         public void testImplicitZero()
         {
-            test(".5", number(".5"));
+            numberTest(".5");
         }
 
         [Test]
         public void testImplicitPositiveZero()
         {
-            test("+.5", number("+.5"));
+            numberTest("+.5");
         }
 
         [Test]
         public void testImplicitNegativeZero()
         {
-            test("-.5", number("-.5"));
+            numberTest("-.5");
+        }
+
+        private static void numberTest(string s)
+        {
+            test(s, number(s));
+        }
+
+        [Test]
+        public void testScientific()
+        {
+            numberTest("1.e+10");
+            numberTest("1e10");
+            numberTest("+1e10");
+            numberTest("+15e10");
+            numberTest("-1e10");
+            numberTest("1.e10");
+            numberTest("1.3e2");
+            numberTest("1e-2");
+            numberTest("1e+2");
+        }
+
+        [Test]
+        public void testInvalidExponent()
+        {
+            test(".e ", symbol(".e"), sp);
+        }
+
+
+        [Test]
+        public void testInvalidExponent2()
+        {
+            test(".every ", symbol(".every"), sp);
         }
 
         [Test]

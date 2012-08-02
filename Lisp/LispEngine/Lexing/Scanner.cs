@@ -104,20 +104,52 @@ namespace LispEngine.Lexing
             return s.sb.Length > 1 ? TokenType.Symbol : TokenType.Dot;
         }
 
+        private static TokenType? readExponent(Scanner s)
+        {
+            s.readChar(); // Skip exponent market
+            var read = false;
+            if (s.isOneOf("+-"))
+            {
+                s.readChar();
+                read = true;
+            }
+            while (s.isDigit())
+            {
+                read = true;
+                s.readChar();
+            }
+            if(read)
+                return TokenType.Double;
+            // It's not a floating point number in exponent format.
+            // Read it as a symbol instead.
+            matchSymbol(s);
+            return TokenType.Symbol;
+        }
+
+        private bool isExponent() {
+            return peek()== 'e';
+        }
+
         private static TokenType? remainingFloat(Scanner s)
         {
             s.readChar(); // Skip the '.'
-            while (s.isDigit())
+            while (s.isDigit() || s.isExponent())
+            {
+                if (s.isExponent())
+                    return readExponent(s);
                 s.readChar();
+            }
             return TokenType.Double;
         }
 
-        private static TokenType? positiveNumber(Scanner s)
+        private static TokenType? unsignedNumber(Scanner s)
         {
             if (!s.isDigit())
                 return null;
             while (s.isDigit())
                 s.readChar();
+            if (s.isExponent())
+                return readExponent(s);
             if (s.peek() != '.')
                 return TokenType.Integer;
             return remainingFloat(s);
@@ -131,9 +163,19 @@ namespace LispEngine.Lexing
                 matchSymbol(s);
                 return s.sb.Length == 1 ? TokenType.Dot : TokenType.Symbol;
             }
-            return floatToken;            
+            return floatToken;
         }
 
+        // This code is pretty hairy - the problem is
+        // distinguishing between:
+        // 1. a floating point number, which may be
+        // in scientific notification, and might simply begin
+        // with "."
+        // 2. A symbol with a dot in it
+        // 3. Just a lone "." used for separating lists
+
+        // It's doubtful that it's entirely correct - but if you find a bug,
+        // add it as a test to ScannerTest and amend this logic.
         private static TokenType? matchNumber(Scanner s)
         {
             if(s.peek() == '.')
@@ -144,14 +186,14 @@ namespace LispEngine.Lexing
                 s.readChar();
                 if(s.peek() == '.')
                     return leadingFloat(s);
-                var num = positiveNumber(s);
+                var num = unsignedNumber(s);
                 if (num != null)
                     return num;
 
                 matchSymbol(s);
                 return TokenType.Symbol;
             }
-            return positiveNumber(s);
+            return unsignedNumber(s);
         }
 
         // TODO:
