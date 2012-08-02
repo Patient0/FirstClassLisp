@@ -264,5 +264,36 @@ namespace LispTests.Parsing
         {
             test("#(1 (4) 3)", vector(atom(1), atomList(4), atom(3)));
         }
+
+        private static void numberTest(string s)
+        {
+            test(s, atom(Double.Parse(s)));
+        }
+
+        [Test]
+        public void testPositiveNegativeInteger()
+        {
+            test("+55", atom(55));
+            test("-55", atom(-55));
+        }
+
+        [Test]
+        public void testFloatingPoint()
+        {
+            numberTest("5.5");
+            numberTest("4.5");
+            numberTest(".5");
+            numberTest("+.5");
+            numberTest("-.5");
+            numberTest("1.e+10");
+            numberTest("1e10");
+            numberTest("+1e10");
+            numberTest("+15e10");
+            numberTest("-1e10");
+            numberTest("1.e10");
+            numberTest("1.3e2");
+            numberTest("1e-2");
+            numberTest("1e+2");
+        }
     }
 }

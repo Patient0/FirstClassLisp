@@ -160,6 +160,8 @@ namespace LispEngine.Parsing
         {
             if (next.Type == TokenType.Integer)
                 return atom(int.Parse(next.Contents));
+            if (next.Type == TokenType.Double)
+                return atom(double.Parse(next.Contents));
             if(next.Type == TokenType.Boolean)
                 return atom(next.Contents.ToLower().Equals("#t"));
             if (next.Type == TokenType.String)
