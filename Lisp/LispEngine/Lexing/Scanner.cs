@@ -37,11 +37,9 @@ namespace LispEngine.Lexing
         // but never used.
         private void init()
         {
-            if(!initialized)
-            {
-                buf = reader.Read();
-                initialized = true;
-            }
+            if (initialized) return;
+            buf = reader.Read();
+            initialized = true;
         }
 
         public int Peek()
@@ -103,6 +101,34 @@ namespace LispEngine.Lexing
             s.readChar();
             matchSymbol(s);
             return s.sb.Length > 1 ? TokenType.Symbol : TokenType.Dot;
+        }
+
+        private static TokenType? positiveNumber(Scanner s)
+        {
+            if (!s.isDigit())
+                return null;
+            while (s.isDigit())
+                s.readChar();
+            if (s.peek() != '.')
+                return TokenType.Integer;
+            s.readChar();
+            while (s.isDigit())
+                s.readChar();
+            return TokenType.Double;
+        }
+
+        private static TokenType? matchNumber(Scanner s)
+        {
+            if(s.peek() == '-')
+            {
+                s.readChar();
+                var num = positiveNumber(s);
+                if (num != null)
+                    return num;
+                matchSymbol(s);
+                return TokenType.Symbol;
+            }
+            return positiveNumber(s);
         }
 
         // TODO:
@@ -172,6 +198,7 @@ namespace LispEngine.Lexing
                                 if(s.peek() == '@')
                                     s.readChar();
                             }),
+                    matchNumber,
                     match(TokenType.Symbol, matchSymbol),
                     // Match either "." or a ".symbol"
                     matchDot,
@@ -201,8 +228,6 @@ namespace LispEngine.Lexing
                         }),
                     matchPredicate(TokenType.Space, 
                         s => s.isWhiteSpace()),
-                    matchPredicate(TokenType.Integer, 
-                        s => s.isDigit()),
                     matchSingle(TokenType.Open, '('),
                     matchSingle(TokenType.Close, ')'),
                     matchHash
