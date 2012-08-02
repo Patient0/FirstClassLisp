@@ -35,12 +35,17 @@ namespace LispTests.Lexing
             return token(TokenType.Integer, s);
         }
 
+        private static Token number(string s)
+        {
+            return token(TokenType.Double, s);
+        }
+
         private static Token str(string s)
         {
             return token(TokenType.String, s);
         }
 
-        private void test(string text, params Token[] expected)
+        private static void test(string text, params Token[] expected)
         {
             var c = 0;
             var s = Scanner.Create(text);
@@ -172,6 +177,12 @@ namespace LispTests.Lexing
         public void testVectorLiteral()
         {
             test("#(1)", vectorOpen, integer("1"), close);
+        }
+
+        [Test, Ignore]
+        public void testFloat()
+        {
+            test("4.5", number("4.5"));
         }
     }
 }

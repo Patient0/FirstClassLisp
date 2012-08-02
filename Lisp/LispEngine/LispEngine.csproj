@@ -112,9 +112,7 @@
   <ItemGroup>
     <EmbeddedResource Include="ReflectionBinding\ReflectionBuiltins.lisp" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="IO\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Bootstrap\Library.lisp" />
   </ItemGroup>
