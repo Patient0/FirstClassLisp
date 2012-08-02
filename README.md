@@ -14,6 +14,8 @@ I wrote it mainly for fun, and to experiment with the idea of [First Class macro
 
 To try out all of these features and get some idea of performance, I implemented the 'amb' operator as a first-class macro, and re-implemented Peter Norvig's Sudoku algorithm, but using the 'amb' operator to perform the depth-first search.
 
+All of the source code is checked in to GitHub, but if you don't have a .Net development environment and would like to try it out, you can try running 'Lisp.exe' on a Windows machine from the [Dist] (https://github.com/Patient0/FirstClassLisp/tree/master/Dist) directory.
+
 ### Pattern-matching lambda
 
 Standard scheme syntax allows only the following three forms for arguments:
