@@ -155,7 +155,7 @@
                                 (,make-thunk
                                     (,set-fail ,old-fail)
                                     (,c (,make-thunk ,y))))
-                            (make-thunk ,x)))))
+                            (,make-thunk ,x)))))
             (x . rest)
                 `(,amb ,x (,amb ,@rest))))
      (macro expand-amb))
